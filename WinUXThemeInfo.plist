@@ -1,0 +1,17 @@
+{
+  NSExecutable = "WinUXTheme.dll";
+  NSMainNibFile = "";
+  NSPrincipalClass = "WinUXTheme";
+  GSThemeAuthors = (
+	"Fred Kiefer",
+	"Riccardo Mottola"
+  );
+  GSThemeDetails = "Windows native UX theme";
+  GSThemeDomain = {
+	GSBackHandlesWindowDecorations = YES;
+	NSMenuInterfaceStyle = NSWindows95InterfaceStyle;
+	NSScrollViewInterfaceStyle = NSWindows95InterfaceStyle;
+	NSScrollerInterfaceStyle = NSWindows95InterfaceStyle;
+  };
+}
+
