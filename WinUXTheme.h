@@ -22,7 +22,89 @@
    Boston, MA 02110-1301, USA.
 */
 
+#import <AppKit/AppKit.h>
+#import <GNUstepGUI/GSDisplayServer.h>
 #import <GNUstepGUI/GSTheme.h>
+
+// Import Windows headers for theme management.
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0501 // Minimal target is Windows XP
+#include <windows.h>
+#include <uxtheme.h>
+#include <tmschema.h>
+
+// These colours are missing for mingw
+#ifndef COLOR_MENUHILIGHT
+ #define COLOR_MENUHILIGHT 29
+#endif
+#ifndef COLOR_MENUBAR
+#define COLOR_MENUBAR 30
+#endif
+
+@interface NSObject (WIN32GState)
+- (HDC) getHDC;
+- (void) releaseHDC:(HDC)hdc;
+@end
+
+@interface NSObject (GSGraphicsContext)
+- (id) currentGState;
+@end
+
+
+/*
+ * See http://msdn.microsoft.com/en-us/library/ms724371(VS.85).aspx
+ * for possible values for nIndex.
+ */
+static inline NSColor *Win32ToGSColor(int nIndex)
+{
+  DWORD color = GetSysColor(nIndex);
+  float red, green, blue;
+
+  red = ((float)GetRValue(color)) / 255.0;
+  green = ((float)GetGValue(color)) / 255.0;
+  blue = ((float)GetBValue(color)) / 255.0;
+
+  return [NSColor colorWithDeviceRed: red
+                  green: green
+                  blue: blue
+                  alpha: 1.0];
+}
+
+/*
+ * See WIN32Geometry.h for this code
+ */
+static inline RECT
+GSWindowRectToMS(NSWindow *window, NSRect r0)
+{
+  NSGraphicsContext *ctxt;
+  RECT rect;
+  float h, l, r, t, b;
+  RECT r1;
+  HWND hwnd = (HWND)[window windowNumber];
+
+  GetClientRect(hwnd, &rect);
+  h = rect.bottom - rect.top;
+  [GSServerForWindow(window) styleoffsets: &l : &r : &t : &b 
+                    : [window styleMask]];
+
+  r1.left = r0.origin.x - l;
+  r1.bottom = h - r0.origin.y + b;
+  r1.right = r1.left + r0.size.width;
+  r1.top = r1.bottom - r0.size.height;
+
+  return r1;
+}
+
+static inline HDC GetCurrentHDC()
+{
+  return (HDC)[[GSCurrentContext() currentGState] getHDC]; 
+}
+
+static inline void ReleaseCurrentHDC(HDC hdc)
+{
+  [[GSCurrentContext() currentGState] releaseHDC: hdc];
+}
+
 
 @interface WinUXTheme: GSTheme
 @end

@@ -44,7 +44,8 @@ WinUXTheme_PRINCIPAL_CLASS = WinUXTheme
 ADDITIONAL_OBJC_LIBS=-luxtheme  
 
 WinUXTheme_OBJC_FILES = \
-		WinUXTheme.m
+		WinUXTheme.m \
+		WinNSButton.m
 
 -include GNUmakefile.preamble
 
