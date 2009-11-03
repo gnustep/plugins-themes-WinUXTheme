@@ -31,6 +31,14 @@
 
 
 
+static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
+{
+  NSAffineTransform* ctm = [GSCurrentContext() GSCurrentCTM];
+
+  r = (NSRect)[ctm rectInMatrixSpace: r];
+  return GSWindowRectToMS(win, r);
+}
+
 
 @implementation WinUXTheme
 
@@ -112,6 +120,33 @@
     }
 
   return colors;
+}
+
+- (BOOL) drawThemeBackground:(HTHEME)hTheme
+		      inRect:(NSRect)rect
+		      part:(int)part
+		      state:(int)state
+{
+  HDC hDC;
+  RECT winRect;
+
+  if (hTheme == NULL)
+    return NO;
+  
+
+  winRect = GSViewRectToWin([[GSCurrentContext() focusView] window], rect);
+  hDC = GetCurrentHDC();
+
+  if (FAILED(DrawThemeBackground(hTheme, hDC, part, state, &winRect, NULL)))
+  {
+    ReleaseCurrentHDC(hDC);
+    return NO;
+  }
+  else
+  {
+    ReleaseCurrentHDC(hDC);
+    return YES;
+  }
 }
 
 @end

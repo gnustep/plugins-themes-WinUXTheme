@@ -45,7 +45,8 @@ ADDITIONAL_OBJC_LIBS=-luxtheme
 
 WinUXTheme_OBJC_FILES = \
 		WinUXTheme.m \
-		WinNSButton.m
+		WinNSButton.m \
+		WinNSScroller.m
 
 -include GNUmakefile.preamble
 

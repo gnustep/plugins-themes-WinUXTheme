@@ -107,4 +107,6 @@ static inline void ReleaseCurrentHDC(HDC hdc)
 
 
 @interface WinUXTheme: GSTheme
+
+- (BOOL) drawThemeBackground:(HTHEME)hTheme inRect:(NSRect)rect part:(int)part state:(int)state;
 @end
