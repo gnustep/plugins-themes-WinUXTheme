@@ -13,5 +13,6 @@
 	NSScrollViewInterfaceStyle = NSWindows95InterfaceStyle;
 	NSScrollerInterfaceStyle = NSWindows95InterfaceStyle;
   };
+  GSThemeVersion = 0.1;
 }
 

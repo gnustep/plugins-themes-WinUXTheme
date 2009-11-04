@@ -160,29 +160,24 @@
 - (NSButtonCell *) cellForScrollerArrow: (NSScrollerArrow)arrow
 			     horizontal: (BOOL)horizontal
 {
-  //  return [super cellForScrollerArrow:arrow horizontal:horizontal];
-  
     WIN32ScrollerButtonCell *cell;
     NSScrollerPart part;
+
     if (arrow==NSScrollerIncrementArrow)
       part = NSScrollerIncrementLine;
     else
       part = NSScrollerDecrementLine;
     cell = [[WIN32ScrollerButtonCell alloc] initWithTheme:self scrollerPart:part
       horizontal:horizontal];
-    //    return AUTORELEASE(cell);
     return cell; //FIXME
 }
 
 - (NSCell*) cellForScrollerKnob:(BOOL)horizontal
 {
-  //return [super cellForScrollerKnob:horizontal];
-  
     WIN32ScrollerButtonCell *cell;
 
     cell = [[WIN32ScrollerButtonCell alloc] initWithTheme:self scrollerPart:NSScrollerKnob
       horizontal:horizontal];
-    //   return AUTORELEASE(cell);
     return cell; //FIXME
 }
 
@@ -190,13 +185,10 @@
 
 - (NSCell*) cellForScrollerKnobSlot:(BOOL)horizontal
 {
-  // return [super cellForScrollerKnobSlot:horizontal];
-  
     WIN32ScrollerButtonCell *cell;
-    NSLog(@"Get scroller knob slot.");
+
     cell = [[WIN32ScrollerButtonCell alloc] initWithTheme:self scrollerPart:NSScrollerKnobSlot
       horizontal:horizontal];
-    //  return AUTORELEASE(cell);
     return cell; //FIXME
 }
 
