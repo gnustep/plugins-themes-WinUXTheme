@@ -162,23 +162,47 @@
 {
     WIN32ScrollerButtonCell *cell;
     NSScrollerPart part;
+    NSString *cellName;
 
     if (arrow==NSScrollerIncrementArrow)
-      part = NSScrollerIncrementLine;
+      {
+	part = NSScrollerIncrementLine;
+	if (horizontal)
+	  cellName = @"HorizontalIncrementArrow";
+	else
+	  cellName = @"VerticalIncrementArrow";
+      }
     else
-      part = NSScrollerDecrementLine;
+      {
+	part = NSScrollerDecrementLine;
+	if (horizontal)
+	  cellName = @"HorizontalDecrementArrow";
+	else
+	  cellName = @"VerticalDecrementArrow";
+      }
     cell = [[WIN32ScrollerButtonCell alloc] initWithTheme:self scrollerPart:part
       horizontal:horizontal];
-    return cell; //FIXME
+
+    [self setName: cellName forElement: cell temporary:YES];
+    return [cell autorelease];
 }
 
 - (NSCell*) cellForScrollerKnob:(BOOL)horizontal
 {
     WIN32ScrollerButtonCell *cell;
+    NSString *cellName;
+
+    if (horizontal)
+      cellName = @"HorizontalScrollerKnob";
+    else
+      cellName = @"VerticalScrollerKnob";
 
     cell = [[WIN32ScrollerButtonCell alloc] initWithTheme:self scrollerPart:NSScrollerKnob
-      horizontal:horizontal];
-    return cell; //FIXME
+					    horizontal:horizontal];
+
+
+    [self setName: cellName forElement: cell temporary:YES];
+    return [cell autorelease];
 }
 
 
@@ -186,10 +210,19 @@
 - (NSCell*) cellForScrollerKnobSlot:(BOOL)horizontal
 {
     WIN32ScrollerButtonCell *cell;
+    NSString *cellName;
+
+    if (horizontal)
+      cellName = @"HorizontalScrollerKnobSlot";
+    else
+      cellName = @"VerticalScrollerKnobSlot";
 
     cell = [[WIN32ScrollerButtonCell alloc] initWithTheme:self scrollerPart:NSScrollerKnobSlot
-      horizontal:horizontal];
-    return cell; //FIXME
+					    horizontal:horizontal];
+
+    [self setName: cellName forElement: cell temporary:YES];
+    return [cell autorelease];
+
 }
 
 
