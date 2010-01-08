@@ -12,6 +12,7 @@
 	NSMenuInterfaceStyle = NSWindows95InterfaceStyle;
 	NSScrollViewInterfaceStyle = NSWindows95InterfaceStyle;
 	NSScrollerInterfaceStyle = NSWindows95InterfaceStyle;
+	GSScrollerButtonsOffset = 0;
   };
   GSThemeVersion = 0.1;
 }
