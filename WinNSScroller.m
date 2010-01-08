@@ -225,6 +225,9 @@
 
 }
 
-
+- (float) defaultScrollerWidth
+{
+  return 16.0;
+}
 
 @end  
