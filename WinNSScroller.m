@@ -226,15 +226,5 @@
 }
 
 
-- (float) defaultScrollerWidth
-{
-  int scrollerWidth;
-
-  // FIXME: to complete
-  scrollerWidth = 16;
-
-  return scrollerWidth;
-}
-
 
 @end  
