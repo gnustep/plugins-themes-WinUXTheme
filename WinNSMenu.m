@@ -65,7 +65,7 @@ HMENU r_build_menu(NSMenu *menu)
   while ((item = (NSMenuItem *)[en nextObject]) != nil)
     {
       NSString *title = [item title];
-      const char *ctitle = [title cString];
+      const char *ctitle = [title UTF8String];
       UINT s = 0;
 
       // if we have a submenu then make it a popup, if not it's a normal item.
