@@ -1,3 +1,8 @@
+2010-01-15 13:07-EST Gregory John Casamento <greg.casamento@gmail.com>
+
+	* WinNSMenu.m: Code to get the window bar height.  
+	At this point the height is hard coded.
+
 2010-01-14 16:09-EST Gregory John Casamento <greg.casamento@gmail.com>
 
 	* WinNSMenu.m: Change to UTF8String so that there isn't any 

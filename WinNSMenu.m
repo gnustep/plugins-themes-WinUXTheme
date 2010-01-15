@@ -112,8 +112,14 @@ void build_menu(HWND win)
 - (void) setMenu: (NSMenu *)menu
        forWindow: (NSWindow *)window
 {
-  build_menu((HWND)[window windowNumber]);
+  float menuHeight = 0.0;
+  HWND win = (HWND)[window windowNumber];
+
+  build_menu(win);
+
   [[window windowView] setHasMenu: YES];
+  [[window windowView] changeWindowHeight: 
+		[self menuHeightForWindow: window]];
 }
 
 - (void) processCommand: (void *)context
@@ -128,5 +134,22 @@ void build_menu(HWND win)
   [NSApp sendAction: action
 		 to: target
 	       from: item];
+}
+
+- (float) menuHeightForWindow: (NSWindow *)window
+{
+  BOOL succeeded = NO;
+  MENUBARINFO mbi;
+  HWND win = (HWND)[window windowNumber];
+  RECT bar;
+  float menuHeight = 0.0;
+
+  mbi.cbSize = sizeof(MENUBARINFO);
+  succeeded = GetMenuBarInfo(win,OBJID_CLIENT,0,&mbi);
+  bar = mbi.rcBar;
+  menuHeight = (float)(bar.bottom - bar.top);
+
+  // temporarily override...
+  return 20;
 }
 @end
