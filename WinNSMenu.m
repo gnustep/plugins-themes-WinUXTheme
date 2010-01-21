@@ -64,8 +64,11 @@ HMENU r_build_menu(NSMenu *menu)
   result = CreateMenu();
   while ((item = (NSMenuItem *)[en nextObject]) != nil)
     {
-      NSString *title = [item title];
-      const char *ctitle = [title UTF8String];
+      NSString *title = nil; // [item title];
+      const char *ctitle; // = [title UTF8String];
+      // char key[50]; // = [[item keyEquivalent] UTF8String];
+      // char *modifier;
+      NSString *modifier = @"";
       UINT s = 0;
 
       // if we have a submenu then make it a popup, if not it's a normal item.
@@ -75,6 +78,10 @@ HMENU r_build_menu(NSMenu *menu)
 	  flags = MF_STRING | MF_POPUP;
 	  s = (UINT)r_build_menu(smenu);
 	}
+      else if([item isSeparatorItem])
+	{
+	  flags = MF_SEPARATOR;
+	}
       else
 	{
 	  flags = MF_STRING;
@@ -82,6 +89,39 @@ HMENU r_build_menu(NSMenu *menu)
 	  NSMapInsert(itemMap, (const void *)s, item);
 	}
 
+      if([[item keyEquivalent] isEqualToString: @""] == NO)
+	{
+	  switch([item keyEquivalentModifierMask])
+	    {
+	    case NSShiftKeyMask:
+	      modifier = @"Shift";
+	      break;
+	    case NSControlKeyMask:
+	      modifier = @"Ctrl";
+	      break;
+	    case NSCommandKeyMask:
+	      modifier = @"Alt";
+	      break;
+	    case NSAlternateKeyMask:
+	      modifier = @"AltGr";
+	      break;
+	    default:
+	      modifier = @"Alt";
+	      break;
+	    }
+	  
+	  title = [NSString stringWithFormat: @"%@\t%@-%@",
+			    [item title],
+			    modifier,
+			    [item keyEquivalent]];
+	}
+      else
+	{
+	  title = [NSString stringWithFormat: @"%@",
+			    [item title]];
+	}
+
+      ctitle = [title cStringUsingEncoding: NSUTF8StringEncoding];
       AppendMenu(result, flags, (UINT)s, ctitle);
     }  
 
@@ -112,14 +152,16 @@ void build_menu(HWND win)
 - (void) setMenu: (NSMenu *)menu
        forWindow: (NSWindow *)window
 {
-  float menuHeight = 0.0;
   HWND win = (HWND)[window windowNumber];
 
-  build_menu(win);
-
-  [[window windowView] setHasMenu: YES];
-  [[window windowView] changeWindowHeight: 
-		[self menuHeightForWindow: window]];
+  if(GetMenu(win) == NULL)
+    {     
+      build_menu(win);
+      
+      [[window windowView] setHasMenu: YES];
+      [[window windowView] changeWindowHeight: 
+		    [self menuHeightForWindow: window]];
+    }
 }
 
 - (void) processCommand: (void *)context
@@ -138,6 +180,7 @@ void build_menu(HWND win)
 
 - (float) menuHeightForWindow: (NSWindow *)window
 {
+  /*
   BOOL succeeded = NO;
   MENUBARINFO mbi;
   HWND win = (HWND)[window windowNumber];
@@ -151,5 +194,8 @@ void build_menu(HWND win)
 
   // temporarily override...
   return 20;
+  */
+
+  return (float)GetSystemMetrics(SM_CYMENU);
 }
 @end

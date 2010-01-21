@@ -76,7 +76,6 @@ static inline NSColor *Win32ToGSColor(int nIndex)
 static inline RECT
 GSWindowRectToMS(NSWindow *window, NSRect r0)
 {
-  NSGraphicsContext *ctxt;
   RECT rect;
   float h, l, r, t, b;
   RECT r1;

@@ -101,7 +101,7 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
               forKey: @"textBackgroundColor"];
       [colors setColor: Win32ToGSColor(COLOR_WINDOWTEXT)
               forKey: @"textColor"];
-      [colors setColor: Win32ToGSColor(COLOR_WINDOW)
+      [colors setColor: Win32ToGSColor(COLOR_3DFACE) // COLOR_WINDOW
               forKey: @"windowBackgroundColor"];
       [colors setColor: Win32ToGSColor(COLOR_WINDOWFRAME)
               forKey: @"windowFrameColor"];

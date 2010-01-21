@@ -1,3 +1,12 @@
+2010-01-21 15:34-EST Gregory John Casamento <greg.casamento@gmail.com>
+
+	* WinNSMenu.m: Add menu shortcut display and support for separators.
+	* WinUXTheme.h: Remove uneeded ctxt variable.
+	* WinUXTheme.m: Change color for window background to COLOR_3DFACE, 
+	since this is what other projects have done.
+	Please see this:
+	http://www.winehq.org/pipermail/wine-patches/2005-September/020868.html
+
 2010-01-15 13:07-EST Gregory John Casamento <greg.casamento@gmail.com>
 
 	* WinNSMenu.m: Code to get the window bar height.  
