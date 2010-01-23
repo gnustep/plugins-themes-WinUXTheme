@@ -1,3 +1,8 @@
+2010-01-23 18:37-EST Gregory John Casamento <greg.casamento@gmail.com>
+
+	* WinNSMenu.m: Code to roughly calculate the number of rows
+	a menu can take in the worst case.
+
 2010-01-21 15:34-EST Gregory John Casamento <greg.casamento@gmail.com>
 
 	* WinNSMenu.m: Add menu shortcut display and support for separators.

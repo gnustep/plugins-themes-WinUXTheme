@@ -28,6 +28,7 @@
 #import <GNUstepGUI/GSWindowDecorationView.h>
 #import "WinUXTheme.h"
 #include <windows.h>
+#include <math.h>
 
 static HMENU windows_menu = 0;
 static UINT menu_tag = 0;
@@ -35,12 +36,18 @@ static NSMapTable *itemMap = 0;
 
 @interface NSWindow (WinMenuPrivate)
 - (GSWindowDecorationView *) windowView;
+- (void) _setMenu: (NSMenu *) menu;
 @end
 
 @implementation NSWindow (WinMenuPrivate)
 - (GSWindowDecorationView *) windowView
 {
   return _wv;
+}
+
+- (void) _setMenu: (NSMenu *) menu
+{
+  [super setMenu: menu];
 }
 @end
 
@@ -64,10 +71,8 @@ HMENU r_build_menu(NSMenu *menu)
   result = CreateMenu();
   while ((item = (NSMenuItem *)[en nextObject]) != nil)
     {
-      NSString *title = nil; // [item title];
-      const char *ctitle; // = [title UTF8String];
-      // char key[50]; // = [[item keyEquivalent] UTF8String];
-      // char *modifier;
+      NSString *title = nil;
+      const char *ctitle;
       NSString *modifier = @"";
       UINT s = 0;
 
@@ -121,6 +126,14 @@ HMENU r_build_menu(NSMenu *menu)
 			    [item title]];
 	}
 
+      // If it's enabled and not a seperator or a supermenu,
+      // determine if it's enabled and set it's state accordingly.
+      if([item isSeparatorItem] == NO &&
+	 [item hasSubmenu] == NO)
+	{
+	  flags |= ([item isEnabled]?MF_ENABLED:MF_GRAYED);
+	}
+
       ctitle = [title cStringUsingEncoding: NSUTF8StringEncoding];
       AppendMenu(result, flags, (UINT)s, ctitle);
     }  
@@ -149,18 +162,29 @@ void build_menu(HWND win)
 }
 
 @implementation WinUXTheme (NSMenu)
+- (void) updateMenu: (NSMenu *)menu
+	  forWindow: (NSWindow *)window
+{
+  HWND win = (HWND)[window windowNumber];
+  build_menu(win);
+}
+
 - (void) setMenu: (NSMenu *)menu
        forWindow: (NSWindow *)window
 {
   HWND win = (HWND)[window windowNumber];
 
   if(GetMenu(win) == NULL)
-    {     
-      build_menu(win);
-      
+    { 
+      float h = 0.0;
+
+      [self updateMenu: menu
+	     forWindow: window];
+
+      [window _setMenu: menu];
+      h = [self menuHeightForWindow: window];      
       [[window windowView] setHasMenu: YES];
-      [[window windowView] changeWindowHeight: 
-		    [self menuHeightForWindow: window]];
+      [[window windowView] changeWindowHeight: h]; 
     }
 }
 
@@ -180,22 +204,37 @@ void build_menu(HWND win)
 
 - (float) menuHeightForWindow: (NSWindow *)window
 {
-  /*
-  BOOL succeeded = NO;
-  MENUBARINFO mbi;
-  HWND win = (HWND)[window windowNumber];
-  RECT bar;
-  float menuHeight = 0.0;
+  NSArray *items = [[window menu] itemArray];
+  float height = 0.0;
 
-  mbi.cbSize = sizeof(MENUBARINFO);
-  succeeded = GetMenuBarInfo(win,OBJID_CLIENT,0,&mbi);
-  bar = mbi.rcBar;
-  menuHeight = (float)(bar.bottom - bar.top);
+  if([items count] > 0)
+    {
+      NSEnumerator *en = [items objectEnumerator];
+      id obj = nil;
+      float est_menu_width = 0.0; 
+      float ratio = 0.0; 
+      int rows = 0 ; 
+      int letters = 0;
+      int bar = GetSystemMetrics(SM_CYMENU);
+      NSRect rect = [window frame];
+  
+      /**
+       * This calculation is something of a hack.
+       * It will count up the number of letters in the top level
+       * menu and determine if that can overflow the width of the window.
+       */
+      while ((obj = [en nextObject]) != nil)
+	{
+	  letters += [[obj title] length];
+	  letters += 2; // the 1 character pad on each side.
+	}      
 
-  // temporarily override...
-  return 20;
-  */
+      est_menu_width = (6.0 * letters);
+      ratio = est_menu_width / rect.size.width;
+      rows = ceil(ratio);
+      height = rows * bar; 
+    }
 
-  return (float)GetSystemMetrics(SM_CYMENU);
+  return height;
 }
 @end
