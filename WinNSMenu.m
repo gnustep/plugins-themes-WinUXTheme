@@ -161,30 +161,50 @@ void build_menu(HWND win)
   SetMenu(win, windows_menu);
 }
 
+void delete_menu(HWND win)
+{
+  HMENU menu = GetMenu(win);
+  if(menu)
+    {
+      // Iterate over the menu bar and delete all
+      // items.
+      while(DeleteMenu(menu, 0, MF_BYPOSITION));
+    }
+}
+
 @implementation WinUXTheme (NSMenu)
 - (void) updateMenu: (NSMenu *)menu
 	  forWindow: (NSWindow *)window
 {
-  HWND win = (HWND)[window windowNumber];
-  build_menu(win);
+  if(menu != nil && window != nil)
+    {
+      HWND win = (HWND)[window windowNumber];
+
+      delete_menu(win);
+      build_menu(win);
+      NSLog(@"menu = %@, window = %@", menu, window);
+    }
 }
 
 - (void) setMenu: (NSMenu *)menu
        forWindow: (NSWindow *)window
 {
-  HWND win = (HWND)[window windowNumber];
-
-  if(GetMenu(win) == NULL)
-    { 
-      float h = 0.0;
-
-      [self updateMenu: menu
-	     forWindow: window];
-
-      [window _setMenu: menu];
-      h = [self menuHeightForWindow: window];      
-      [[window windowView] setHasMenu: YES];
-      [[window windowView] changeWindowHeight: h]; 
+  if(menu != nil && window != nil)
+    {
+      HWND win = (HWND)[window windowNumber];
+      
+      if(GetMenu(win) == NULL)
+	{ 
+	  float h = 0.0;
+	  
+	  [self updateMenu: menu
+		 forWindow: window];
+	  
+	  [window _setMenu: menu];
+	  h = [self menuHeightForWindow: window];      
+	  [[window windowView] setHasMenu: YES];
+	  [[window windowView] changeWindowHeight: h]; 
+	}
     }
 }
 
