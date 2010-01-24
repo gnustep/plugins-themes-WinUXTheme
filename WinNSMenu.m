@@ -222,20 +222,20 @@ void delete_menu(HWND win)
 
 - (void) processCommand: (void *)context
 {
+  WPARAM wParam = (WPARAM)context;
+  UINT tag = LOWORD(wParam);
+  NSMenuItem *item = itemForTag(tag);
+  SEL action = [item action];
+  id target = [item target];
+  
   [menuLock lock];
-  {
-    WPARAM wParam = (WPARAM)context;
-    UINT tag = LOWORD(wParam);
-    NSMenuItem *item = itemForTag(tag);
-    SEL action = [item action];
-    id target = [item target];
-    
-    // send the action....
-    [NSApp sendAction: action
-		   to: target
-		 from: item];
-  }
-  [menuLock unlock];
+  item = itemForTag(tag);
+  [menuLock unlock];    
+  
+  // send the action....
+  [NSApp sendAction: action
+		 to: target
+	       from: item];
 }
 
 - (float) menuHeightForWindow: (NSWindow *)window
