@@ -33,6 +33,7 @@
 static HMENU windows_menu = 0;
 static UINT menu_tag = 0;
 static NSMapTable *itemMap = 0;
+static NSLock *menuLock = nil;
 
 @interface NSWindow (WinMenuPrivate)
 - (GSWindowDecorationView *) windowView;
@@ -54,6 +55,14 @@ static NSMapTable *itemMap = 0;
 NSMenuItem *itemForTag(UINT tag)
 {
   return (NSMenuItem *)NSMapGet(itemMap,(const void *)tag);
+}
+
+void initialize_lock()
+{
+  if(menuLock == nil)
+    {
+      menuLock = [[NSLock alloc] init];
+    }
 }
 
 // find all subitems for the given items...
@@ -179,9 +188,12 @@ void delete_menu(HWND win)
   if(menu != nil && window != nil)
     {
       HWND win = (HWND)[window windowNumber];
+      initialize_lock();
+      [menuLock lock];
 
       delete_menu(win);
       build_menu(win);
+      [menuLock unlock];
       NSLog(@"menu = %@, window = %@", menu, window);
     }
 }
@@ -210,16 +222,20 @@ void delete_menu(HWND win)
 
 - (void) processCommand: (void *)context
 {
-  WPARAM wParam = (WPARAM)context;
-  UINT tag = LOWORD(wParam);
-  NSMenuItem *item = itemForTag(tag);
-  SEL action = [item action];
-  id target = [item target];
-  
-  // send the action....
-  [NSApp sendAction: action
-		 to: target
-	       from: item];
+  [menuLock lock];
+  {
+    WPARAM wParam = (WPARAM)context;
+    UINT tag = LOWORD(wParam);
+    NSMenuItem *item = itemForTag(tag);
+    SEL action = [item action];
+    id target = [item target];
+    
+    // send the action....
+    [NSApp sendAction: action
+		   to: target
+		 from: item];
+  }
+  [menuLock unlock];
 }
 
 - (float) menuHeightForWindow: (NSWindow *)window
