@@ -4,7 +4,8 @@
   NSPrincipalClass = "WinUXTheme";
   GSThemeAuthors = (
 	"Fred Kiefer",
-	"Riccardo Mottola"
+	"Riccardo Mottola",
+	"Gregory Casamento"
   );
   GSThemeDetails = "Windows native UX theme";
   GSThemeDomain = {

@@ -1,3 +1,7 @@
+2010-01-24 04:44-EST Gregory John Casamento <greg.casamento@gmail.com>
+
+	* WinUXThemeInfo.plist: Added myself to the list of authors.
+
 2010-01-24 04:14-EST Gregory John Casamento <greg.casamento@gmail.com>
 
 	* WinNSMenu.m: Reduce the scope of the lock to encompass only
