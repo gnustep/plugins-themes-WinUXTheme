@@ -88,7 +88,6 @@
   
   if (IsThemePartDefined(hTheme, [self _partForPart:_part], 0))
   {
-    NSLog(@"Draw scroller part.");
     int part;
     BOOL result;
 

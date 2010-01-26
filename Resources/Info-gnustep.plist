@@ -1,0 +1,21 @@
+{
+    GSThemeAuthors = (
+	"Fred Kiefer",
+	"Riccardo Mottola",
+	"Gregory Casamento"
+    );
+    GSThemeDetails = "Windows native UX theme";
+    GSThemeDomain = {
+	GSBackHandlesWindowDecorations = YES;
+	GSScrollerButtonsOffset = 0;
+	NSMenuInterfaceStyle = NSWindows95InterfaceStyle;
+	NSScrollViewInterfaceStyle = NSWindows95InterfaceStyle;
+	NSScrollerInterfaceStyle = NSWindows95InterfaceStyle;
+    };
+    GSThemeIcon = WinTheme.png;
+    GSThemeVersion = 0.1;
+    NOTE = "Automatically generated, do not edit!";
+    NSExecutable = WinUXTheme.dll;
+    NSMainNibFile = "";
+    NSPrincipalClass = WinUXTheme;
+}

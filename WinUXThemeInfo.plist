@@ -8,6 +8,7 @@
 	"Gregory Casamento"
   );
   GSThemeDetails = "Windows native UX theme";
+  GSThemeIcon = WinTheme.png;
   GSThemeDomain = {
 	GSBackHandlesWindowDecorations = YES;
 	NSMenuInterfaceStyle = NSWindows95InterfaceStyle;

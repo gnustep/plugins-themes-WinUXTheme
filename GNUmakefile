@@ -49,6 +49,16 @@ WinUXTheme_OBJC_FILES = \
 		WinNSScroller.m \
 		WinNSMenu.m
 
+#
+# Resource files
+#
+WinUXTheme_RESOURCE_FILES = \
+Resources/WinTheme.png \
+Resources/ThemeImages/common_RadioOff.tif \
+Resources/ThemeImages/common_RadioOn.tif \
+Resources/ThemeImages/common_SwitchOff.tif \
+Resources/ThemeImages/common_SwitchOn.tif
+
 -include GNUmakefile.preamble
 
 include $(GNUSTEP_MAKEFILES)/bundle.make
