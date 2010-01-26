@@ -1,7 +1,7 @@
 #
 #  Top level makefile for GNUstep Backend
 #
-#  Copyright (C) 2009 Free Software Foundation, Inc.
+#  Copyright (C) 2009-2010 Free Software Foundation, Inc.
 #
 #  Author: Riccardo Mottola
 #
