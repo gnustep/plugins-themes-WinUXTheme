@@ -24,13 +24,14 @@
    Boston, MA 02110-1301, USA.
 */
 
+#import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <GNUstepGUI/GSWindowDecorationView.h>
 #import "WinUXTheme.h"
 #include <windows.h>
 #include <math.h>
 
-static HMENU windows_menu = 0;
+// static HMENU windows_menu = 0;
 static UINT menu_tag = 0;
 static NSMapTable *itemMap = 0;
 static NSLock *menuLock = nil;
@@ -152,6 +153,8 @@ HMENU r_build_menu(NSMenu *menu)
 
 void build_menu(HWND win)
 {
+  HMENU windows_menu = NULL;
+
   // Reset the tags...
   menu_tag = 100;
 
@@ -175,8 +178,7 @@ void delete_menu(HWND win)
   HMENU menu = GetMenu(win);
   if(menu)
     {
-      // Iterate over the menu bar and delete all
-      // items.
+      // Iterate over the menu bar and delete all items.
       while(DeleteMenu(menu, 0, MF_BYPOSITION));
     }
 }
@@ -208,10 +210,10 @@ void delete_menu(HWND win)
       if(GetMenu(win) == NULL)
 	{ 
 	  float h = 0.0;
-	  
+
 	  [self updateMenu: menu
 		 forWindow: window];
-	  
+	  	  
 	  [window _setMenu: menu];
 	  h = [self menuHeightForWindow: window];      
 	  [[window windowView] setHasMenu: YES];
@@ -272,5 +274,19 @@ void delete_menu(HWND win)
     }
 
   return height;
+}
+
+- (void) updateAllWindowsWithMenu: (NSMenu *)menu
+{
+  NSEnumerator *en = [[NSApp windows] objectEnumerator];
+  id            o = nil;
+
+  while ((o = [en nextObject]) != nil)
+    {
+      if([o canBecomeMainWindow])
+	{
+	  [self updateMenu: menu forWindow: o];
+	}
+    }
 }
 @end

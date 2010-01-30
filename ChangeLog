@@ -1,3 +1,9 @@
+2010-01-29 22:16-EST Gregory John Casamento <greg.casamento@gmail.com>
+
+	* WinNSMenu.m: Added implementation of updateAllWindowsWithMenu:.
+	* WinUXTheme.m: Added implementation of activate to order out
+	main menu window when this theme is switched to.
+
 2010-01-26 Riccardo Mottola
 
 	* added WinTheme.png: theme icon

@@ -39,8 +39,24 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
   return GSWindowRectToMS(win, r);
 }
 
+@interface NSMenu (WinUXThemePrivate)
+- (NSWindow *) window;
+@end
+
+@implementation NSMenu (WinUXThemePrivate)
+- (NSWindow *) window
+{
+  return _aWindow;
+}
+@end
 
 @implementation WinUXTheme
+
+- (void) activate
+{
+  [super activate];
+  [[[NSApp mainMenu] window] orderOut: self];
+}
 
 - (NSColorList*) colors
 {
