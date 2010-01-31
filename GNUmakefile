@@ -47,7 +47,8 @@ WinUXTheme_OBJC_FILES = \
 		WinUXTheme.m \
 		WinNSButton.m \
 		WinNSScroller.m \
-		WinNSMenu.m
+		WinNSMenu.m \
+		WinNSMenuItemCell.m
 
 #
 # Resource files
