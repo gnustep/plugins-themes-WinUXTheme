@@ -1,3 +1,9 @@
+2010-01-31 03:27-EST Gregory John Casamento <greg.casamento@gmail.com>
+
+	* GNUmakefile: New image.
+	* Resources/ThemeImages/common_Nibble.tif: More windows
+	like nibble for popup.
+
 2010-01-31 02:14-EST Gregory John Casamento <greg.casamento@gmail.com>
 
 	* GNUmakefile: Add new category for rendering menu items in

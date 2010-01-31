@@ -58,7 +58,8 @@ Resources/WinTheme.png \
 Resources/ThemeImages/common_RadioOff.tif \
 Resources/ThemeImages/common_RadioOn.tif \
 Resources/ThemeImages/common_SwitchOff.tif \
-Resources/ThemeImages/common_SwitchOn.tif
+Resources/ThemeImages/common_SwitchOn.tif \
+Resources/ThemeImages/common_Nibble.tif
 
 -include GNUmakefile.preamble
 
