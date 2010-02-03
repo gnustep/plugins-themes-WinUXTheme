@@ -1,3 +1,9 @@
+2010-02-02 Gregory John Casamento <greg.casamento@gmail.com>
+
+	* WinNSMenu.m: Remove locks.  This seems to be causing a deadlock.
+	I'm removing it so that other can test if not having the lock 
+	makes a difference.
+
 2010-01-31 03:27-EST Gregory John Casamento <greg.casamento@gmail.com>
 
 	* GNUmakefile: New image.

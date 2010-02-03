@@ -190,12 +190,12 @@ void delete_menu(HWND win)
   if(menu != nil && window != nil)
     {
       HWND win = (HWND)[window windowNumber];
-      initialize_lock();
-      [menuLock lock];
+      // initialize_lock();
+      // [menuLock lock];
 
       delete_menu(win);
       build_menu(win);
-      [menuLock unlock];
+      // [menuLock unlock];
       NSLog(@"menu = %@, window = %@", menu, window);
     }
 }
@@ -230,9 +230,9 @@ void delete_menu(HWND win)
   SEL action = [item action];
   id target = [item target];
   
-  [menuLock lock];
+  // [menuLock lock];
   item = itemForTag(tag);
-  [menuLock unlock];    
+  // [menuLock unlock];    
   
   // send the action....
   [NSApp sendAction: action
