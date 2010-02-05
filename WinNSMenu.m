@@ -67,13 +67,17 @@ void initialize_lock()
 }
 
 // find all subitems for the given items...
-HMENU r_build_menu(NSMenu *menu)
+HMENU r_build_menu(HWND win, NSMenu *menu)
 {
   NSArray *array = [menu itemArray];
   NSEnumerator *en = [array objectEnumerator];
   NSMenuItem *item = nil;
   HMENU result = 0;
   UINT flags = 0;
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  NSString *cmdMod  = [defaults stringForKey: @"GSFirstCommandKey"];
+  NSString *altMod  = [defaults stringForKey: @"GSFirstAlternateKey"];
+  NSString *ctrlMod = [defaults stringForKey: @"GSFirstControlKey"];
   
   if(menu == nil)
     return 0; 
@@ -83,7 +87,7 @@ HMENU r_build_menu(NSMenu *menu)
     {
       NSString *title = nil;
       const char *ctitle;
-      NSString *modifier = @"";
+      // NSString *modifier = @"";
       UINT s = 0;
 
       // if we have a submenu then make it a popup, if not it's a normal item.
@@ -91,7 +95,7 @@ HMENU r_build_menu(NSMenu *menu)
 	{
 	  NSMenu *smenu = [item submenu];
 	  flags = MF_STRING | MF_POPUP;
-	  s = (UINT)r_build_menu(smenu);
+	  s = (UINT)r_build_menu(win,smenu);
 	}
       else if([item isSeparatorItem])
 	{
@@ -106,29 +110,40 @@ HMENU r_build_menu(NSMenu *menu)
 
       if([[item keyEquivalent] isEqualToString: @""] == NO)
 	{
-	  switch([item keyEquivalentModifierMask])
+	  const char *ke = [[item keyEquivalent] 
+	  		     cStringUsingEncoding: 
+	  		       NSUTF8StringEncoding];
+	  NSString *modifier = @"";
+	  int mask = [item keyEquivalentModifierMask];
+
+	  if(mask & NSCommandKeyMask)
 	    {
-	    case NSShiftKeyMask:
-	      modifier = @"Shift";
-	      break;
-	    case NSControlKeyMask:
-	      modifier = @"Ctrl";
-	      break;
-	    case NSCommandKeyMask:
-	      modifier = @"Alt";
-	      break;
-	    case NSAlternateKeyMask:
-	      modifier = @"AltGr";
-	      break;
-	    default:
-	      modifier = @"Alt";
-	      break;
+	      modifier = [[modifier stringByAppendingString: cmdMod]
+			   stringByAppendingString: @"+"];
+	      
+	    }
+	  if(mask & NSAlternateKeyMask)
+	    {
+	      modifier = [[modifier stringByAppendingString: altMod]
+			   stringByAppendingString: @"+"];
+	      
+	    }
+	  if(mask & NSControlKeyMask)
+	    {
+	      modifier = [[modifier stringByAppendingString: ctrlMod]
+			   stringByAppendingString: @"+"];
+	      
 	    }
 	  
-	  title = [NSString stringWithFormat: @"%@\t%@-%@",
+	  /* RegisterHotKey(win,
+			 s,
+			 MOD_CONTROL,
+			 ke[0]);*/
+
+	  title = [NSString stringWithFormat: @"%@\t%@%@", // (%c)",
 			    [item title],
 			    modifier,
-			    [item keyEquivalent]];
+			    [item keyEquivalent]]; //, ke[0]];
 	}
       else
 	{
@@ -169,7 +184,7 @@ void build_menu(HWND win)
 			     NSNonRetainedObjectMapValueCallBacks, 50);
 
   // Recursively build the menu and set it on the window device.
-  windows_menu = r_build_menu([NSApp mainMenu]);
+  windows_menu = r_build_menu(win, [NSApp mainMenu]);
   SetMenu(win, windows_menu);
 }
 
@@ -190,13 +205,20 @@ void delete_menu(HWND win)
   if(menu != nil && window != nil)
     {
       HWND win = (HWND)[window windowNumber];
-      // initialize_lock();
-      // [menuLock lock];
+      GSWindowDecorationView *wv = [window windowView];
 
       delete_menu(win);
       build_menu(win);
-      // [menuLock unlock];
-      NSLog(@"menu = %@, window = %@", menu, window);
+
+      if(![wv hasMenu])
+	{
+	  float h = 0.0;
+	  
+	  [window _setMenu: menu];
+	  h = [self menuHeightForWindow: window];      
+	  [wv setHasMenu: YES];
+	  [wv changeWindowHeight: h]; 
+	}
     }
 }
 
@@ -209,15 +231,8 @@ void delete_menu(HWND win)
       
       if(GetMenu(win) == NULL)
 	{ 
-	  float h = 0.0;
-
 	  [self updateMenu: menu
 		 forWindow: window];
-	  	  
-	  [window _setMenu: menu];
-	  h = [self menuHeightForWindow: window];      
-	  [[window windowView] setHasMenu: YES];
-	  [[window windowView] changeWindowHeight: h]; 
 	}
     }
 }
@@ -233,7 +248,7 @@ void delete_menu(HWND win)
   // [menuLock lock];
   item = itemForTag(tag);
   // [menuLock unlock];    
-  
+  NSLog(@"..........");
   // send the action....
   [NSApp sendAction: action
 		 to: target

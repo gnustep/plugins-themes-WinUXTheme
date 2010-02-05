@@ -1,3 +1,8 @@
+2010-02-05 16:23-EST Gregory John Casamento <greg.casamento@gmail.com>
+
+	* WinNSMenu.m: Changes to pull the current name of the modifier
+	key to be used key equivalent.
+
 2010-02-02 Gregory John Casamento <greg.casamento@gmail.com>
 
 	* WinNSMenu.m: Remove locks.  This seems to be causing a deadlock.
