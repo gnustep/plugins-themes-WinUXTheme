@@ -1,0 +1,5 @@
+W32VSR{
+Class = "BUTTON";
+Part = <*I3>;
+State = <*I1>;
+}

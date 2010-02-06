@@ -28,7 +28,7 @@
 #import <AppKit/AppKit.h>
 #import <GNUstepGUI/GSDisplayServer.h>
 #import "WinUXTheme.h"
-
+#import "WIN32VSImageRep.h"
 
 
 static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
@@ -51,6 +51,12 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
 @end
 
 @implementation WinUXTheme
+
++ (void) initialize
+{
+  // Inserting WIN32VSImageRep class for themed images.
+  [NSImageRep registerImageRepClass:[WIN32VSImageRep class]];
+}
 
 - (void) activate
 {
@@ -147,8 +153,7 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
   RECT winRect;
 
   if (hTheme == NULL)
-    return NO;
-  
+    return NO;  
 
   winRect = GSViewRectToWin([[GSCurrentContext() focusView] window], rect);
   hDC = GetCurrentHDC();
@@ -165,6 +170,60 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
   }
 }
 
+- (HTHEME) themeWithClassName:(NSString*)className
+{
+  HWND hWnd;
+  HTHEME hTheme;
+  wchar_t* classNameChars;
+  
+  hWnd = (HWND)[[[NSView focusView] window] windowNumber];
+  classNameChars = objc_calloc([className length]+1, sizeof(wchar_t));
+  [className getCharacters:classNameChars];
+  
+  hTheme = OpenThemeData(hWnd, classNameChars);
+  
+  objc_free(classNameChars);
+  return hTheme;
+}
+
+- (void) releaseTheme:(HTHEME)hTheme
+{
+  CloseThemeData(hTheme);
+}
+
+- (NSSize) sizeForTheme:(HTHEME)hTheme
+                   part:(int)part
+                  state:(int)state
+                  type:(WIN32ThemeSizeType)sizeType 
+{
+  int type;
+  SIZE size;
+
+  switch (sizeType)
+  {
+    case WIN32ThemeSizeMinimum: type= TS_MIN; break;
+    case WIN32ThemeSizeBestFit: type = TS_TRUE; break;
+    case WIN32ThemeSizeDraw: type = TS_DRAW; break;
+  }
+
+  if (FAILED(GetThemePartSize(hTheme, NULL, part, state, NULL, type, &size)))
+  {
+    [NSException raise:NSInternalInconsistencyException
+                format:@"Error calling GetThemePartSize in -[WIN32Theme sizeForTheme:part:state:type:] (hTheme=%p,part=%d,state=%d,type=%d",
+                hTheme, part, state, sizeType];
+    return NSZeroSize;
+  }
+  else
+    return NSMakeSize(size.cx, size.cy);
+}
+
+- (BOOL) isTheme:(HTHEME)hTheme partDefined:(int)part
+{
+  if (IsThemePartDefined(hTheme, part, 0))
+    return YES;
+  else 
+    return NO;
+} 
 @end
 
 

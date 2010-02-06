@@ -41,6 +41,13 @@
 #define COLOR_MENUBAR 30
 #endif
 
+typedef enum WIN32ThemeSizeType
+{
+  WIN32ThemeSizeBestFit,
+  WIN32ThemeSizeMinimum,
+  WIN32ThemeSizeDraw
+} WIN32ThemeSizeType;
+
 @interface NSObject (WIN32GState)
 - (HDC) getHDC;
 - (void) releaseHDC:(HDC)hdc;
@@ -106,6 +113,15 @@ static inline void ReleaseCurrentHDC(HDC hdc)
 
 
 @interface WinUXTheme: GSTheme
-
-- (BOOL) drawThemeBackground:(HTHEME)hTheme inRect:(NSRect)rect part:(int)part state:(int)state;
+- (BOOL) drawThemeBackground:(HTHEME)hTheme 
+                      inRect:(NSRect)rect 
+                        part:(int)part 
+                       state:(int)state;
+- (HTHEME) themeWithClassName:(NSString*)className;
+- (void) releaseTheme:(HTHEME)hTheme;
+- (NSSize) sizeForTheme:(HTHEME)hTheme
+                   part:(int)part
+                  state:(int)state
+  		   type:(WIN32ThemeSizeType)sizeType;
+- (BOOL) isTheme:(HTHEME)hTheme partDefined:(int)part;
 @end

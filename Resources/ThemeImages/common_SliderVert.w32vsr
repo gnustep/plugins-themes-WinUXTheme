@@ -1,0 +1,5 @@
+W32VSR{
+Class = "TRACKBAR";
+Part = <*I6>;
+State = <*I1>;
+}

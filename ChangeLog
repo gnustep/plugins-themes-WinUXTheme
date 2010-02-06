@@ -1,3 +1,21 @@
+2010-02-06 02:39-EST Gregory John Casamento <greg.casamento@gmail.com>
+
+	* GNUmakefile: Updated to copy new theme based images.
+	* Resources/ThemeImages/common_3DArrowRight.w32vsr: Added
+	* Resources/ThemeImages/common_RadioOff.tif: Removed
+	* Resources/ThemeImages/common_RadioOff.w32vsr: Added
+	* Resources/ThemeImages/common_RadioOn.tif: Removed
+	* Resources/ThemeImages/common_RadioOn.w32vsr: Added
+	* Resources/ThemeImages/common_SliderHoriz.w32vsr: Added
+	* Resources/ThemeImages/common_SliderVert.w32vsr: Added
+	* Resources/ThemeImages/common_SwitchOff.tif: Removed
+	* Resources/ThemeImages/common_SwitchOff.w32vsr: Added
+	* Resources/ThemeImages/common_SwitchOn.tif: Removed
+	* Resources/ThemeImages/common_SwitchOn.w32vsr: Added
+	* WIN32VSImageRep.[hm]: Ported Chris Armstrong's code for 
+	theme based image drawing to the current theme.
+	* WinUXTheme.[hm]: Added new methods to support image drawing
+
 2010-02-05 16:23-EST Gregory John Casamento <greg.casamento@gmail.com>
 
 	* WinNSMenu.m: Changes to pull the current name of the modifier

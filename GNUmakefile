@@ -48,18 +48,22 @@ WinUXTheme_OBJC_FILES = \
 		WinNSButton.m \
 		WinNSScroller.m \
 		WinNSMenu.m \
-		WinNSMenuItemCell.m
+		WinNSMenuItemCell.m \
+		WIN32VSImageRep.m
 
 #
 # Resource files
 #
 WinUXTheme_RESOURCE_FILES = \
 Resources/WinTheme.png \
-Resources/ThemeImages/common_RadioOff.tif \
-Resources/ThemeImages/common_RadioOn.tif \
-Resources/ThemeImages/common_SwitchOff.tif \
-Resources/ThemeImages/common_SwitchOn.tif \
-Resources/ThemeImages/common_Nibble.tif
+Resources/ThemeImages/common_3DArrowRight.w32vsr \
+Resources/ThemeImages/common_Nibble.tif \
+Resources/ThemeImages/common_RadioOff.w32vsr \
+Resources/ThemeImages/common_RadioOn.w32vsr \
+Resources/ThemeImages/common_SliderHoriz.w32vsr \
+Resources/ThemeImages/common_SliderVert.w32vsr \
+Resources/ThemeImages/common_SwitchOff.w32vsr \
+Resources/ThemeImages/common_SwitchOn.w32vsr
 
 -include GNUmakefile.preamble
 

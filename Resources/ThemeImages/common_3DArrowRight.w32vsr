@@ -1,0 +1,5 @@
+W32VSR{
+Class = "MENU";
+Part = <*I16>;
+State = <*I1>;
+}
