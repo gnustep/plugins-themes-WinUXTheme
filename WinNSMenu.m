@@ -31,6 +31,15 @@
 #include <windows.h>
 #include <math.h>
 
+static NSString *keys = @"\
+{\
+\"Control_L\"=\"Control\"; \
+\"Control_R\"=\"Control\"; \
+\"Alt_L\"=\"Alt\"; \
+\"Alt_R\"=\"Alt\"; \
+}\
+";
+
 // static HMENU windows_menu = 0;
 static UINT menu_tag = 0;
 static NSMapTable *itemMap = 0;
@@ -78,6 +87,23 @@ HMENU r_build_menu(HWND win, NSMenu *menu)
   NSString *cmdMod  = [defaults stringForKey: @"GSFirstCommandKey"];
   NSString *altMod  = [defaults stringForKey: @"GSFirstAlternateKey"];
   NSString *ctrlMod = [defaults stringForKey: @"GSFirstControlKey"];
+
+  if([cmdMod isEqual: @"NoSymbol"])
+    {
+      cmdMod = @"Alt_L";
+    }
+
+  if([altMod isEqual: @"NoSymbol"])
+    {
+      altMod = @"Alt_R";
+    }
+
+  if([ctrlMod isEqual: @"NoSymbol"])
+    {
+      altMod = @"Control_L";
+    }
+
+  // NSScanner *scanner = [NSScanner scanScannerWithString: cmdMod];
   
   if(menu == nil)
     return 0; 
@@ -87,7 +113,6 @@ HMENU r_build_menu(HWND win, NSMenu *menu)
     {
       NSString *title = nil;
       const char *ctitle;
-      // NSString *modifier = @"";
       UINT s = 0;
 
       // if we have a submenu then make it a popup, if not it's a normal item.
@@ -110,9 +135,6 @@ HMENU r_build_menu(HWND win, NSMenu *menu)
 
       if([[item keyEquivalent] isEqualToString: @""] == NO)
 	{
-	  const char *ke = [[item keyEquivalent] 
-	  		     cStringUsingEncoding: 
-	  		       NSUTF8StringEncoding];
 	  NSString *modifier = @"";
 	  int mask = [item keyEquivalentModifierMask];
 
@@ -134,16 +156,11 @@ HMENU r_build_menu(HWND win, NSMenu *menu)
 			   stringByAppendingString: @"+"];
 	      
 	    }
-	  
-	  /* RegisterHotKey(win,
-			 s,
-			 MOD_CONTROL,
-			 ke[0]);*/
 
-	  title = [NSString stringWithFormat: @"%@\t%@%@", // (%c)",
+	  title = [NSString stringWithFormat: @"%@\t%@%@", 
 			    [item title],
 			    modifier,
-			    [item keyEquivalent]]; //, ke[0]];
+			    [item keyEquivalent]]; 
 	}
       else
 	{

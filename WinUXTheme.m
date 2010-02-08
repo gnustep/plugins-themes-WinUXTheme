@@ -155,6 +155,10 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
   if (hTheme == NULL)
     return NO;  
 
+  if ([self isTheme: hTheme
+	partDefined: part] == NO)
+    return NO;
+
   winRect = GSViewRectToWin([[GSCurrentContext() focusView] window], rect);
   hDC = GetCurrentHDC();
 

@@ -56,16 +56,7 @@ WinUXTheme_OBJC_FILES = \
 #
 WinUXTheme_RESOURCE_FILES = \
 Resources/WinTheme.png \
-Resources/ThemeImages/common_3DArrowRight.w32vsr \
-Resources/ThemeImages/common_Nibble.tif \
-Resources/ThemeImages/common_RadioOff.w32vsr \
-Resources/ThemeImages/common_RadioOn.w32vsr \
-Resources/ThemeImages/common_SliderHoriz.w32vsr \
-Resources/ThemeImages/common_SliderVert.w32vsr \
-Resources/ThemeImages/common_SwitchOff.w32vsr \
-Resources/ThemeImages/common_SwitchOn.w32vsr
-
--include GNUmakefile.preamble
+Resources/ThemeImages/* 
 
 include $(GNUSTEP_MAKEFILES)/bundle.make
 

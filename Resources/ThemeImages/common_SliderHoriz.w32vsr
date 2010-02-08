@@ -1,5 +1,0 @@
-W32VSR{
-Class = "TRACKBAR";
-Part = <*I3>;
-State = <*I1>;
-}

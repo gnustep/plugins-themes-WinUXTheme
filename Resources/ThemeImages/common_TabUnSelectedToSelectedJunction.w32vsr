@@ -1,0 +1,5 @@
+W32VSR{
+Class = "TAB";
+Part = <*I7>;
+State = <*I1>;
+}
