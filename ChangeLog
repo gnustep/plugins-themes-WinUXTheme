@@ -1,3 +1,13 @@
+2010-02-24 09:33-EST Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Resources/ThemeImages/common_TabSelectedLeft.w32vsr
+	* Resources/ThemeImages/common_TabSelectedRight.w32vsr
+	* Resources/ThemeImages/common_TabSelectedToUnSelectedJunction.w32vsr
+	* Resources/ThemeImages/common_TabUnSelectedToSelectedJunction.w32vsr
+	* Resources/ThemeImages/common_TabUnselectedLeft.w32vsr
+	* Resources/ThemeImages/common_TabUnselectedRight.w32vsr:
+	Remove.
+
 2010-02-08 14:48-EST Gregory John Casamento <greg.casamento@gmail.com>
 
 	* GNUmakefile

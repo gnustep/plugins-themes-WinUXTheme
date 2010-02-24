@@ -1,5 +1,0 @@
-W32VSR{
-Class = "TAB";
-Part = <*I6>;
-State = <*I1>;
-}
