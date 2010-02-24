@@ -31,15 +31,6 @@
 #include <windows.h>
 #include <math.h>
 
-static NSString *keys = @"\
-{\
-\"Control_L\"=\"Control\"; \
-\"Control_R\"=\"Control\"; \
-\"Alt_L\"=\"Alt\"; \
-\"Alt_R\"=\"Alt\"; \
-}\
-";
-
 // static HMENU windows_menu = 0;
 static UINT menu_tag = 0;
 static NSMapTable *itemMap = 0;
@@ -88,23 +79,46 @@ HMENU r_build_menu(HWND win, NSMenu *menu)
   NSString *altMod  = [defaults stringForKey: @"GSFirstAlternateKey"];
   NSString *ctrlMod = [defaults stringForKey: @"GSFirstControlKey"];
 
+  // if unspecified, map to default...
   if([cmdMod isEqual: @"NoSymbol"])
     {
       cmdMod = @"Alt_L";
     }
-
   if([altMod isEqual: @"NoSymbol"])
     {
       altMod = @"Alt_R";
     }
-
   if([ctrlMod isEqual: @"NoSymbol"])
     {
-      altMod = @"Control_L";
+      ctrlMod = @"Control_L";
     }
 
-  // NSScanner *scanner = [NSScanner scanScannerWithString: cmdMod];
-  
+  // Map the internal names to the common ones...
+  if([altMod isEqual: @"Control_L"])
+    {
+      altMod = @"Ctrl";
+    }
+  if([ctrlMod isEqual: @"Control_L"])
+    {
+      ctrlMod = @"Ctrl";
+    }
+  if([cmdMod isEqual: @"Control_L"])
+    {
+      cmdMod = @"Ctrl";
+    }
+  if([altMod isEqual: @"Control_R"])
+    {
+      altMod = @"Ctrl";
+    }
+  if([ctrlMod isEqual: @"Control_R"])
+    {
+      ctrlMod = @"Ctrl";
+    }
+  if([cmdMod isEqual: @"Control_R"])
+    {
+      cmdMod = @"Ctrl";
+    }
+
   if(menu == nil)
     return 0; 
   
@@ -246,7 +260,7 @@ void delete_menu(HWND win)
     {
       HWND win = (HWND)[window windowNumber];
       
-      if(GetMenu(win) == NULL)
+      // if(GetMenu(win) == NULL)
 	{ 
 	  [self updateMenu: menu
 		 forWindow: window];
@@ -262,10 +276,8 @@ void delete_menu(HWND win)
   SEL action = [item action];
   id target = [item target];
   
-  // [menuLock lock];
   item = itemForTag(tag);
-  // [menuLock unlock];    
-  NSLog(@"..........");
+
   // send the action....
   [NSApp sendAction: action
 		 to: target

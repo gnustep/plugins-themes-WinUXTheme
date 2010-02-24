@@ -1,3 +1,18 @@
+2010-02-24 15:10-EST Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Resources/ThemeImages/common_TabDownSelectedLeft.tif
+	* Resources/ThemeImages/common_TabDownUnSelectedLeft.tif
+	* Resources/ThemeImages/common_TabDownUnSelectedRight.tif
+	* Resources/ThemeImages/common_TabSelectedLeft.tif
+	* Resources/ThemeImages/common_TabSelectedRight.tif
+	* Resources/ThemeImages/common_TabSelectedToUnSelectedJunction.tif
+	* Resources/ThemeImages/common_TabUnSelectToSelectedJunction.tif
+	* Resources/ThemeImages/common_TabUnSelectedJunction.tif
+	* Resources/ThemeImages/common_TabUnSelectedLeft.tif
+	* Resources/ThemeImages/common_TabUnSelectedRight.tif: Added
+	* WinNSMenu.m: Map Control_L and Control_R to Ctrl when displaying
+	in menus.
+
 2010-02-24 09:33-EST Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Resources/ThemeImages/common_TabSelectedLeft.w32vsr
