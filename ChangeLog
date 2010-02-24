@@ -1,3 +1,16 @@
+2010-02-24 16:00-EST Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Resources/ThemeImages/common_TabDownUnSelectedLeft.tif
+	* Resources/ThemeImages/common_TabDownUnSelectedRight.tif
+	* Resources/ThemeImages/common_TabSelectedLeft.tif
+	* Resources/ThemeImages/common_TabSelectedRight.tif
+	* Resources/ThemeImages/common_TabSelectedToUnSelectedJunction.tif
+	* Resources/ThemeImages/common_TabUnSelectToSelectedJunction.tif
+	* Resources/ThemeImages/common_TabUnSelectedJunction.tif
+	* Resources/ThemeImages/common_TabUnSelectedLeft.tif
+	* Resources/ThemeImages/common_TabUnSelectedRight.tif: Add blue borders
+	to blend in better with tab buttons on Windows.
+
 2010-02-24 15:10-EST Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Resources/ThemeImages/common_TabDownSelectedLeft.tif
