@@ -1,3 +1,8 @@
+2010-02-24 22:12-EST Gregory John Casamento <greg.casamento@gmail.com>
+
+	* WinUXTheme.m: Change color of selected menu text.  Previously
+	it was white on almost white which was unreadable.
+
 2010-02-24 16:00-EST Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Resources/ThemeImages/common_TabDownUnSelectedLeft.tif

@@ -105,13 +105,13 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
               forKey: @"scrollBarColor"];
       [colors setColor: Win32ToGSColor(COLOR_HIGHLIGHT)
               forKey: @"selectedControlColor"];
-      [colors setColor: Win32ToGSColor(COLOR_HIGHLIGHTTEXT)
+      [colors setColor: [NSColor blackColor] // Win32ToGSColor(COLOR_HIGHLIGHTTEXT)
               forKey: @"selectedControlTextColor"];
       [colors setColor: [NSColor lightGrayColor]
               forKey: @"selectedKnobColor"];
       [colors setColor: Win32ToGSColor(COLOR_MENUHILIGHT)
               forKey: @"selectedMenuItemColor"];
-      [colors setColor: Win32ToGSColor(COLOR_3DHILIGHT)
+      [colors setColor: [NSColor blackColor] // Win32ToGSColor(COLOR_3DHILIGHT)
               forKey: @"selectedMenuItemTextColor"];
       [colors setColor: Win32ToGSColor(COLOR_HIGHLIGHT)
               forKey: @"selectedTextBackgroundColor"];
