@@ -23,13 +23,13 @@
 
 + (NSArray*) imageUnfilteredFileTypes
 {
-  NSLog(@"WIN32VSR +imageUnfilteredFileTypes.");
+  NSDebugLog(@"WIN32VSR +imageUnfilteredFileTypes.");
   return [NSArray arrayWithObject:@"w32vsr"];
 }
 
 + (NSArray*) imageUnfilteredPasteboardTypes
 {
-  NSLog(@"WIN32VSR +imageUnfilteredPasteboardTypes");
+  NSDebugLog(@"WIN32VSR +imageUnfilteredPasteboardTypes");
   return [NSArray arrayWithObjects:NSStringPboardType,
     NSFileContentsPboardType,
     nil];
@@ -37,7 +37,7 @@
 
 + (BOOL) canInitWithData:(NSData*)data
 {
-  NSLog(@"WIN32VSR +canInitWithData:");
+  NSDebugLog(@"WIN32VSR +canInitWithData:");
   if ([data length] >= FOURCC_LENGTH)
   {
     char fourcc[FOURCC_LENGTH+1];
@@ -52,25 +52,25 @@
 
 + (NSImageRep*) imageRepWithData:(NSData*)data
 {
-  NSLog(@"WIN32VSR +imageRepWithData");
+  NSDebugLog(@"WIN32VSR +imageRepWithData");
   return [[self alloc] initWithData:data];
 }
 
 - (id) retain
 {
-  NSLog(@"WIN32VSR -retain");
+  NSDebugLog(@"WIN32VSR -retain");
   return [super retain];
 }
 
 - (id) init
 {
-  NSLog(@"WIN32VSR -init");
+  NSDebugLog(@"WIN32VSR -init");
   return [super init];
 }
 
 - (void) encodeWithCoder:(NSCoder*)coder
 {
-  NSLog(@"WIN32VSR -encodeWithCoder");
+  NSDebugLog(@"WIN32VSR -encodeWithCoder");
   [super encodeWithCoder:coder];
   if ([coder allowsKeyedCoding])
   {
@@ -88,7 +88,7 @@
 
 - (id) initWithCoder:(NSCoder*)coder
 {
-  NSLog(@"WIN32VSR -initWithCoder");
+  NSDebugLog(@"WIN32VSR -initWithCoder");
   self = [super initWithCoder:coder];
   if (self)
   {
@@ -119,7 +119,7 @@
 
 - (id) initWithData:(NSData*)data
 {
-  NSLog(@"WIN32VSR -initWithData:");
+  NSDebugLog(@"WIN32VSR -initWithData:");
   self = [super init];
   if (self==nil)
     return nil;
@@ -161,7 +161,7 @@
     [self _updateImageWidthAndHeight];
 
     RELEASE(chars);
-    NSLog(@"Successfully loaded WIN32ImageRep object.");
+    NSDebugLog(@"Successfully loaded WIN32ImageRep object.");
     return self;
   }
   return nil;
@@ -169,7 +169,7 @@
 
 - (id) copyWithZone:(NSZone*)zone
 {
-  NSLog(@"WIN32VSR -copyWithZone");
+  NSDebugLog(@"WIN32VSR -copyWithZone");
   WIN32VSImageRep* c = [super copyWithZone:zone];
   TEST_RETAIN(c->themeClass);
   
@@ -179,7 +179,7 @@
 
 - (BOOL) draw
 {
-  NSLog(@"WIN32VSR -draw: Draw WIN32VSImageRep %@ %d %d", themeClass, part, state); 
+  NSDebugLog(@"WIN32VSR -draw: Draw WIN32VSImageRep %@ %d %d", themeClass, part, state); 
   HTHEME hTheme;
   BOOL res;
   WinUXTheme *themeEngine;
@@ -199,7 +199,7 @@
 
 - (void) dealloc
 {
-  NSLog(@"WIN32VSR -dealloc");
+  NSDebugLog(@"WIN32VSR -dealloc");
   [themeClass release];
   [super dealloc];
 }
