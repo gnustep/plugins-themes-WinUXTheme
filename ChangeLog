@@ -1,3 +1,8 @@
+2010-03-05 Doug Simons <doug.simons@testplant.com>
+
+	* WinNSMenu.m: Improve display of keyEquivalent modifiers,
+	including Shift.
+
 2010-02-24 22:12-EST Gregory John Casamento <greg.casamento@gmail.com>
 
 	* WinUXTheme.m: Change color of selected menu text.  Previously

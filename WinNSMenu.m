@@ -78,19 +78,24 @@ HMENU r_build_menu(HWND win, NSMenu *menu)
   NSString *cmdMod  = [defaults stringForKey: @"GSFirstCommandKey"];
   NSString *altMod  = [defaults stringForKey: @"GSFirstAlternateKey"];
   NSString *ctrlMod = [defaults stringForKey: @"GSFirstControlKey"];
+  NSString *shiftMod = [defaults stringForKey: @"GSFirstShiftKey"];
 
   // if unspecified, map to default...
-  if([cmdMod isEqual: @"NoSymbol"])
+  if(cmdMod == nil || [cmdMod isEqual: @"NoSymbol"])
     {
       cmdMod = @"Alt_L";
     }
-  if([altMod isEqual: @"NoSymbol"])
+  if(altMod == nil || [altMod isEqual: @"NoSymbol"])
     {
       altMod = @"Alt_R";
     }
-  if([ctrlMod isEqual: @"NoSymbol"])
+  if(ctrlMod == nil || [ctrlMod isEqual: @"NoSymbol"])
     {
       ctrlMod = @"Control_L";
+    }
+  if(shiftMod == nil || [shiftMod isEqual: @"NoSymbol"])
+    {
+      shiftMod = @"Shift";
     }
 
   // Map the internal names to the common ones...
@@ -117,6 +122,30 @@ HMENU r_build_menu(HWND win, NSMenu *menu)
   if([cmdMod isEqual: @"Control_R"])
     {
       cmdMod = @"Ctrl";
+    }
+  if([altMod isEqual: @"Alt_L"])
+    {
+      altMod = @"Alt";
+    }
+  if([ctrlMod isEqual: @"Alt_L"])
+    {
+      ctrlMod = @"Alt";
+    }
+  if([cmdMod isEqual: @"Alt_L"])
+    {
+      cmdMod = @"Alt";
+    }
+  if([altMod isEqual: @"Alt_R"])
+    {
+      altMod = @"Alt";
+    }
+  if([ctrlMod isEqual: @"Alt_R"])
+    {
+      ctrlMod = @"Alt";
+    }
+  if([cmdMod isEqual: @"Alt_R"])
+    {
+      cmdMod = @"Alt";
     }
 
   if(menu == nil)
@@ -151,6 +180,7 @@ HMENU r_build_menu(HWND win, NSMenu *menu)
 	{
 	  NSString *modifier = @"";
 	  int mask = [item keyEquivalentModifierMask];
+	  NSString *keyEquivalent = [item keyEquivalent];
 
 	  if(mask & NSCommandKeyMask)
 	    {
@@ -170,11 +200,17 @@ HMENU r_build_menu(HWND win, NSMenu *menu)
 			   stringByAppendingString: @"+"];
 	      
 	    }
+	  if(mask & NSShiftKeyMask || ([keyEquivalent characterAtIndex:0] >= 'A' && [keyEquivalent characterAtIndex:0] <= 'Z') )
+	    {
+	      modifier = [[modifier stringByAppendingString: shiftMod]
+			   stringByAppendingString: @"+"];
+	      
+	    }
 
 	  title = [NSString stringWithFormat: @"%@\t%@%@", 
 			    [item title],
 			    modifier,
-			    [item keyEquivalent]]; 
+			    keyEquivalent]; 
 	}
       else
 	{
