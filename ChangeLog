@@ -1,3 +1,9 @@
+2010-03-17 01:57-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* GNUmakefile: Add WinNSOpenPanel.m to list of files.
+	* WinNSMenu.m: Expand font size for wraparound calculation.
+	* WinNSOpenPanel.m: Use native panels for open and save panels.
+
 2010-03-05 Doug Simons <doug.simons@testplant.com>
 
 	* WinNSMenu.m: Improve display of keyEquivalent modifiers,

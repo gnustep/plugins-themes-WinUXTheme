@@ -294,13 +294,8 @@ void delete_menu(HWND win)
 {
   if(menu != nil && window != nil)
     {
-      HWND win = (HWND)[window windowNumber];
-      
-      // if(GetMenu(win) == NULL)
-	{ 
-	  [self updateMenu: menu
-		 forWindow: window];
-	}
+      [self updateMenu: menu
+	     forWindow: window];
     }
 }
 
@@ -347,7 +342,7 @@ void delete_menu(HWND win)
 	  letters += 2; // the 1 character pad on each side.
 	}      
 
-      est_menu_width = (6.0 * letters);
+      est_menu_width = (8.0 * letters);
       ratio = est_menu_width / rect.size.width;
       rows = ceil(ratio);
       height = rows * bar; 
