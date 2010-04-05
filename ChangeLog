@@ -1,3 +1,7 @@
+2010-04-05 05:22-MDT Jonathan Gillaspie <jonathan.gillaspie@testplant.com>
+
+	* WinNSOpenPanel.m: Native Save and Open Sheets, Folder Picker when appropriate
+
 2010-03-17 01:57-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* GNUmakefile: Add WinNSOpenPanel.m to list of files.

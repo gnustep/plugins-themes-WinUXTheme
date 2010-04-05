@@ -27,12 +27,17 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
+#import <shlobj.h>
 #import <commdlg.h>
 #import <windows.h>
 #import "WinUXTheme.h"
 
 // Flag to indicate that a folder was selected.
 #define FOLDER_SELECTED 0xFFFFFFFF
+
+
+ 
+
 
 /**
  * Callback function to handle events from the save/open dialog.
@@ -104,7 +109,7 @@ UINT_PTR CALLBACK filepanel_dialog_hook(HWND win,
  */
 unichar *filter_string_from_types(NSArray *types)
 {
-  if(types == nil)
+  if(types == nil || [types count] == 0)
     {
       return L"All (*.*)\0*.*\0";
     }
@@ -184,6 +189,7 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
 {
   unichar szFile[1024];
   OPENFILENAMEW ofn;
+  BROWSEINFO folderBrowser;
   NSArray *filenames;
   NSString *filename;
   NSString *directory;
@@ -219,6 +225,14 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
 
       // initialize filenames array
       filenames = [[NSMutableArray alloc] initWithCapacity: 10];
+      
+      // Initialize folderBroswers structure
+      folderBrowser.pidlRoot = NULL; // Starting root - Use Desktop
+      folderBrowser.pszDisplayName = (LPTSTR)szFile;
+      folderBrowser.lpszTitle = "";
+      folderBrowser.ulFlags = BIF_EDITBOX | BIF_NEWDIALOGSTYLE;
+      folderBrowser.lpfn = NULL;
+      folderBrowser.lParam = 0;
     }
   return self;
 }
@@ -243,9 +257,9 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
 }
 
 - (int) runModalForDirectory: (NSString *)path
-			file: (NSString *)name
-		       types: (NSArray *)fileTypes
-	    relativeToWindow: (NSWindow*)window
+                        file: (NSString *)name
+                       types: (NSArray *)fileTypes
+            relativeToWindow: (NSWindow*)window
 {
   BOOL flag = YES;
   int result = NSOKButton;
@@ -254,41 +268,85 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
   NSMutableSet *typeset = [NSMutableSet set];
   NSArray *types = nil; 
 
+  // Arbitrary Folder Browser (not with explicit extension) is a different call in Windows Land
+  if ([self canChooseDirectories] && ![self canChooseFiles]) 
+  {
+    LPITEMIDLIST pidl;
+    folderBrowser.hwndOwner = (HWND)[window windowNumber];
+      
+    pidl = SHBrowseForFolder(&folderBrowser);
+    if(pidl == NULL || !SHGetPathFromIDList(pidl,(LPSTR)szFile))
+    {
+      result = NSCancelButton;
+    }
+    else
+    {
+      NSString *file = [[NSString stringWithCString:(const char *) szFile encoding: NSUTF8StringEncoding]
+        stringByStandardizingPath];
+
+      ASSIGN(filenames, [NSArray arrayWithObject:file]);
+      ASSIGN(filename, file);
+      ASSIGN(directory,filename);
+    }
+    
+    return result;
+  }
+
   [typeset addObjectsFromArray: fileTypes];
   types = [typeset allObjects];
 
   ofn.hwndOwner = (HWND)[window windowNumber];
   ofn.lpstrFilter = (unichar *)filter_string_from_types(types);
-  ofn.nFilterIndex = [types indexOfObject: fileType] + 1;
-  ofn.lpstrTitle = (unichar *)[[self title] cStringUsingEncoding: 
-					      NSUnicodeStringEncoding];
-  ofn.lCustData = (LPARAM)types;
+	ofn.nFilterIndex = [types indexOfObject: fileType] + 1;
+	ofn.lpstrTitle = (unichar *)[[self title] cStringUsingEncoding: NSUnicodeStringEncoding];
+	if ([name length])
+  {
+		strcpy((char *) szFile, [name cStringUsingEncoding:NSUnicodeStringEncoding]);
+	}
+	else 
+  {
+		szFile[0] = '\0';
+	}
 
-  // Turn on multiple selection, if it's requested.
-  if([self allowsMultipleSelection])
-    {
-      ofn.Flags |= OFN_ALLOWMULTISELECT;
-    }
+	if ([path length]) 
+  { // Convert to Windows
+		path = [path stringByReplacingOccurrencesOfString:@"/" withString:@"\\"];
+		ofn.lpstrInitialDir = (unichar *)[path cStringUsingEncoding: NSUnicodeStringEncoding];
+	}
+	else {
+		ofn.lpstrInitialDir = NULL;
+	}
+	ofn.lCustData = (LPARAM)types;
 
-  flag = GetOpenFileNameW(&ofn);
+	// Turn on multiple selection, if it's requested.
+	if([self allowsMultipleSelection]) 
+  {
+		ofn.Flags |= OFN_ALLOWMULTISELECT;
+  }
+	else {
+		ofn.Flags &= ~OFN_ALLOWMULTISELECT;
+	}
+
+	flag = GetOpenFileNameW(&ofn);
+  
   if(!flag && ofn.lCustData != FOLDER_SELECTED)
     {
       result = NSCancelButton;
     }
   else
-    {
-      NSArray *files = [NSArray arrayWithArray:			     
+  {
+    NSArray *files = [NSArray arrayWithArray:			     
 				  array_from_filenames(ofn.lpstrFile,
 						       ofn.nFileOffset)];
  
-      if([files count] > 0)
-	{
+    if([files count] > 0)
+    {
 	  ASSIGN(filenames, files);
 	  ASSIGN(filename, [files objectAtIndex: 0]);
 	  ASSIGN(directory, 
 		 [filename stringByDeletingLastPathComponent]);
-	}
     }
+  }
 
   return result;
 }
@@ -319,6 +377,25 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
 			       file: name
 			      types: [self allowedFileTypes]];
 }
+
+// This won't run as a true sheet but it will run the Native Windows Open Panel
+// and then call the appropriate didEndSelector on finish
+- (void)beginSheetForDirectory:(NSString *)path 
+	file:(NSString *) name 
+	types:(NSArray *)fileTypes 
+	modalForWindow:(NSWindow *)docWindow 
+	modalDelegate:(id)modalDelegate 
+	didEndSelector:(SEL)didEndSelector 
+	contextInfo:(void *)contextInfo {
+	int ret = [self runModalForDirectory: path file: name types: fileTypes relativeToWindow: docWindow];
+
+	if (modalDelegate && [modalDelegate respondsToSelector: didEndSelector]) {
+      void (*didEnd)(id, SEL, id, int, void*);
+      didEnd = (void (*)(id, SEL, id, int, void*))[modalDelegate methodForSelector: didEndSelector];
+      didEnd(modalDelegate, didEndSelector, self, ret, contextInfo);
+    }
+}
+
 @end
 
 @implementation WinNSSavePanel
@@ -365,10 +442,26 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
   types = [typeset allObjects];
 
   ofn.hwndOwner = (HWND)[window windowNumber];
+  
   ofn.lpstrFilter = (unichar *)filter_string_from_types(types);
   ofn.nFilterIndex = [types indexOfObject: fileType] + 1;
-  ofn.lpstrTitle = (unichar *)[[self title] cStringUsingEncoding: 
-					      NSUnicodeStringEncoding];
+  
+  ofn.lpstrTitle = (unichar *)[[self title] cStringUsingEncoding: NSUnicodeStringEncoding];
+  if ([name length]) {
+	strcpy((char *)szFile, [name cStringUsingEncoding:NSUnicodeStringEncoding]);
+  }
+  else {
+    szFile[0] = '\0';
+  }
+	
+  if ([path length]) {
+	path = [path stringByReplacingOccurrencesOfString:@"/" withString:@"\\"];
+	ofn.lpstrInitialDir = (unichar *)[path cStringUsingEncoding: NSUnicodeStringEncoding];
+  }
+  else {
+	ofn.lpstrInitialDir = NULL;
+  }
+  
   ofn.lCustData = (LPARAM)types;
 
   flag = GetSaveFileNameW(&ofn);
@@ -418,6 +511,23 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
   return [self runModalForDirectory: path
 			       file: name
 			      types: [self allowedFileTypes]];
+}
+
+// This won't run as a  true sheet but it will run the Native Windows Save Panel
+// and then call the appropriate didEndSelector on finish
+- (void)beginSheetForDirectory:(NSString *)path 
+	file:(NSString *)name
+	modalForWindow:(NSWindow *)docWindow 
+	modalDelegate:(id)modalDelegate 
+	didEndSelector:(SEL)didEndSelector 
+	contextInfo:(void *)contextInfo {
+	int ret = [self runModalForDirectory: path file: name relativeToWindow: docWindow];
+
+	if (modalDelegate && [modalDelegate respondsToSelector: didEndSelector]) {
+      void (*didEnd)(id, SEL, id, int, void*);
+      didEnd = (void (*)(id, SEL, id, int, void*))[modalDelegate methodForSelector: didEndSelector];
+      didEnd(modalDelegate, didEndSelector, self, ret, contextInfo);
+    }
 }
 
 @end
