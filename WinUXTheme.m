@@ -200,7 +200,7 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
                   state:(int)state
                   type:(WIN32ThemeSizeType)sizeType 
 {
-  int type;
+  int type = TS_MIN;
   SIZE size;
 
   switch (sizeType)

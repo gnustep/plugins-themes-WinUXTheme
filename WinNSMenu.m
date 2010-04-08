@@ -176,7 +176,9 @@ HMENU r_build_menu(HWND win, NSMenu *menu)
 	  NSMapInsert(itemMap, (const void *)s, item);
 	}
 
-      if([[item keyEquivalent] isEqualToString: @""] == NO)
+  // Don't attempt to display special characters in the title bar
+      if([[item keyEquivalent] length] > 0 &&
+         [[NSCharacterSet alphanumericCharacterSet] characterIsMember:[[item keyEquivalent] characterAtIndex:0]])
 	{
 	  NSString *modifier = @"";
 	  int mask = [item keyEquivalentModifierMask];

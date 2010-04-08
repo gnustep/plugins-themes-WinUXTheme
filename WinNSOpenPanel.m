@@ -171,9 +171,13 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
 	{
 	  unichar *fn = filename_list + offset; // next filename...
 
-	  file = [[NSString stringWithCharacters: fn
+	  file = [[NSMutableString stringWithCharacters: fn
 					 length: wcslen(fn)]
 		   stringByStandardizingPath];
+    [(NSMutableString *)file replaceOccurrencesOfString:@"\\" 
+      withString:@"/" 
+      options: 0  
+      range:NSMakeRange(0, [file length])];
 	  if([file length] > 0)
 	    {
 	      [filenames addObject: file];
@@ -283,10 +287,10 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
     {
       NSString *file = [[NSString stringWithCString:(const char *) szFile encoding: NSUTF8StringEncoding]
         stringByStandardizingPath];
-
+      file = [file stringByReplacingOccurrencesOfString:@"\\" withString:@"/"]; 
       ASSIGN(filenames, [NSArray arrayWithObject:file]);
       ASSIGN(filename, file);
-      ASSIGN(directory,filename);
+      ASSIGN(directory, filename);
     }
     
     return result;
