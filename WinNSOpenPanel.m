@@ -260,6 +260,11 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
   return filenames;
 }
 
+- (NSString*) directory
+{
+  return directory;
+}
+
 - (int) runModalForDirectory: (NSString *)path
                         file: (NSString *)name
                        types: (NSArray *)fileTypes
@@ -428,6 +433,11 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
 {
   ASSIGN(_fullFileName, filename);
   return [super filename];
+}
+
+- (NSString*) directory
+{
+  return directory;
 }
 
 - (int) runModalForDirectory: (NSString *)path
