@@ -491,7 +491,8 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
  
       if([files count] > 0)
 	{
-	  [super setRequiredFileType: [types objectAtIndex: ofn.nFilterIndex - 1]];
+    if ([types count] > 0)
+      [super setRequiredFileType: [types objectAtIndex: ofn.nFilterIndex - 1]];
 	  ASSIGN(filename, [files objectAtIndex: 0]);
 	  ASSIGN(directory, [filename stringByDeletingLastPathComponent]);
 	}
