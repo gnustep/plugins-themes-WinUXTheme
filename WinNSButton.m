@@ -31,58 +31,44 @@
 
 @implementation WinUXTheme (NSButton)
 
+static int _ButtonStateForThemeControlState(GSThemeControlState state)
+{
+  switch (state)
+    {
+    case GSThemeHighlightedState:
+      return PBS_DEFAULTED;
+    case GSThemeSelectedState:
+      return PBS_PRESSED;
+    case GSThemeDisabledState:
+      return PBS_DISABLED;
+    case GSThemeNormalState:
+    default:
+      return PBS_NORMAL;
+    }
+}
+
 - (void) drawButton: (NSRect) frame 
                  in: (NSCell*) cell 
                view: (NSView*) view 
               style: (int) style 
               state: (GSThemeControlState) state 
 {
-  HTHEME hTheme;
-  NSWindow *window = [view window];
-  HWND hwnd = (HWND)[window windowNumber];
+  HTHEME hTheme = [self themeWithClassName: @"button"];
+  int drawState = _ButtonStateForThemeControlState(state);
 
-  hTheme = OpenThemeData(hwnd, L"button");
-  if (hTheme != NULL)
+   if (![self drawThemeBackground: hTheme
+			  inRect: frame
+			    part: BP_PUSHBUTTON
+			   state: drawState])
     {
-      BOOL result = NO;
-          
-      if (IsThemePartDefined(hTheme, BP_PUSHBUTTON, 0))
-        {
-          int drawState;
-          HDC hDC = GetCurrentHDC();
-          RECT winRect = GSWindowRectToMS(window, [view convertRect: frame toView: nil]);
-          
-          switch (state)
-            {
-            case GSThemeHighlightedState:
-              drawState = PBS_DEFAULTED;
-              break;
-            case GSThemeSelectedState:
-              drawState = PBS_PRESSED;
-              break;
-            case GSThemeNormalState:
-            default:
-              drawState = PBS_NORMAL;
-              break;
-            }
-      
-          result = (DrawThemeBackground(hTheme, hDC, BP_PUSHBUTTON, drawState, 
-                                        &winRect, NULL) == S_OK);
-          ReleaseCurrentHDC(hDC);
-        }
-
-      CloseThemeData(hTheme);
-      if (result)
-        {
-          return;
-        }
+      [super drawButton: frame 
+		     in: cell 
+		   view: view 
+		  style: style 
+		  state: state];
     }
 
-  [super drawButton: frame 
-         in: cell 
-         view: view 
-         style: style 
-         state: state];
+   [self releaseTheme: hTheme];
 }
 
 - (NSSize) buttonBorderForCell: (NSCell*)cell
@@ -101,24 +87,10 @@
 
       if (IsThemePartDefined(hTheme, BP_PUSHBUTTON, 0))
         {
-          int drawState;
+          int drawState = _ButtonStateForThemeControlState(state);
           HDC hDC = GetCurrentHDC();
           MARGINS win32Margins;
 
-          switch (state)
-            {
-            case GSThemeHighlightedState:
-              drawState = PBS_DEFAULTED;
-              break;
-            case GSThemeSelectedState:
-              drawState = PBS_PRESSED;
-              break;
-            case GSThemeNormalState:
-            default:
-              drawState = PBS_NORMAL;
-              break;
-            }
-      
           result = (GetThemeMargins(hTheme, hDC, BP_PUSHBUTTON, drawState, 
                                     TMT_CONTENTMARGINS, NULL, &win32Margins) == S_OK);
           if (result)

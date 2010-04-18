@@ -1,5 +1,10 @@
 2010-04-18 Eric Wasylishen <ewasylishen@gmail.com>
 
+	* WinNSButton.m: Refactor and tidy up code, and add support
+	for disabled buttons.
+
+2010-04-18 Eric Wasylishen <ewasylishen@gmail.com>
+
 	* WinNSProgressIndicator.m: Add progress indicator themeing
 
 2010-04-18 Eric Wasylishen <ewasylishen@gmail.com>
