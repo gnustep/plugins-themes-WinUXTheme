@@ -1,5 +1,9 @@
 2010-04-18 Eric Wasylishen <ewasylishen@gmail.com>
 
+	* WinNSProgressIndicator.m: Add progress indicator themeing
+
+2010-04-18 Eric Wasylishen <ewasylishen@gmail.com>
+
 	* WinNSStepper.m: Add stepper themeing
 
 2010-04-18 Eric Wasylishen <ewasylishen@gmail.com>
