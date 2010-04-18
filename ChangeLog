@@ -1,5 +1,9 @@
 2010-04-18 Eric Wasylishen <ewasylishen@gmail.com>
 
+	* WinNSStepper.m: Add stepper themeing
+
+2010-04-18 Eric Wasylishen <ewasylishen@gmail.com>
+
 	* WinNSTableHeader: Add table header themeing
 
 2010-04-14 01:22-MDT Jonathan Gillaspie <jonathan.gillaspie@testplant.com>

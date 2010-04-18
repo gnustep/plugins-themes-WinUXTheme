@@ -51,7 +51,8 @@ WinUXTheme_OBJC_FILES = \
 		WinNSMenuItemCell.m \
 		WIN32VSImageRep.m \
 		WinNSOpenPanel.m \
-		WinNSTableHeader.m
+		WinNSTableHeader.m \
+		WinNSStepper.m
 
 #
 # Resource files
