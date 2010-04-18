@@ -15,6 +15,7 @@
 	NSScrollViewInterfaceStyle = NSWindows95InterfaceStyle;
 	NSScrollerInterfaceStyle = NSWindows95InterfaceStyle;
 	GSScrollerButtonsOffset = 0;
+	GSScrollViewNoInnerBorder = YES;
   };
   GSThemeVersion = 0.1;
 }

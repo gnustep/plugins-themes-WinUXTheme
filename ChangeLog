@@ -1,4 +1,9 @@
 2010-04-18 Eric Wasylishen <ewasylishen@gmail.com>
+	
+	* WinUXThemeInfo.plist: Enable the GSScrollViewNoInnerBorder deafault
+	to improve the look of scroll views.
+
+2010-04-18 Eric Wasylishen <ewasylishen@gmail.com>
 
 	* WinNSColorWell.m: Add color well themeing
 	* WinNSProgressIndicator.m: Don't try to use clip rect (incorrectly)
