@@ -38,10 +38,10 @@
 - (NSRect) drawProgressIndicatorBezel: (NSRect)bounds withClip: (NSRect) rect
 {
   HTHEME hTheme = [self themeWithClassName: @"progress"];
-  NSRect drawingRect = NSIntersectionRect(bounds, rect); //FIXME: do real clipping
+  //FIXME: use clip rect?
 
   if (![self drawThemeBackground: hTheme
-			  inRect: drawingRect
+			  inRect: bounds
 			    part: PP_BAR
 			   state: 0])
     {
@@ -49,7 +49,7 @@
     }
 
   [self releaseTheme: hTheme];
-  return drawingRect;
+  return bounds;
 }
 
 - (void) drawProgressIndicatorBarDeterminate: (NSRect)bounds

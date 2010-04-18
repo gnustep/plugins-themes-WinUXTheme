@@ -1,5 +1,10 @@
 2010-04-18 Eric Wasylishen <ewasylishen@gmail.com>
 
+	* WinNSColorWell.m: Add color well themeing
+	* WinNSProgressIndicator.m: Don't try to use clip rect (incorrectly)
+	
+2010-04-18 Eric Wasylishen <ewasylishen@gmail.com>
+
 	* WinNSButton.m: Refactor and tidy up code, and add support
 	for disabled buttons.
 
