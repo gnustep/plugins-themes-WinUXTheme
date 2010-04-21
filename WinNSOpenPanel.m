@@ -35,10 +35,6 @@
 // Flag to indicate that a folder was selected.
 #define FOLDER_SELECTED 0xFFFFFFFF
 
-
- 
-
-
 /**
  * Callback function to handle events from the save/open dialog.
  */
@@ -310,7 +306,7 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
 	ofn.lpstrTitle = (unichar *)[[self title] cStringUsingEncoding: NSUnicodeStringEncoding];
 	if ([name length])
   {
-		strcpy((char *) szFile, [name cStringUsingEncoding:NSUnicodeStringEncoding]);
+		wcscpy(szFile, (const unichar *) [name cStringUsingEncoding: NSUnicodeStringEncoding]);
 	}
 	else 
   {
@@ -462,7 +458,7 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
   
   ofn.lpstrTitle = (unichar *)[[self title] cStringUsingEncoding: NSUnicodeStringEncoding];
   if ([name length]) {
-	strcpy((char *)szFile, [name cStringUsingEncoding:NSUnicodeStringEncoding]);
+	wcscpy(szFile, (const unichar *)[name cStringUsingEncoding: NSUnicodeStringEncoding]);
   }
   else {
     szFile[0] = '\0';
