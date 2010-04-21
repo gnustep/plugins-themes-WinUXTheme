@@ -1,3 +1,11 @@
+2010-04-21 Eric Wasylishen <ewasylishen@gmail.com>
+
+	* WinNSBrowserHeader.m: Don't draw a background for browser headers.
+	I think this is the best-looking solution for now. We could make
+	browsers look like tables, but that would require some work (i.e.
+	not drawing the sunken border around columns, getting rid of the
+	spacing around columns)
+
 2010-04-18 Eric Wasylishen <ewasylishen@gmail.com>
 	
 	* WinUXThemeInfo.plist: Enable the GSScrollViewNoInnerBorder deafault
