@@ -79,6 +79,7 @@ HMENU r_build_menu(HWND win, NSMenu *menu)
   NSString *altMod  = [defaults stringForKey: @"GSFirstAlternateKey"];
   NSString *ctrlMod = [defaults stringForKey: @"GSFirstControlKey"];
   NSString *shiftMod = [defaults stringForKey: @"GSFirstShiftKey"];
+  const unichar ellipsis = 0x2026;
 
   // if unspecified, map to default...
   if(cmdMod == nil || [cmdMod isEqual: @"NoSymbol"])
@@ -219,6 +220,10 @@ HMENU r_build_menu(HWND win, NSMenu *menu)
 	  title = [NSString stringWithFormat: @"%@",
 			    [item title]];
 	}
+
+      // Replace the ellipsis character with '...'
+      title = [title stringByReplacingOccurrencesOfString: [[[NSString alloc] initWithCharacters: &ellipsis length: 1] autorelease]
+					       withString: @"..."];
 
       // If it's enabled and not a seperator or a supermenu,
       // determine if it's enabled and set it's state accordingly.

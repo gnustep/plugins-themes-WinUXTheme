@@ -4,6 +4,10 @@
 
 2010-04-21 Eric Wasylishen <ewasylishen@gmail.com>
 
+	* WinNSMenu.m: Replace ellipsis character with "..."
+
+2010-04-21 Eric Wasylishen <ewasylishen@gmail.com>
+
 	* WinNSBrowserHeader.m: Don't draw a background for browser headers.
 	I think this is the best-looking solution for now. We could make
 	browsers look like tables, but that would require some work (i.e.
