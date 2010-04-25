@@ -1,4 +1,8 @@
-2010-04-25 01:22-MDT Jonathan Gillaspie <jonathan.gillaspie@testplant.com>
+2010-04-25 Jonathan Gillaspie <jonathan.gillaspie@testplant.com>
+
+	* WinNSOpenPanel.m: Return NS style paths instead of Windows style.
+
+2010-04-25 Jonathan Gillaspie <jonathan.gillaspie@testplant.com>
 
 	* WinNSOpenPanel.m: Switch File Type filters to be a combined filter 
 	instead of a series of individual filters.

@@ -164,6 +164,10 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
   
   if(offset < [file length])
     {
+	  file = [file stringByStandardizingPath];
+	  file = [file mutableCopy];
+      [(NSMutableString *)file replaceOccurrencesOfString:@"\\" 
+	    withString:@"/" options: 0 range:NSMakeRange(0, [file length])];
       [filenames addObject: file];
     }
   else
@@ -172,13 +176,11 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
 	{
 	  unichar *fn = filename_list + offset; // next filename...
 
-	  file = [[NSMutableString stringWithCharacters: fn
-					 length: wcslen(fn)]
+	  file = [[NSString stringWithCharacters: fn length: wcslen(fn)]
 		   stringByStandardizingPath];
-    [(NSMutableString *)file replaceOccurrencesOfString:@"\\" 
-      withString:@"/" 
-      options: 0  
-      range:NSMakeRange(0, [file length])];
+	  file = [file mutableCopy];
+      [(NSMutableString *)file replaceOccurrencesOfString:@"\\" 
+      withString:@"/" options: 0 range:NSMakeRange(0, [file length])];
 	  if([file length] > 0)
 	    {
 	      [filenames addObject: file];
