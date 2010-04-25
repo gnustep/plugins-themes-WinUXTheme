@@ -114,19 +114,24 @@ unichar *filter_string_from_types(NSArray *types)
   NSEnumerator *en = nil;
   id type = nil;
   NSDocumentController *dc = [NSDocumentController sharedDocumentController];
-  NSString *filterString = @""; //"All (*.*)+*.*+";
+  NSMutableString *filterString = [NSMutableString string];
+  NSMutableString *typesString = [NSMutableString string];
 
   [set addObjectsFromArray: types];
   en = [set objectEnumerator];
 
-  // build the string...
+  // build the string..
   while((type = [en nextObject]) != nil)
     {
-      NSString *displayName = [dc displayNameForType: type];
-      NSString *typeString = [NSString stringWithFormat: @"%@ (*.%@)+*.%@+",
-				       displayName, type, type];
-      filterString = [filterString stringByAppendingString: typeString];
+	  [filterString appendFormat:@"%@ (*.%@),", [dc displayNameForType: type],
+        type];
+	  [typesString appendFormat: @"*.%@;",type];
     }
+  [filterString replaceCharactersInRange:NSMakeRange([filterString length]-1,1)
+    withString:@"+"];
+  [filterString appendString:typesString];
+  [filterString replaceCharactersInRange:NSMakeRange([filterString length]-1,1) 
+    withString:@"+"];
 
   // Add the nulls...
   unichar *fs = (unichar *)[filterString cStringUsingEncoding: 
