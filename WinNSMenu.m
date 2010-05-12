@@ -67,7 +67,7 @@ void initialize_lock()
 }
 
 // find all subitems for the given items...
-HMENU r_build_menu(HWND win, NSMenu *menu)
+HMENU r_build_menu(NSMenu *menu)
 {
   NSArray *array = [menu itemArray];
   NSEnumerator *en = [array objectEnumerator];
@@ -84,7 +84,7 @@ HMENU r_build_menu(HWND win, NSMenu *menu)
   // if unspecified, map to default...
   if(cmdMod == nil || [cmdMod isEqual: @"NoSymbol"])
     {
-      cmdMod = @"Alt_L";
+      cmdMod = @"Control_L"; // Since the default on Windows is Control
     }
   if(altMod == nil || [altMod isEqual: @"NoSymbol"])
     {
@@ -92,7 +92,7 @@ HMENU r_build_menu(HWND win, NSMenu *menu)
     }
   if(ctrlMod == nil || [ctrlMod isEqual: @"NoSymbol"])
     {
-      ctrlMod = @"Control_L";
+      ctrlMod = @"Control_R";
     }
   if(shiftMod == nil || [shiftMod isEqual: @"NoSymbol"])
     {
@@ -164,7 +164,7 @@ HMENU r_build_menu(HWND win, NSMenu *menu)
 	{
 	  NSMenu *smenu = [item submenu];
 	  flags = MF_STRING | MF_POPUP;
-	  s = (UINT)r_build_menu(win,smenu);
+	  s = (UINT)r_build_menu(smenu);
 	}
       else if([item isSeparatorItem])
 	{
@@ -177,9 +177,10 @@ HMENU r_build_menu(HWND win, NSMenu *menu)
 	  NSMapInsert(itemMap, (const void *)s, item);
 	}
 
-  // Don't attempt to display special characters in the title bar
+      // Don't attempt to display special characters in the title bar
       if([[item keyEquivalent] length] > 0 &&
-         [[NSCharacterSet alphanumericCharacterSet] characterIsMember:[[item keyEquivalent] characterAtIndex:0]])
+         [[NSCharacterSet alphanumericCharacterSet] 
+	   characterIsMember:[[item keyEquivalent] characterAtIndex:0]])
 	{
 	  NSString *modifier = @"";
 	  int mask = [item keyEquivalentModifierMask];
@@ -203,7 +204,8 @@ HMENU r_build_menu(HWND win, NSMenu *menu)
 			   stringByAppendingString: @"+"];
 	      
 	    }
-	  if(mask & NSShiftKeyMask || ([keyEquivalent characterAtIndex:0] >= 'A' && [keyEquivalent characterAtIndex:0] <= 'Z') )
+	  if(mask & NSShiftKeyMask || ([keyEquivalent characterAtIndex:0] >= 'A' && 
+				       [keyEquivalent characterAtIndex:0] <= 'Z') )
 	    {
 	      modifier = [[modifier stringByAppendingString: shiftMod]
 			   stringByAppendingString: @"+"];
@@ -258,7 +260,7 @@ void build_menu(HWND win)
 			     NSNonRetainedObjectMapValueCallBacks, 50);
 
   // Recursively build the menu and set it on the window device.
-  windows_menu = r_build_menu(win, [NSApp mainMenu]);
+  windows_menu = r_build_menu([NSApp mainMenu]);
   SetMenu(win, windows_menu);
 }
 
@@ -271,6 +273,14 @@ void delete_menu(HWND win)
       while(DeleteMenu(menu, 0, MF_BYPOSITION));
     }
 }
+
+/*
+@implementation NSMenu (ContextMenus)
+- (void) _rightMouseDisplay: (NSEvent*)theEvent
+{
+}
+@end
+*/
 
 @implementation WinUXTheme (NSMenu)
 - (void) updateMenu: (NSMenu *)menu
@@ -370,5 +380,34 @@ void delete_menu(HWND win)
 	  [self updateMenu: menu forWindow: o];
 	}
     }
+}
+
+- (void) rightMouseDisplay: (NSMenu *)menu
+		  forEvent: (NSEvent *)theEvent
+{
+  HMENU hmenu = r_build_menu(menu);
+  HMENU smenu = hmenu;
+
+  // Get the file menu of the main menu, if this is the 
+  // main menu...
+  if(menu == [NSApp mainMenu])
+    {
+      smenu = GetSubMenu(hmenu,0);
+    }
+
+  NSWindow *mainWin = [NSApp mainWindow];
+  NSWindow *keyWin = [NSApp keyWindow];
+  HWND win = (HWND)[mainWin windowNumber];
+  NSPoint point = [keyWin convertBaseToScreen: [theEvent locationInWindow]];
+  POINT p = GSScreenPointToMS(point);
+  int x = p.x;
+  int y = p.y;
+  TrackPopupMenu(smenu,
+		 TPM_LEFTALIGN,
+		 x,
+		 y,
+		 0,
+		 win,
+		 NULL);		  
 }
 @end
