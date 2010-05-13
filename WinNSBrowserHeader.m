@@ -32,7 +32,14 @@
 	 	     withFrame: (NSRect)rect
 			inView: (NSView*)view;
 {
-  // Draw nothing. This looks most appropriate to me.
+  // If no theme is active, draw the default...
+  // otherwise, do nothing...
+  if(!IsThemeActive())
+    {
+      [super drawBrowserHeaderCell: cell
+			 withFrame: rect
+			    inView: view];
+    }
 }
 
 - (NSRect) browserHeaderDrawingRectForCell: (NSCell*)cell

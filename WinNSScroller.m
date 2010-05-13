@@ -80,6 +80,14 @@
 
 - (void) highlight:(BOOL)flag withFrame:(NSRect)frame inView:(NSView*)view
 {
+  if(!IsThemeActive())
+    {
+      [super highlight: flag
+	     withFrame: frame
+		inView: view];
+      return;
+    }
+
   HTHEME hTheme;
   NSWindow *window = [view window];
   HWND hwnd = (HWND)[window windowNumber];
@@ -159,6 +167,12 @@
 - (NSButtonCell *) cellForScrollerArrow: (NSScrollerArrow)arrow
 			     horizontal: (BOOL)horizontal
 {
+  if(!IsThemeActive())
+    {
+      return [super cellForScrollerArrow: arrow
+			      horizontal: horizontal];
+    }
+
     WIN32ScrollerButtonCell *cell;
     NSScrollerPart part;
     NSString *cellName;
@@ -188,6 +202,11 @@
 
 - (NSCell*) cellForScrollerKnob:(BOOL)horizontal
 {
+  if(!IsThemeActive())
+    {
+      return [super cellForScrollerKnob: horizontal];
+    }
+
     WIN32ScrollerButtonCell *cell;
     NSString *cellName;
 
@@ -208,6 +227,11 @@
 
 - (NSCell*) cellForScrollerKnobSlot:(BOOL)horizontal
 {
+  if(!IsThemeActive())
+    {
+      return [super cellForScrollerKnobSlot: horizontal];
+    }
+
     WIN32ScrollerButtonCell *cell;
     NSString *cellName;
 

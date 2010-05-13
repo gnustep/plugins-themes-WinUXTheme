@@ -53,6 +53,16 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
               style: (int) style 
               state: (GSThemeControlState) state 
 {
+  if(!IsThemeActive())
+    {
+      [super drawButton: frame
+		     in: cell
+		   view: view
+		  style: style
+		  state: state];
+      return;
+    }
+
   HTHEME hTheme = [self themeWithClassName: @"button"];
   int drawState = _ButtonStateForThemeControlState(state);
 
@@ -75,6 +85,13 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
 			 style: (int)style 
 			 state: (GSThemeControlState)state
 {
+  if(!IsThemeActive())
+    {
+      return [super buttonBorderForCell: cell
+				  style: style
+				  state: state];
+    }
+
   HTHEME hTheme;
   NSWindow *window = [[cell controlView] window];
   HWND hwnd = (HWND)[window windowNumber];

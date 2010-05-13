@@ -1,3 +1,14 @@
+2010-05-13 17:06-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* WinNSBrowserHeader.m
+	* WinNSButton.m
+	* WinNSMenuItemCell.m
+	* WinNSMenu.m
+	* WinNSScroller.m
+	* WinNSTableHeader.m: Call super class version of all methods
+	when IsThemeActive() so that the default theme is used when
+	the "Windows Classic" theme is selected.
+
 2010-05-13 03:05-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* WinNSButton.m: Minor formatting cleanup.

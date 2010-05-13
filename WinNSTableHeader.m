@@ -32,7 +32,15 @@
                    withFrame: (NSRect)cellFrame
                       inView: (NSView *)controlView
                        state: (GSThemeControlState)state
-{
+{  
+  if(!IsThemeActive())
+    {
+      [super drawTableHeaderCell: cell
+		       withFrame: cellFrame
+			  inView: (NSView *)controlView
+			   state: state];
+    }
+
   HTHEME hTheme;
   int drawState;
 

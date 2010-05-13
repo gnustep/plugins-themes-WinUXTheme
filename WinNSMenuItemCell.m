@@ -35,6 +35,16 @@
                                           state: (GSThemeControlState)state
                                    isHorizontal: (BOOL)isHorizontal
 {
+  if(!IsThemeActive())
+    {
+      [super drawBorderAndBackgroundForMenuItemCell: cell
+					  withFrame: frame
+					     inView: view
+					      state: state
+				       isHorizontal: isHorizontal];
+      return;
+    }
+
   HTHEME hTheme;
   NSWindow *window = [view window];
   HWND hwnd = (HWND)[window windowNumber];
