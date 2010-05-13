@@ -67,7 +67,7 @@ void initialize_lock()
 }
 
 // find all subitems for the given items...
-HMENU r_build_menu(NSMenu *menu)
+HMENU r_build_menu(NSMenu *menu, BOOL asPopup) 
 {
   NSArray *array = [menu itemArray];
   NSEnumerator *en = [array objectEnumerator];
@@ -152,7 +152,14 @@ HMENU r_build_menu(NSMenu *menu)
   if(menu == nil)
     return 0; 
   
-  result = CreateMenu();
+  if(asPopup)
+    {
+      result = CreatePopupMenu();
+    }
+  else
+    {
+      result = CreateMenu();
+    }
   while ((item = (NSMenuItem *)[en nextObject]) != nil)
     {
       NSString *title = nil;
@@ -164,7 +171,7 @@ HMENU r_build_menu(NSMenu *menu)
 	{
 	  NSMenu *smenu = [item submenu];
 	  flags = MF_STRING | MF_POPUP;
-	  s = (UINT)r_build_menu(smenu);
+	  s = (UINT)r_build_menu(smenu, asPopup); 
 	}
       else if([item isSeparatorItem])
 	{
@@ -224,7 +231,8 @@ HMENU r_build_menu(NSMenu *menu)
 	}
 
       // Replace the ellipsis character with '...'
-      title = [title stringByReplacingOccurrencesOfString: [[[NSString alloc] initWithCharacters: &ellipsis length: 1] autorelease]
+      title = [title stringByReplacingOccurrencesOfString: 
+		    [[[NSString alloc] initWithCharacters: &ellipsis length: 1] autorelease]
 					       withString: @"..."];
 
       // If it's enabled and not a seperator or a supermenu,
@@ -257,10 +265,10 @@ void build_menu(HWND win)
 
   // Create the map
   itemMap = NSCreateMapTable(NSIntMapKeyCallBacks,
-			     NSNonRetainedObjectMapValueCallBacks, 50);
+			     NSObjectMapValueCallBacks, 50);
 
   // Recursively build the menu and set it on the window device.
-  windows_menu = r_build_menu([NSApp mainMenu]);
+  windows_menu = r_build_menu([NSApp mainMenu], NO);
   SetMenu(win, windows_menu);
 }
 
@@ -385,16 +393,8 @@ void delete_menu(HWND win)
 - (void) rightMouseDisplay: (NSMenu *)menu
 		  forEvent: (NSEvent *)theEvent
 {
-  HMENU hmenu = r_build_menu(menu);
+  HMENU hmenu = r_build_menu(menu, YES); 
   HMENU smenu = hmenu;
-
-  // Get the file menu of the main menu, if this is the 
-  // main menu...
-  if(menu == [NSApp mainMenu])
-    {
-      smenu = GetSubMenu(hmenu,0);
-    }
-
   NSWindow *mainWin = [NSApp mainWindow];
   NSWindow *keyWin = [NSApp keyWindow];
   HWND win = (HWND)[mainWin windowNumber];
@@ -402,6 +402,7 @@ void delete_menu(HWND win)
   POINT p = GSScreenPointToMS(point);
   int x = p.x;
   int y = p.y;
+
   TrackPopupMenu(smenu,
 		 TPM_LEFTALIGN,
 		 x,
