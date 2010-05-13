@@ -1,3 +1,11 @@
+2010-05-13 03:05-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* WinNSButton.m: Minor formatting cleanup.
+	* WinNSMenuItemCell.m: Conditionally display the button theme,
+	if the owning view is an NSMenuView, then don't draw the border.
+	* WinNSMenu.m: Draw the menu view so that it has a darker border on
+	all sides. Added an implemenation of drawBackgroundForMenuView:...
+
 2010-05-13 00:41-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* WinNSMenu.m: Use popup menus when generating the context

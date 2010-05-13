@@ -56,7 +56,7 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
   HTHEME hTheme = [self themeWithClassName: @"button"];
   int drawState = _ButtonStateForThemeControlState(state);
 
-   if (![self drawThemeBackground: hTheme
+  if (![self drawThemeBackground: hTheme
 			  inRect: frame
 			    part: BP_PUSHBUTTON
 			   state: drawState])
@@ -67,8 +67,8 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
 		  style: style 
 		  state: state];
     }
-
-   [self releaseTheme: hTheme];
+  
+  [self releaseTheme: hTheme];
 }
 
 - (NSSize) buttonBorderForCell: (NSCell*)cell

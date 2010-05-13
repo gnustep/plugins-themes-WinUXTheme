@@ -394,7 +394,6 @@ void delete_menu(HWND win)
 		  forEvent: (NSEvent *)theEvent
 {
   HMENU hmenu = r_build_menu(menu, YES); 
-  HMENU smenu = hmenu;
   NSWindow *mainWin = [NSApp mainWindow];
   NSWindow *keyWin = [NSApp keyWindow];
   HWND win = (HWND)[mainWin windowNumber];
@@ -403,12 +402,45 @@ void delete_menu(HWND win)
   int x = p.x;
   int y = p.y;
 
-  TrackPopupMenu(smenu,
+  TrackPopupMenu(hmenu,
 		 TPM_LEFTALIGN,
 		 x,
 		 y,
 		 0,
 		 win,
 		 NULL);		  
+}
+@end
+ 
+/**
+ * Draw menu views as boxes instead of groups of buttons.
+ */
+@implementation WinUXTheme (NSMenuView)
+- (void) drawBackgroundForMenuView: (NSMenuView*)menuView
+                         withFrame: (NSRect)bounds
+                         dirtyRect: (NSRect)dirtyRect
+                        horizontal: (BOOL)horizontal 
+{
+  NSString  *name = horizontal ? GSMenuHorizontalBackground : 
+    GSMenuVerticalBackground;
+  GSDrawTiles *tiles = [self tilesNamed: name state: GSThemeNormalState];
+ 
+  if (tiles == nil)
+    {
+      NSRectEdge sides[] = {NSMinYEdge, NSMaxXEdge, NSMaxYEdge, NSMinXEdge,
+			    NSMinYEdge, NSMaxXEdge};
+      float      grays[] = {NSBlack, NSBlack, NSWhite, NSWhite, 
+			    NSDarkGray, NSDarkGray};
+
+     [[NSColor whiteColor] set];
+     NSRectFill(NSIntersectionRect(bounds, dirtyRect));
+     NSDrawTiledRects(bounds, dirtyRect, sides, grays, 2);
+    }
+  else
+    {
+      [self fillRect: bounds
+           withTiles: tiles
+          background: [NSColor clearColor]];
+    }
 }
 @end

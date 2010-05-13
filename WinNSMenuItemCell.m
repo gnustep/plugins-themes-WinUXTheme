@@ -63,9 +63,12 @@
               drawState = PBS_NORMAL;
               break;
             }
-      
-          result = (DrawThemeBackground(hTheme, hDC, BP_PUSHBUTTON, drawState, 
-                                        &winRect, NULL) == S_OK);
+
+	  if([view isKindOfClass: [NSMenuView class]])
+	    result = YES;
+	  else
+	    result = (DrawThemeBackground(hTheme, hDC, BP_PUSHBUTTON, drawState, 
+					  &winRect, NULL) == S_OK);
           ReleaseCurrentHDC(hDC);
         }
 
