@@ -36,6 +36,48 @@ static UINT menu_tag = 0;
 static NSMapTable *itemMap = 0;
 static NSLock *menuLock = nil;
 
+@interface NSMenu (Private)
+- (NSPopUpButtonCell *) owningPopUp;
+@end
+
+@implementation NSMenu (Private)
+- (NSPopUpButtonCell *) owningPopUp
+{
+  return _popUpButtonCell;
+}
+@end
+
+@interface GSFakeNSMenuItem : NSMenuItem
+{
+  id _originalItem;
+}
+
+- (void) action: (id)sender;
+- (id) initWithItem: (id)item;
+@end
+
+@implementation GSFakeNSMenuItem
+- (id) initWithItem: (id)item
+{
+  if(([super initWithTitle: [item title]
+		    action: @selector(action:)
+	     keyEquivalent: [item keyEquivalent]]) != nil)
+    {
+      _originalItem = item;
+      [self setTarget: self];
+    }
+  return self;
+}
+
+- (void) action: (id)sender
+{
+  NSPopUpButtonCell *popupCell = [[_originalItem menu] owningPopUp];
+  NSPopUpButton *popup = (NSPopUpButton *)[popupCell controlView];
+
+  [popup selectItem: _originalItem];
+}
+@end
+
 @interface NSWindow (WinMenuPrivate)
 - (GSWindowDecorationView *) windowView;
 - (void) _setMenu: (NSMenu *) menu;
@@ -67,7 +109,7 @@ void initialize_lock()
 }
 
 // find all subitems for the given items...
-HMENU r_build_menu(NSMenu *menu, BOOL asPopup) 
+HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL fakeItem) 
 {
   NSArray *array = [menu itemArray];
   NSEnumerator *en = [array objectEnumerator];
@@ -171,7 +213,7 @@ HMENU r_build_menu(NSMenu *menu, BOOL asPopup)
 	{
 	  NSMenu *smenu = [item submenu];
 	  flags = MF_STRING | MF_POPUP;
-	  s = (UINT)r_build_menu(smenu, asPopup); 
+	  s = (UINT)r_build_menu(smenu, asPopup, fakeItem); 
 	}
       else if([item isSeparatorItem])
 	{
@@ -181,6 +223,11 @@ HMENU r_build_menu(NSMenu *menu, BOOL asPopup)
 	{
 	  flags = MF_STRING;
 	  s = menu_tag++;
+	  if(fakeItem)
+	    {
+	      item = [[GSFakeNSMenuItem alloc] initWithItem: item];
+	      AUTORELEASE(item);
+	    }
 	  NSMapInsert(itemMap, (const void *)s, item);
 	}
 
@@ -268,7 +315,7 @@ void build_menu(HWND win)
 			     NSObjectMapValueCallBacks, 50);
 
   // Recursively build the menu and set it on the window device.
-  windows_menu = r_build_menu([NSApp mainMenu], NO);
+  windows_menu = r_build_menu([NSApp mainMenu], NO, NO);
   SetMenu(win, windows_menu);
 }
 
@@ -393,11 +440,35 @@ void delete_menu(HWND win)
 - (void) rightMouseDisplay: (NSMenu *)menu
 		  forEvent: (NSEvent *)theEvent
 {
-  HMENU hmenu = r_build_menu(menu, YES); 
+  HMENU hmenu = r_build_menu(menu, YES, NO); 
   NSWindow *mainWin = [NSApp mainWindow];
   NSWindow *keyWin = [NSApp keyWindow];
   HWND win = (HWND)[mainWin windowNumber];
   NSPoint point = [keyWin convertBaseToScreen: [theEvent locationInWindow]];
+  POINT p = GSScreenPointToMS(point);
+  int x = p.x;
+  int y = p.y;
+
+  TrackPopupMenu(hmenu,
+		 TPM_LEFTALIGN,
+		 x,
+		 y,
+		 0,
+		 win,
+		 NULL);		  
+}
+
+- (void) displayPopUpMenu: (NSMenuView *)mr
+  	    withCellFrame: (NSRect)cellFrame
+	controlViewWindow: (NSWindow *)cvWin
+	    preferredEdge: (NSRectEdge)edge
+	     selectedItem: (int)selectedItem
+{
+  NSMenu *menu = [mr menu];
+  HMENU hmenu = r_build_menu(menu, YES, YES); 
+  NSWindow *mainWin = [NSApp mainWindow];
+  HWND win = (HWND)[mainWin windowNumber];
+  NSPoint point = cellFrame.origin;
   POINT p = GSScreenPointToMS(point);
   int x = p.x;
   int y = p.y;

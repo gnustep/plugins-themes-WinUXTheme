@@ -1,3 +1,11 @@
+2010-05-20 04:17-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* WinNSMenu.m: added code to use the new displayPopUpMenu:... method
+	and also added an implementation here to use it.   Additionally
+	added a flag to r_create_menu which creates fake menu items if needed
+	when building so that the parent popup button's state is updated
+	correctly.
+
 2010-05-13 17:06-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* WinNSBrowserHeader.m
