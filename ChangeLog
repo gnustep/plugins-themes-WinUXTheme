@@ -1,3 +1,8 @@
+2010-05-27 Doug Simons <doug.simons@testplant.com>
+
+	* WinNSOpenPanel.m: Purge extraneous events which may get passed
+	on to us from Windows while running modal open/save panels.
+
 2010-05-27 00:52-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* WinNSMenu.m: Do not generate fake menu items when displaying

@@ -192,6 +192,18 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
   return filenames;
 }
 
+static void _purgeEvents()
+{
+  // Purge any events in the event queue. We allow a small time for incoming events
+  // to arrive from the backend.
+  NSDate *nearFuture = [NSDate dateWithTimeIntervalSinceNow:0.1];
+  while (([NSApp nextEventMatchingMask: NSAnyEventMask
+			untilDate: nearFuture
+			inMode: NSDefaultRunLoopMode
+			dequeue: YES]) != nil)
+    ; // do nothing, just discard events
+}
+
 @interface WinNSOpenPanel : NSOpenPanel
 {
   unichar szFile[1024];
@@ -301,6 +313,7 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
       ASSIGN(directory, filename);
     }
     
+	_purgeEvents(); // remove any events that came through while panel was running
     return result;
   }
 
@@ -360,6 +373,7 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
     }
   }
 
+  _purgeEvents(); // remove any events that came through while panel was running
   return result;
 }
 
@@ -500,7 +514,7 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
 	  ASSIGN(directory, [filename stringByDeletingLastPathComponent]);
 	}
     }
-
+  _purgeEvents(); // remove any events that came through while panel was running
   return result;
 }
 
