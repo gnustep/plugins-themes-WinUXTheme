@@ -1,3 +1,8 @@
+2010-05-26 23:53-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* WinNSMenu.m: Added a call to update to the new methods so that
+	the menus for both popups and for context menus are validated.
+
 2010-05-20 04:17-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* WinNSMenu.m: added code to use the new displayPopUpMenu:... method

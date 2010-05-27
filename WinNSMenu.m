@@ -65,6 +65,7 @@ static NSLock *menuLock = nil;
     {
       _originalItem = item;
       [self setTarget: self];
+      [self setEnabled: [item isEnabled]];
     }
   return self;
 }
@@ -213,7 +214,7 @@ HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL fakeItem)
 	{
 	  NSMenu *smenu = [item submenu];
 	  flags = MF_STRING | MF_POPUP;
-	  s = (UINT)r_build_menu(smenu, asPopup, fakeItem); 
+	  s = (UINT)r_build_menu(smenu, asPopup, fakeItem); //, isMainMenu); 
 	}
       else if([item isSeparatorItem])
 	{
@@ -315,7 +316,7 @@ void build_menu(HWND win)
 			     NSObjectMapValueCallBacks, 50);
 
   // Recursively build the menu and set it on the window device.
-  windows_menu = r_build_menu([NSApp mainMenu], NO, NO);
+  windows_menu = r_build_menu([NSApp mainMenu], NO, NO); //, YES);
   SetMenu(win, windows_menu);
 }
 
@@ -328,14 +329,6 @@ void delete_menu(HWND win)
       while(DeleteMenu(menu, 0, MF_BYPOSITION));
     }
 }
-
-/*
-@implementation NSMenu (ContextMenus)
-- (void) _rightMouseDisplay: (NSEvent*)theEvent
-{
-}
-@end
-*/
 
 @implementation WinUXTheme (NSMenu)
 - (void) updateMenu: (NSMenu *)menu
@@ -440,7 +433,9 @@ void delete_menu(HWND win)
 - (void) rightMouseDisplay: (NSMenu *)menu
 		  forEvent: (NSEvent *)theEvent
 {
-  HMENU hmenu = r_build_menu(menu, YES, NO); 
+  [menu update];
+
+  HMENU hmenu = r_build_menu(menu, YES, NO); //, ([NSApp mainMenu] == menu)); 
   NSWindow *mainWin = [NSApp mainWindow];
   NSWindow *keyWin = [NSApp keyWindow];
   HWND win = (HWND)[mainWin windowNumber];
@@ -465,6 +460,9 @@ void delete_menu(HWND win)
 	     selectedItem: (int)selectedItem
 {
   NSMenu *menu = [mr menu];
+
+  [menu update];
+
   HMENU hmenu = r_build_menu(menu, YES, YES); 
   NSWindow *mainWin = [NSApp mainWindow];
   HWND win = (HWND)[mainWin windowNumber];
