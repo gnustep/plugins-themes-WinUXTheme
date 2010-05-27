@@ -1,3 +1,8 @@
+2010-05-27 00:52-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* WinNSMenu.m: Do not generate fake menu items when displaying
+	a menu for a NSPopUpButton which pulls down.
+
 2010-05-26 23:53-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* WinNSMenu.m: Added a call to update to the new methods so that

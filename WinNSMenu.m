@@ -316,7 +316,7 @@ void build_menu(HWND win)
 			     NSObjectMapValueCallBacks, 50);
 
   // Recursively build the menu and set it on the window device.
-  windows_menu = r_build_menu([NSApp mainMenu], NO, NO); //, YES);
+  windows_menu = r_build_menu([NSApp mainMenu], NO, NO); 
   SetMenu(win, windows_menu);
 }
 
@@ -435,7 +435,7 @@ void delete_menu(HWND win)
 {
   [menu update];
 
-  HMENU hmenu = r_build_menu(menu, YES, NO); //, ([NSApp mainMenu] == menu)); 
+  HMENU hmenu = r_build_menu(menu, YES, NO);
   NSWindow *mainWin = [NSApp mainWindow];
   NSWindow *keyWin = [NSApp keyWindow];
   HWND win = (HWND)[mainWin windowNumber];
@@ -460,10 +460,11 @@ void delete_menu(HWND win)
 	     selectedItem: (int)selectedItem
 {
   NSMenu *menu = [mr menu];
+  BOOL flag = [[menu owningPopUp] pullsDown];
 
   [menu update];
 
-  HMENU hmenu = r_build_menu(menu, YES, YES); 
+  HMENU hmenu = r_build_menu(menu, YES, !flag); 
   NSWindow *mainWin = [NSApp mainWindow];
   HWND win = (HWND)[mainWin windowNumber];
   NSPoint point = cellFrame.origin;
