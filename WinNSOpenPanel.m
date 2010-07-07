@@ -288,7 +288,7 @@ static void _purgeEvents()
   BOOL flag = YES;
   int result = NSOKButton;
   NSDocumentController *dc = [NSDocumentController sharedDocumentController];
-  NSString *fileType = [[dc fileExtensionsFromType: [dc defaultType]] objectAtIndex: 0];
+  NSArray *extensionsForDefaultType = [dc fileExtensionsFromType: [dc defaultType]];
   NSMutableSet *typeset = [NSMutableSet set];
   NSArray *types = nil; 
 
@@ -322,7 +322,15 @@ static void _purgeEvents()
 
   ofn.hwndOwner = (HWND)[window windowNumber];
   ofn.lpstrFilter = (unichar *)filter_string_from_types(types);
-	ofn.nFilterIndex = [types indexOfObject: fileType] + 1;
+  ofn.nFilterIndex = 0;
+  if ([extensionsForDefaultType count] > 0)
+  {
+  	NSUInteger defaultIndex = [types indexOfObject: [extensionsForDefaultType objectAtIndex: 0]];
+  	if (defaultIndex !=  NSNotFound)
+  	{
+  		ofn.nFilterIndex = defaultIndex + 1;
+  	}
+  }
 	ofn.lpstrTitle = (unichar *)[[self title] cStringUsingEncoding: NSUnicodeStringEncoding];
 	if ([name length])
   {
@@ -465,7 +473,7 @@ static void _purgeEvents()
   BOOL flag = YES;
   int result = NSOKButton;
   NSDocumentController *dc = [NSDocumentController sharedDocumentController];
-  NSString *fileType = [[dc fileExtensionsFromType: [dc defaultType]] objectAtIndex: 0];
+  NSArray *extensionsForDefaultType = [dc fileExtensionsFromType: [dc defaultType]];
   NSMutableSet *typeset = [NSMutableSet set];
   NSArray *types = nil; 
 
@@ -475,8 +483,15 @@ static void _purgeEvents()
   ofn.hwndOwner = (HWND)[window windowNumber];
   
   ofn.lpstrFilter = (unichar *)filter_string_from_types(types);
-  ofn.nFilterIndex = [types indexOfObject: fileType] + 1;
-  
+  ofn.nFilterIndex = 0;
+  if ([extensionsForDefaultType count] > 0)
+  {
+  	NSUInteger defaultIndex = [types indexOfObject: [extensionsForDefaultType objectAtIndex: 0]];
+  	if (defaultIndex !=  NSNotFound)
+  	{
+  		ofn.nFilterIndex = defaultIndex + 1;
+  	}
+  }
   ofn.lpstrTitle = (unichar *)[[self title] cStringUsingEncoding: NSUnicodeStringEncoding];
   if ([name length]) {
 	wcscpy(szFile, (const unichar *)[name cStringUsingEncoding: NSUnicodeStringEncoding]);

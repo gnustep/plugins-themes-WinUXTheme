@@ -1,3 +1,9 @@
+2010-07-06 Eric Wasylishen <ewasylishen@gmail.com>
+
+	* WinNSOpenPanel.m: Remove assumtion that the app's default
+	file types array is non-empty. This was causing an exception
+	to be thrown in GSTest and LaternaMagica.
+
 2010-05-27 Doug Simons <doug.simons@testplant.com>
 
 	* WinNSOpenPanel.m: Purge extraneous events which may get passed
