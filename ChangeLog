@@ -1,3 +1,8 @@
+2010-08-25 Eric Wasylishen <ewasylishen@gmail.com>
+
+	* WinNSMenu.m: Provisional fix for https://savannah.gnu.org/bugs/?29708
+	(menu not updated when selecting "Undo" in Ink)
+
 2010-07-06 Eric Wasylishen <ewasylishen@gmail.com>
 
 	* WinNSOpenPanel.m: Remove assumtion that the app's default

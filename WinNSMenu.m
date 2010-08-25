@@ -378,6 +378,12 @@ void delete_menu(HWND win)
   [NSApp sendAction: action
 		 to: target
 	       from: item];
+
+  // HACK: since we are outside of the NSApplication runloop, the menus won't
+  // be updated automatically
+
+  [[NSApp mainMenu] update];
+  [[NSApp servicesMenu] update];
 }
 
 - (float) menuHeightForWindow: (NSWindow *)window
