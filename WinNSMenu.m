@@ -123,6 +123,7 @@ HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL fakeItem)
   NSString *ctrlMod = [defaults stringForKey: @"GSFirstControlKey"];
   NSString *shiftMod = [defaults stringForKey: @"GSFirstShiftKey"];
   const unichar ellipsis = 0x2026;
+  BOOL skipFirstItem = (asPopup && [[menu owningPopUp] pullsDown]); // leave first item off of pull-downs
 
   // if unspecified, map to default...
   if(cmdMod == nil || [cmdMod isEqual: @"NoSymbol"])
@@ -208,6 +209,12 @@ HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL fakeItem)
       NSString *title = nil;
       const char *ctitle;
       UINT s = 0;
+
+      if (skipFirstItem)
+        {
+          skipFirstItem = NO; // only skip the first item
+          continue;
+        }
 
       // if we have a submenu then make it a popup, if not it's a normal item.
       if([item hasSubmenu])

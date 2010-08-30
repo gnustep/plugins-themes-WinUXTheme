@@ -1,3 +1,8 @@
+2010-08-30 Doug Simons <doug.simons@testplant.com>
+
+	* WinNSMenu.m:
+	Fix problem of pulldown menu incorrectly including the button title.
+
 2010-08-25 Eric Wasylishen <ewasylishen@gmail.com>
 
 	* WinNSMenu.m: Provisional fix for https://savannah.gnu.org/bugs/?29708
