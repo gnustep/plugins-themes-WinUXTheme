@@ -80,6 +80,7 @@ UINT_PTR CALLBACK filepanel_dialog_hook(HWND win,
 		      // Indicate that a folder was selected and
 		      // set it's name in the file section.
 		      ofnw->lpOFN->lCustData = FOLDER_SELECTED;
+			  ofnw->lpOFN->nFileOffset = 0; // Reset the fileOffset to the begining
 		      wcscpy(ofnw->lpOFN->lpstrFile, foldername);
 		      
 		      // If we're opening a folder, then close and
