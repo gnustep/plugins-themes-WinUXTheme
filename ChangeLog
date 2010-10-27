@@ -1,3 +1,8 @@
+2010-10-27 Doug Simons <doug.simons@testplant.com>
+
+	* WinNSMenu.m:
+	Implemented checkmarks on selected menu items.
+
 2010-08-31 Jonathan Gillaspie <jonathan.gillaspie@testplant.com>
 
 	* WinNSOpenPanel.m: Fix a small problem opening a FOLDER after having 

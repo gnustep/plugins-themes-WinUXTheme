@@ -295,7 +295,9 @@ HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL fakeItem)
       if([item isSeparatorItem] == NO &&
 	 [item hasSubmenu] == NO)
 	{
-	  flags |= ([item isEnabled]?MF_ENABLED:MF_GRAYED);
+	  flags |= ([item isEnabled]?MF_ENABLED:MF_GRAYED); // shouldn't this be :MF_GRAYED|MF_DISABLED ?
+          if ([item state] == NSOnState)
+            flags |= MF_CHECKED; // set checkmark
 	}
 
       ctitle = [title cStringUsingEncoding: NSUTF8StringEncoding];
