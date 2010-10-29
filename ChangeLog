@@ -1,3 +1,9 @@
+2010-10-29 Doug Simons <doug.simons@testplant.com>
+
+	* WinNSMenu.m:
+	Implement new doesProcessEventsForPopUpMenu method. This fixes a
+	problem with actions getting sent twice when using this theme.
+
 2010-10-27 Doug Simons <doug.simons@testplant.com>
 
 	* WinNSMenu.m:
