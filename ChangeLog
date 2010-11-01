@@ -1,3 +1,8 @@
+2010-11-01 Jonathan Gillaspie <jonathan.gillaspie@testplant.com>>
+
+	* Resources/ThemeImages/common_3DArrowUp.tif:
+	Small change to make 3D Arrow consistent with other Windows UI controls.
+	
 2010-10-29 Doug Simons <doug.simons@testplant.com>
 
 	* WinNSMenu.m:
