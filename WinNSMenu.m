@@ -72,10 +72,8 @@ static NSLock *menuLock = nil;
 
 - (void) action: (id)sender
 {
-  NSPopUpButtonCell *popupCell = [[_originalItem menu] owningPopUp];
-  NSPopUpButton *popup = (NSPopUpButton *)[popupCell controlView];
-
-  [popup selectItem: _originalItem];
+  NSMenu *theMenu = [_originalItem menu];
+  [theMenu performActionForItemAtIndex:[theMenu indexOfItem:_originalItem]];
 }
 @end
 
