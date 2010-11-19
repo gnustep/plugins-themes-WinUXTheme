@@ -1,5 +1,11 @@
 2010-11-19 Doug Simons <doug.simons@testplant.com>
 
+	* WinNSColorWell.m:
+	Make border of NSColorWell smaller to more closely match Cocoa metrics. This makes a
+	big difference in small color wells.
+
+2010-11-19 Doug Simons <doug.simons@testplant.com>
+
 	* WinNSMenu.m:
 	Send actions for items in a popUp menu as well as in a pullDown.
 

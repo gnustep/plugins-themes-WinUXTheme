@@ -29,6 +29,9 @@
 #define EP_EDITBORDER_NOSCROLL 6
 #define EPSN_NORMAL 1
 
+// a border width of 5 gives a reasonable compromise between Cocoa metrics and looking good
+#define COLOR_WELL_BORDER_WIDTH 5.0
+
 @implementation WinUXTheme (NSColorWell)
 
 - (NSRect) drawColorWellBorder: (NSColorWell*)well
@@ -63,7 +66,7 @@
 	  return [super drawColorWellBorder: well withBounds: bounds withClip: clipRect];
         }
 
-      aRect = NSInsetRect(bounds, 8.0, 8.0);
+      aRect = NSInsetRect(bounds, COLOR_WELL_BORDER_WIDTH, COLOR_WELL_BORDER_WIDTH);
     }
 
 
