@@ -1,3 +1,8 @@
+2010-12-20 Doug Simons <doug.simons@testplant.com>
+
+	* WinNSMenu.m:
+	Be sure to destroy the menu itself, or it will eventually crash.
+
 2010-11-19 Doug Simons <doug.simons@testplant.com>
 
 	* WinNSColorWell.m:

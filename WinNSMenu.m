@@ -334,6 +334,9 @@ void delete_menu(HWND win)
     {
       // Iterate over the menu bar and delete all items.
       while(DeleteMenu(menu, 0, MF_BYPOSITION));
+      
+      // Destroy the menu itself
+      DestroyMenu(menu);
     }
 }
 
