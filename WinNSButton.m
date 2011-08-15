@@ -81,15 +81,15 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
   [self releaseTheme: hTheme];
 }
 
-- (NSSize) buttonBorderForCell: (NSCell*)cell
-			 style: (int)style 
-			 state: (GSThemeControlState)state
+- (GSThemeMargins) buttonMarginsForCell: (NSCell*)cell
+				  style: (int)style 
+				  state: (GSThemeControlState)state
 {
   if(!IsThemeActive())
     {
-      return [super buttonBorderForCell: cell
-				  style: style
-				  state: state];
+      return [super buttonMarginsForCell: cell
+				   style: style
+				   state: state];
     }
 
   HTHEME hTheme;
@@ -100,7 +100,7 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
   if (hTheme != NULL)
     {
       BOOL result = NO;
-      NSSize size;
+      GSThemeMargins margins = {0, 0, 0, 0};
 
       if (IsThemePartDefined(hTheme, BP_PUSHBUTTON, 0))
         {
@@ -112,8 +112,10 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
                                     TMT_CONTENTMARGINS, NULL, &win32Margins) == S_OK);
           if (result)
             {
-              size = NSMakeSize(win32Margins.cxLeftWidth + win32Margins.cxRightWidth, 
-                                win32Margins.cyTopHeight + win32Margins.cyBottomHeight);
+              margins.left = win32Margins.cxLeftWidth;
+	      margins.right = win32Margins.cxRightWidth;
+	      margins.top = win32Margins.cyTopHeight;
+	      margins.bottom = win32Margins.cyBottomHeight;
             }
           ReleaseCurrentHDC(hDC);
         }
@@ -121,13 +123,13 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
       CloseThemeData(hTheme);
       if (result)
         {
-          return size;
+          return margins;
         }
     }
 
-  return [super buttonBorderForCell: cell
-                style: style 
-                state: state];
+  return [super buttonMarginsForCell: cell
+			       style: style 
+			       state: state];
 }
 
 @end

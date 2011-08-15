@@ -1,3 +1,8 @@
+2011-08-15  Eric Wasylishen  <ewasylishen@gmail.com>
+
+	* WinNSButton.m: Use new buttonMarginsForCell: API to return
+	top/bottom/left/right margins
+
 2010-12-20 Doug Simons <doug.simons@testplant.com>
 
 	* WinNSMenu.m:
