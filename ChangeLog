@@ -1,3 +1,7 @@
+2012-02-23  Jonathan Gillaspie  <jonathan.gillaspie@testplant.com>
+
+	* WinNSMenu.m: Allow punctions and symbols in the key equivalent field.
+
 2011-08-15  Eric Wasylishen  <ewasylishen@gmail.com>
 
 	* WinNSButton.m: Use new buttonMarginsForCell: API to return

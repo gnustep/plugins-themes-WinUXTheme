@@ -239,8 +239,9 @@ HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL fakeItem)
 
       // Don't attempt to display special characters in the title bar
       if([[item keyEquivalent] length] > 0 &&
-         [[NSCharacterSet alphanumericCharacterSet] 
-	   characterIsMember:[[item keyEquivalent] characterAtIndex:0]])
+         ([[NSCharacterSet alphanumericCharacterSet] characterIsMember:[[item keyEquivalent] characterAtIndex:0]] ||
+		  [[NSCharacterSet punctuationCharacterSet] characterIsMember:[[item keyEquivalent] characterAtIndex:0]] ||
+		  [[NSCharacterSet symbolCharacterSet] characterIsMember:[[item keyEquivalent] characterAtIndex:0]] ))
 	{
 	  NSString *modifier = @"";
 	  int mask = [item keyEquivalentModifierMask];
