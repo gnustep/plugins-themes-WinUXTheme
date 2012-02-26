@@ -205,7 +205,7 @@ HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL fakeItem)
   while ((item = (NSMenuItem *)[en nextObject]) != nil)
     {
       NSString *title = nil;
-      const char *ctitle;
+      const wchar_t *ctitle;
       UINT s = 0;
 
       if (skipFirstItem)
@@ -299,8 +299,8 @@ HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL fakeItem)
             flags |= MF_CHECKED; // set checkmark
 	}
 
-      ctitle = [title cStringUsingEncoding: NSUTF8StringEncoding];
-      AppendMenu(result, flags, (UINT)s, ctitle);
+      ctitle = [title cStringUsingEncoding: NSUTF16StringEncoding];
+      AppendMenuW(result, flags, (UINT)s, ctitle);
     }  
 
   return result;

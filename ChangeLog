@@ -1,3 +1,7 @@
+2012-02-26  German Arias  <german@xelalug.com>
+
+	* WinNSMenu.m: Use AppendMenuW() to allow unicode characters.
+
 2012-02-23  Jonathan Gillaspie  <jonathan.gillaspie@testplant.com>
 
 	* WinNSMenu.m: Allow punctions and symbols in the key equivalent field.
