@@ -212,7 +212,6 @@ static void _purgeEvents()
   BROWSEINFO folderBrowser;
   NSArray *filenames;
   NSString *filename;
-  NSString *directory;
 }
 @end
 
@@ -221,7 +220,6 @@ static void _purgeEvents()
   unichar szFile[1024];
   OPENFILENAMEW ofn;
   NSString *filename;
-  NSString *directory;
 }
 @end
 
@@ -276,11 +274,6 @@ static void _purgeEvents()
   return filenames;
 }
 
-- (NSString*) directory
-{
-  return directory;
-}
-
 - (int) runModalForDirectory: (NSString *)path
                         file: (NSString *)name
                        types: (NSArray *)fileTypes
@@ -311,7 +304,7 @@ static void _purgeEvents()
       file = [file stringByReplacingOccurrencesOfString:@"\\" withString:@"/"]; 
       ASSIGN(filenames, [NSArray arrayWithObject:file]);
       ASSIGN(filename, file);
-      ASSIGN(directory, filename);
+      [self setDirectory: filename];
     }
     
 	_purgeEvents(); // remove any events that came through while panel was running
@@ -377,8 +370,7 @@ static void _purgeEvents()
     {
 	  ASSIGN(filenames, files);
 	  ASSIGN(filename, [files objectAtIndex: 0]);
-	  ASSIGN(directory, 
-		 [filename stringByDeletingLastPathComponent]);
+	  [self setDirectory: [filename stringByDeletingLastPathComponent]];
     }
   }
 
@@ -461,11 +453,6 @@ static void _purgeEvents()
   return [super filename];
 }
 
-- (NSString*) directory
-{
-  return directory;
-}
-
 - (int) runModalForDirectory: (NSString *)path
 			file: (NSString *)name
 		       types: (NSArray *)fileTypes
@@ -527,7 +514,7 @@ static void _purgeEvents()
     if ([types count] > 0)
       [super setRequiredFileType: [types objectAtIndex: ofn.nFilterIndex - 1]];
 	  ASSIGN(filename, [files objectAtIndex: 0]);
-	  ASSIGN(directory, [filename stringByDeletingLastPathComponent]);
+	  [self setDirectory: [filename stringByDeletingLastPathComponent]];
 	}
     }
   _purgeEvents(); // remove any events that came through while panel was running
