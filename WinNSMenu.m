@@ -276,7 +276,7 @@ HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL fakeItem)
 	  title = [NSString stringWithFormat: @"%@\t%@%@", 
 			    [item title],
 			    modifier,
-			    keyEquivalent]; 
+			    [keyEquivalent uppercaseString]]; // Convention on windows is show cap letters 
 	}
       else
 	{
