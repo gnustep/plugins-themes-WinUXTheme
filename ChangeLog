@@ -1,3 +1,7 @@
+2012-09-04  Jonathan Gillaspie  <jonathan.gillaspie@testplant.com>
+
+	* WinNSMenu.m: Display Key Equivalents on Menus with capital letters (Windows Standard) eg Ctrl+S (not s).
+
 2012-02-26  German Arias  <german@xelalug.com>
 
 	* WinNSMenu.m: Use AppendMenuW() to allow unicode characters.
