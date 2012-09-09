@@ -328,7 +328,8 @@ static void _purgeEvents()
 	ofn.lpstrTitle = (unichar *)[[self title] cStringUsingEncoding: NSUnicodeStringEncoding];
 	if ([name length])
   {
-		wcscpy(szFile, (const unichar *) [name cStringUsingEncoding: NSUnicodeStringEncoding]);
+    NSString *file = [name lastPathComponent];
+		wcscpy(szFile, (const unichar *) [file cStringUsingEncoding: NSUnicodeStringEncoding]);
 	}
 	else 
   {
@@ -358,6 +359,11 @@ static void _purgeEvents()
   
   if(!flag && ofn.lCustData != FOLDER_SELECTED)
     {
+      DWORD errorCode = CommDlgExtendedError();
+      if (errorCode)
+        {
+          NSLog(@"%s:open panel error: %d\n", __PRETTY_FUNCTION__, errorCode);
+        }
       result = NSCancelButton;
     }
   else
@@ -368,9 +374,9 @@ static void _purgeEvents()
  
     if([files count] > 0)
     {
-	  ASSIGN(filenames, files);
-	  ASSIGN(filename, [files objectAtIndex: 0]);
-	  [self setDirectory: [filename stringByDeletingLastPathComponent]];
+      ASSIGN(filenames, files);
+      ASSIGN(filename, [files objectAtIndex: 0]);
+      [self setDirectory: [filename stringByDeletingLastPathComponent]];
     }
   }
 
@@ -482,7 +488,8 @@ static void _purgeEvents()
   }
   ofn.lpstrTitle = (unichar *)[[self title] cStringUsingEncoding: NSUnicodeStringEncoding];
   if ([name length]) {
-	wcscpy(szFile, (const unichar *)[name cStringUsingEncoding: NSUnicodeStringEncoding]);
+    NSString *file = [name lastPathComponent];
+    wcscpy(szFile, (const unichar *)[file cStringUsingEncoding: NSUnicodeStringEncoding]);
   }
   else {
     szFile[0] = '\0';
@@ -501,6 +508,11 @@ static void _purgeEvents()
   flag = GetSaveFileNameW(&ofn);
   if(!flag && ofn.lCustData != FOLDER_SELECTED)
     {
+      DWORD errorCode = CommDlgExtendedError();
+      if (errorCode)
+      {
+        NSLog(@"%s:save panel error: %d\n", __PRETTY_FUNCTION__, errorCode);
+      }
       result = NSCancelButton;
     }
   else
