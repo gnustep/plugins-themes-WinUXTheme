@@ -448,14 +448,24 @@ void delete_menu(HWND win)
 }
 
 - (void) rightMouseDisplay: (NSMenu *)menu
-		  forEvent: (NSEvent *)theEvent
+                 forEvent: (NSEvent *)theEvent
 {
+  // if the map is initialized, free it.
+  if (itemMap != nil)
+    {
+      NSFreeMapTable(itemMap);
+    }
+
+  // Create the map
+  itemMap = NSCreateMapTable(NSIntMapKeyCallBacks,
+                 NSObjectMapValueCallBacks, 50);
+
   [menu update];
 
   HMENU hmenu = r_build_menu(menu, YES, NO);
   NSWindow *mainWin = [NSApp mainWindow];
   NSWindow *keyWin = [NSApp keyWindow];
-  HWND win = (HWND)[mainWin windowNumber];
+  HWND win = (HWND)[(mainWin ? mainWin : keyWin) windowNumber];
   NSPoint point = [keyWin convertBaseToScreen: [theEvent locationInWindow]];
   POINT p = GSScreenPointToMS(point);
   int x = p.x;
@@ -467,7 +477,7 @@ void delete_menu(HWND win)
 		 y,
 		 0,
 		 win,
-		 NULL);		  
+		 NULL);          
 }
 
 - (void) displayPopUpMenu: (NSMenuView *)mr

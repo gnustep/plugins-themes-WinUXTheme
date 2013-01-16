@@ -1,3 +1,8 @@
+2013-01-16  Doug Simons  <doug.simons@testplant.com>
+
+	* WinNSMenu.m: Fix rightMouseDisplay:forEvent: to work correctly when called
+	from a modal panel before build_menu() has been called.
+
 2012-09-04  Jonathan Gillaspie  <jonathan.gillaspie@testplant.com>
 
 	* WinNSMenu.m: Display Key Equivalents on Menus with capital letters (Windows Standard) eg Ctrl+S (not s).
