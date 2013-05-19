@@ -36,9 +36,10 @@
   if(!IsThemeActive())
     {
       [super drawTableHeaderCell: cell
-		       withFrame: cellFrame
-			  inView: (NSView *)controlView
-			   state: state];
+                       withFrame: cellFrame
+                          inView: (NSView *)controlView
+                           state: state];
+      return;
     }
 
   HTHEME hTheme;

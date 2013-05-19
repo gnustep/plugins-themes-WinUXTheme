@@ -40,10 +40,10 @@
 {
   NSRect aRect = bounds;
   GSThemeControlState state;
-
+  
   // FIXME: refactor so more of the work is done in NSColorWell rather than in the theme
   // FIXME: use clipRect?
-
+  
   if ([[well cell] isHighlighted] || [well isActive])
     {
       state = GSThemeHighlightedState;
@@ -57,38 +57,46 @@
     {
       HTHEME hTheme = [self themeWithClassName: @"button"];
       int drawState = (state == GSThemeHighlightedState) ? PBS_HOT : PBS_NORMAL;
-
+      
       if (![self drawThemeBackground: hTheme
-			      inRect: bounds
-				part: BP_PUSHBUTTON
-			       state: drawState])
-        {
-	  return [super drawColorWellBorder: well withBounds: bounds withClip: clipRect];
-        }
-
+                              inRect: bounds
+                                part: BP_PUSHBUTTON
+                               state: drawState])
+      {
+        [self releaseTheme:hTheme];
+        return [super drawColorWellBorder: well withBounds: bounds withClip: clipRect];
+      }
+      [self releaseTheme:hTheme];
+      
       aRect = NSInsetRect(bounds, COLOR_WELL_BORDER_WIDTH, COLOR_WELL_BORDER_WIDTH);
     }
-
-
+  
+  
   if ([well isEnabled])
     {
       HTHEME hTheme = [self themeWithClassName: @"edit"];
-
-      if (![self drawThemeBackground: hTheme
-			      inRect: aRect
-				part: EP_EDITBORDER_NOSCROLL
-			       state: EPSN_NORMAL])
+      
+      if (hTheme)
         {
-	  [self drawGrayBezel: aRect withClip: clipRect];
-	  aRect = NSInsetRect(aRect, 2.0, 2.0);
-	}
-      else
-	{
-	  // FIXME: lookup inset from Windows
-	  aRect = NSInsetRect(aRect, 1.0, 1.0);
-	}
+          if (![self drawThemeBackground: hTheme
+                                  inRect: aRect
+                                    part: EP_EDITBORDER_NOSCROLL
+                                   state: EPSN_NORMAL])
+            {
+              [self drawGrayBezel: aRect withClip: clipRect];
+              aRect = NSInsetRect(aRect, 2.0, 2.0);
+            }
+          else
+            {
+              // FIXME: lookup inset from Windows
+              aRect = NSInsetRect(aRect, 1.0, 1.0);
+            }
+          
+          // Release the theme...
+          [self releaseTheme:hTheme];
+        }
     }
-
+  
   return aRect;
 }
 
