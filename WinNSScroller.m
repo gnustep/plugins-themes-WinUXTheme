@@ -93,66 +93,69 @@
   HWND hwnd = (HWND)[window windowNumber];
 
   hTheme = OpenThemeData(hwnd, L"scrollbar");
-  
-  if (IsThemePartDefined(hTheme, [self _partForPart:_part], 0))
+  if (hTheme)
   {
-    int part;
-    BOOL result;
-
-    switch (_part)
+    if (IsThemePartDefined(hTheme, [self _partForPart:_part], 0))
     {
-      case NSScrollerKnob:
-  
-        result = [_theme drawThemeBackground:hTheme
-          inRect:frame
-          part: _horizontal ? SBP_THUMBBTNHORZ : SBP_THUMBBTNVERT
-          state: flag ? SCRBS_PRESSED : SCRBS_NORMAL
-          ];
-        result = [_theme drawThemeBackground:hTheme
-          inRect:frame
-          part: _horizontal ? SBP_GRIPPERHORZ : SBP_GRIPPERVERT
-          state: flag ? SCRBS_PRESSED : SCRBS_NORMAL];
-        break;
-      case NSScrollerKnobSlot:
-        result = [_theme drawThemeBackground:hTheme
-          inRect: frame
-          part: _horizontal ? SBP_UPPERTRACKHORZ : SBP_UPPERTRACKVERT
-          state: flag ? SCRBS_PRESSED : SCRBS_NORMAL
-          ];
-        break;
-      case NSScrollerIncrementLine:
-      case NSScrollerDecrementLine:
-        if (_part==NSScrollerIncrementLine)
-        {
-          if (_horizontal)
-            part = flag ? ABS_RIGHTPRESSED : ABS_RIGHTNORMAL;
-          else
-            part = flag ? ABS_DOWNPRESSED : ABS_DOWNNORMAL;
-        }
-        else
-        {
-          if (_horizontal)
-            part = flag ? ABS_LEFTPRESSED : ABS_LEFTNORMAL;
-          else
-            part = flag ? ABS_UPPRESSED : ABS_UPNORMAL;
-            
-        }
-        result = [_theme drawThemeBackground:hTheme
-          inRect: frame
-          part: SBP_ARROWBTN
-          state: part 
-          ];
-        break;
-      default:
-        break;
-    }    
+      int part;
+      BOOL result;
+
+      switch (_part)
+      {
+        case NSScrollerKnob:
     
-    if (result)
-      return;
-  }
-  else
-  {
-    NSLog(@"No theme part defined.");
+          result = [_theme drawThemeBackground:hTheme
+            inRect:frame
+            part: _horizontal ? SBP_THUMBBTNHORZ : SBP_THUMBBTNVERT
+            state: flag ? SCRBS_PRESSED : SCRBS_NORMAL
+            ];
+          result = [_theme drawThemeBackground:hTheme
+            inRect:frame
+            part: _horizontal ? SBP_GRIPPERHORZ : SBP_GRIPPERVERT
+            state: flag ? SCRBS_PRESSED : SCRBS_NORMAL];
+          break;
+        case NSScrollerKnobSlot:
+          result = [_theme drawThemeBackground:hTheme
+            inRect: frame
+            part: _horizontal ? SBP_UPPERTRACKHORZ : SBP_UPPERTRACKVERT
+            state: flag ? SCRBS_PRESSED : SCRBS_NORMAL
+            ];
+          break;
+        case NSScrollerIncrementLine:
+        case NSScrollerDecrementLine:
+          if (_part==NSScrollerIncrementLine)
+          {
+            if (_horizontal)
+              part = flag ? ABS_RIGHTPRESSED : ABS_RIGHTNORMAL;
+            else
+              part = flag ? ABS_DOWNPRESSED : ABS_DOWNNORMAL;
+          }
+          else
+          {
+            if (_horizontal)
+              part = flag ? ABS_LEFTPRESSED : ABS_LEFTNORMAL;
+            else
+              part = flag ? ABS_UPPRESSED : ABS_UPNORMAL;
+              
+          }
+          result = [_theme drawThemeBackground:hTheme
+            inRect: frame
+            part: SBP_ARROWBTN
+            state: part 
+            ];
+          break;
+        default:
+          break;
+      }    
+      
+      if (result)
+        return;
+    }
+    else
+    {
+      NSLog(@"No theme part defined.");
+    }
+    CloseThemeData(hTheme);
   }
 }
 - (void) drawWithFrame:(NSRect)frame inView:(NSView*)view
