@@ -94,7 +94,7 @@ static NSLock *menuLock = nil;
 }
 @end
 
-NSMenuItem *itemForTag(UINT tag)
+NSMenuItem *itemForTag(UINT tag, NSMapTable *itemMap)
 {
   return (NSMenuItem *)NSMapGet(itemMap,(const void *)tag);
 }
@@ -108,7 +108,7 @@ void initialize_lock()
 }
 
 // find all subitems for the given items...
-HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL fakeItem) 
+HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopup, BOOL fakeItem, NSMapTable *itemMap)
 {
   NSArray *array = [menu itemArray];
   NSEnumerator *en = [array objectEnumerator];
@@ -219,7 +219,7 @@ HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL fakeItem)
 	{
 	  NSMenu *smenu = [item submenu];
 	  flags = MF_STRING | MF_POPUP;
-	  s = (UINT)r_build_menu(smenu, asPopup, fakeItem); //, isMainMenu); 
+	  s = (UINT)r_build_menu_for_itemmap(smenu, asPopup, fakeItem, itemMap);
 	}
       else if([item isSeparatorItem])
 	{
@@ -306,6 +306,11 @@ HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL fakeItem)
   return result;
 }
 
+HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL fakeItem)
+{
+  return r_build_menu_for_itemmap(menu, asPopup, fakeItem, itemMap);
+}
+
 void build_menu(HWND win)
 {
   HMENU windows_menu = NULL;
@@ -375,26 +380,29 @@ void delete_menu(HWND win)
     }
 }
 
-- (void) processCommand: (void *)context
+- (void) processCommand: (void *)context usingItemMap:(NSMapTable*)itemMap
 {
   WPARAM wParam = (WPARAM)context;
   UINT tag = LOWORD(wParam);
-  NSMenuItem *item = itemForTag(tag);
+  NSMenuItem *item = itemForTag(tag, itemMap);
   SEL action = [item action];
   id target = [item target];
   
-  item = itemForTag(tag);
-
   // send the action....
   [NSApp sendAction: action
-		 to: target
-	       from: item];
-
+                 to: target
+               from: item];
+  
   // HACK: since we are outside of the NSApplication runloop, the menus won't
   // be updated automatically
-
+  
   [[NSApp mainMenu] update];
   [[NSApp servicesMenu] update];
+}
+
+- (void) processCommand: (void *)context
+{
+  [self processCommand:context usingItemMap:itemMap];
 }
 
 - (float) menuHeightForWindow: (NSWindow *)window
@@ -450,19 +458,13 @@ void delete_menu(HWND win)
 - (void) rightMouseDisplay: (NSMenu *)menu
                  forEvent: (NSEvent *)theEvent
 {
-  // if the map is initialized, free it.
-  if (itemMap != nil)
-    {
-      NSFreeMapTable(itemMap);
-    }
-
-  // Create the map
-  itemMap = NSCreateMapTable(NSIntMapKeyCallBacks,
-                 NSObjectMapValueCallBacks, 50);
+  // Create a temporary item map for this popup sequence...
+  NSMapTable *itemMap = NSCreateMapTable(NSIntMapKeyCallBacks,
+                                         NSObjectMapValueCallBacks, 50);
 
   [menu update];
 
-  HMENU hmenu = r_build_menu(menu, YES, NO);
+  HMENU hmenu = r_build_menu_for_itemmap(menu, YES, NO, itemMap);
   NSWindow *mainWin = [NSApp mainWindow];
   NSWindow *keyWin = [NSApp keyWindow];
   HWND win = (HWND)[(mainWin ? mainWin : keyWin) windowNumber];
@@ -471,27 +473,52 @@ void delete_menu(HWND win)
   int x = p.x;
   int y = p.y;
 
-  TrackPopupMenu(hmenu,
-		 TPM_LEFTALIGN,
-		 x,
-		 y,
-		 0,
-		 win,
-		 NULL);          
+  // The TrackPopupMenu is a blocking call with or without the TPM_RETURNCMD flag...
+  // The TPM_RETURNCMD allows us to process the menu item here instead of
+  // handling a windows message...
+  DWORD result = TrackPopupMenu(hmenu,
+                                TPM_LEFTALIGN | TPM_RETURNCMD,
+                                x,
+                                y,
+                                0,
+                                win,
+                                NULL);
+
+  // Process the result, if any...
+  if (result == 0)
+  {
+    // User either cancelled (via click elsewhere) or there was an error...
+    DWORD status = GetLastError();
+    if (status && (status != ERROR_INVALID_HANDLE))
+      NSWarnMLog(@"error processing popup menu - status: %d", status);
+  }
+  else
+  {
+    // Process the menu item selected...
+    [self processCommand:(void*)result usingItemMap:itemMap];
+  }
+  
+  // Cleanup...
+  DestroyMenu(hmenu);
+  NSFreeMapTable(itemMap);
 }
 
 - (void) displayPopUpMenu: (NSMenuView *)mr
-  	    withCellFrame: (NSRect)cellFrame
-	controlViewWindow: (NSWindow *)cvWin
-	    preferredEdge: (NSRectEdge)edge
-	     selectedItem: (int)selectedItem
+            withCellFrame: (NSRect)cellFrame
+        controlViewWindow: (NSWindow *)cvWin
+            preferredEdge: (NSRectEdge)edge
+             selectedItem: (int)selectedItem
 {
   NSMenu *menu = [mr menu];
   BOOL flag = [[menu owningPopUp] pullsDown];
 
+  // Create a temporary item map for this popup sequence...
+  NSMapTable *itemMap = NSCreateMapTable(NSIntMapKeyCallBacks,
+                                         NSObjectMapValueCallBacks, 50);
+
   [menu update];
 
-  HMENU hmenu = r_build_menu(menu, YES, !flag); 
+  HMENU hmenu = r_build_menu_for_itemmap(menu, YES, !flag, itemMap);
   NSWindow *mainWin = [NSApp mainWindow];
   HWND win = (HWND)[mainWin windowNumber];
   NSPoint point = cellFrame.origin;
@@ -499,13 +526,34 @@ void delete_menu(HWND win)
   int x = p.x;
   int y = p.y;
 
-  TrackPopupMenu(hmenu,
-		 TPM_LEFTALIGN,
-		 x,
-		 y,
-		 0,
-		 win,
-		 NULL);		  
+  // The TrackPopupMenu is a blocking call with or without the TPM_RETURNCMD flag...
+  // The TPM_RETURNCMD allows us to process the menu item here instead of
+  // handling a windows message...
+  DWORD result = TrackPopupMenu(hmenu,
+                                TPM_LEFTALIGN | TPM_RETURNCMD,
+                                x,
+                                y,
+                                0,
+                                win,
+                                NULL);
+  
+  // Process the result, if any...
+  if (result == 0)
+  {
+    // User either cancelled (via click elsewhere) or there was an error...
+    DWORD status = GetLastError();
+    if (status && (status != ERROR_INVALID_HANDLE))
+      NSWarnMLog(@"error processing popup menu - status: %d", status);
+  }
+  else
+  {
+    // Process the menu item selected...
+    [self processCommand:(void*)result usingItemMap:itemMap];
+  }
+  
+  // Cleanup...
+  DestroyMenu(hmenu);
+  NSFreeMapTable(itemMap);
 }
 
 - (BOOL) doesProcessEventsForPopUpMenu
