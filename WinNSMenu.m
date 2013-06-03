@@ -205,7 +205,6 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopup, BOOL fakeItem, NSMapT
   while ((item = (NSMenuItem *)[en nextObject]) != nil)
     {
       NSString *title = nil;
-      const wchar_t *ctitle;
       UINT s = 0;
 
       if (skipFirstItem)
@@ -299,7 +298,7 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopup, BOOL fakeItem, NSMapT
             flags |= MF_CHECKED; // set checkmark
 	}
 
-      ctitle = [title cStringUsingEncoding: NSUTF16StringEncoding];
+      const wchar_t *ctitle = (wchar_t*)[title cStringUsingEncoding: NSUTF16StringEncoding];
       AppendMenuW(result, flags, (UINT)s, ctitle);
     }  
 
@@ -339,7 +338,7 @@ void delete_menu(HWND win)
   if(menu)
     {
       // Iterate over the menu bar and delete all items.
-      while(DeleteMenu(menu, 0, MF_BYPOSITION));
+//      while(DeleteMenu(menu, 0, MF_BYPOSITION));
       
       // Destroy the menu itself
       DestroyMenu(menu);
@@ -468,8 +467,9 @@ void delete_menu(HWND win)
   NSWindow *mainWin = [NSApp mainWindow];
   NSWindow *keyWin = [NSApp keyWindow];
   HWND win = (HWND)[(mainWin ? mainWin : keyWin) windowNumber];
+  NSScreen *screen = [(mainWin ? mainWin : keyWin) screen];
   NSPoint point = [keyWin convertBaseToScreen: [theEvent locationInWindow]];
-  POINT p = GSScreenPointToMS(point);
+  POINT p = GSScreenPointForScreenToMS(point, screen);
   int x = p.x;
   int y = p.y;
 
@@ -522,7 +522,7 @@ void delete_menu(HWND win)
   NSWindow *mainWin = [NSApp mainWindow];
   HWND win = (HWND)[mainWin windowNumber];
   NSPoint point = cellFrame.origin;
-  POINT p = GSScreenPointToMS(point);
+  POINT p = GSScreenPointForScreenToMS(point, [mainWin screen]);
   int x = p.x;
   int y = p.y;
 

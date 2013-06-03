@@ -102,18 +102,24 @@ GSWindowRectToMS(NSWindow *window, NSRect r0)
 }
 
 static inline POINT
-GSScreenPointToMS(NSPoint point)
+GSScreenPointForScreenToMS(NSPoint point, NSScreen *screen)
 {
-  NSRect screenFrame = [[NSScreen mainScreen] frame];
+  NSRect screenFrame = [screen frame];
   int x = (int)point.x;
   int y = (int)point.y;
   y = (int)screenFrame.size.height - y;
-
+  
   POINT p;
   p.x = x;
   p.y = y;
-
+  
   return p;
+}
+
+static inline POINT
+GSScreenPointToMS(NSPoint point)
+{
+  return GSScreenPointForScreenToMS(point, [NSScreen mainScreen]);
 }
 
 static inline HDC GetCurrentHDC()
