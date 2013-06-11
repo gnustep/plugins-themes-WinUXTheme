@@ -426,10 +426,10 @@ void delete_menu(HWND win)
        * menu and determine if that can overflow the width of the window.
        */
       while ((obj = [en nextObject]) != nil)
-	{
-	  letters += [[obj title] length];
-	  letters += 2; // the 1 character pad on each side.
-	}      
+        {
+          letters += [[obj title] length];
+          letters += 2; // the 1 character pad on each side.
+        }      
 
       est_menu_width = (8.0 * letters);
       ratio = est_menu_width / rect.size.width;
@@ -455,52 +455,20 @@ void delete_menu(HWND win)
 }
 
 - (void) rightMouseDisplay: (NSMenu *)menu
-                 forEvent: (NSEvent *)theEvent
+                  forEvent: (NSEvent *)theEvent
 {
-  // Create a temporary item map for this popup sequence...
-  NSMapTable *itemMap = NSCreateMapTable(NSIntMapKeyCallBacks,
-                                         NSObjectMapValueCallBacks, 50);
-
-  [menu update];
-
-  HMENU hmenu = r_build_menu_for_itemmap(menu, YES, NO, itemMap);
   NSWindow *mainWin = [NSApp mainWindow];
-  NSWindow *keyWin = [NSApp keyWindow];
-  HWND win = (HWND)[(mainWin ? mainWin : keyWin) windowNumber];
-  NSScreen *screen = [(mainWin ? mainWin : keyWin) screen];
-  NSPoint point = [keyWin convertBaseToScreen: [theEvent locationInWindow]];
-  POINT p = GSScreenPointForScreenToMS(point, screen);
-  int x = p.x;
-  int y = p.y;
-
-  // The TrackPopupMenu is a blocking call with or without the TPM_RETURNCMD flag...
-  // The TPM_RETURNCMD allows us to process the menu item here instead of
-  // handling a windows message...
-  DWORD result = TrackPopupMenu(hmenu,
-                                TPM_LEFTALIGN | TPM_RETURNCMD,
-                                x,
-                                y,
-                                0,
-                                win,
-                                NULL);
-
-  // Process the result, if any...
-  if (result == 0)
-  {
-    // User either cancelled (via click elsewhere) or there was an error...
-    DWORD status = GetLastError();
-    if (status && (status != ERROR_INVALID_HANDLE))
-      NSWarnMLog(@"error processing popup menu - status: %d", status);
-  }
-  else
-  {
-    // Process the menu item selected...
-    [self processCommand:(void*)result usingItemMap:itemMap];
-  }
+  NSWindow *keyWin  = [NSApp keyWindow];
+  NSWindow *theWin  = ((mainWin == nil) ? keyWin : mainWin);
+  NSPoint   point   = [theWin convertBaseToScreen: [theEvent locationInWindow]];
+  NSRect    frame   = NSMakeRect(point.x, point.y, 0, 0);
   
-  // Cleanup...
-  DestroyMenu(hmenu);
-  NSFreeMapTable(itemMap);
+  // Use common method for displaying the menu...
+  [self displayPopUpMenu: [menu menuRepresentation]
+           withCellFrame: frame
+       controlViewWindow: theWin
+           preferredEdge: NSMinXEdge
+            selectedItem: 0];
 }
 
 - (void) displayPopUpMenu: (NSMenuView *)mr
@@ -509,8 +477,16 @@ void delete_menu(HWND win)
             preferredEdge: (NSRectEdge)edge
              selectedItem: (int)selectedItem
 {
-  NSMenu *menu = [mr menu];
-  BOOL flag = [[menu owningPopUp] pullsDown];
+  BOOL     fake = NO;
+  NSMenu  *menu = [mr menu];
+  
+  // Need menu for display...
+  if (menu == nil)
+    return;
+  
+  NSPopUpButtonCell *cell = [menu owningPopUp];
+  if (cell)
+    fake = ![cell pullsDown];
 
   // Create a temporary item map for this popup sequence...
   NSMapTable *itemMap = NSCreateMapTable(NSIntMapKeyCallBacks,
@@ -518,13 +494,13 @@ void delete_menu(HWND win)
 
   [menu update];
 
-  HMENU hmenu = r_build_menu_for_itemmap(menu, YES, !flag, itemMap);
-  NSWindow *mainWin = [NSApp mainWindow];
-  HWND win = (HWND)[mainWin windowNumber];
-  NSPoint point = cellFrame.origin;
-  POINT p = GSScreenPointForScreenToMS(point, [mainWin screen]);
-  int x = p.x;
-  int y = p.y;
+  HMENU     hmenu  = r_build_menu_for_itemmap(menu, YES, fake, itemMap);
+  NSWindow *theWin = ((cvWin == nil) ? [NSApp mainWindow] : cvWin);
+  HWND      win    = (HWND)[theWin windowNumber];
+  NSPoint   point  = cellFrame.origin;
+  POINT     p      = GSScreenPointToMS(point);
+  int       x      = p.x;
+  int       y      = p.y;
 
   // The TrackPopupMenu is a blocking call with or without the TPM_RETURNCMD flag...
   // The TPM_RETURNCMD allows us to process the menu item here instead of
@@ -539,17 +515,17 @@ void delete_menu(HWND win)
   
   // Process the result, if any...
   if (result == 0)
-  {
-    // User either cancelled (via click elsewhere) or there was an error...
-    DWORD status = GetLastError();
-    if (status && (status != ERROR_INVALID_HANDLE))
-      NSWarnMLog(@"error processing popup menu - status: %d", status);
-  }
+    {
+      // User either cancelled (via click elsewhere) or there was an error...
+      DWORD status = GetLastError();
+      if (status && (status != ERROR_INVALID_HANDLE))
+        NSWarnMLog(@"error processing popup menu - status: %d", status);
+    }
   else
-  {
-    // Process the menu item selected...
-    [self processCommand:(void*)result usingItemMap:itemMap];
-  }
+    {
+      // Process the menu item selected...
+      [self processCommand:(void*)result usingItemMap:itemMap];
+    }
   
   // Cleanup...
   DestroyMenu(hmenu);

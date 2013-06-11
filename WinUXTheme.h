@@ -57,7 +57,6 @@ typedef enum WIN32ThemeSizeType
 - (id) currentGState;
 @end
 
-
 /*
  * See http://msdn.microsoft.com/en-us/library/ms724371(VS.85).aspx
  * for possible values for nIndex.
@@ -102,24 +101,18 @@ GSWindowRectToMS(NSWindow *window, NSRect r0)
 }
 
 static inline POINT
-GSScreenPointForScreenToMS(NSPoint point, NSScreen *screen)
+GSScreenPointToMS(NSPoint point)
 {
-  NSRect screenFrame = [screen frame];
+  NSRect screenFrame = [[[NSScreen screens] objectAtIndex: 0] frame];
   int x = (int)point.x;
   int y = (int)point.y;
-  y = (int)screenFrame.size.height - y;
+  y     = (int)screenFrame.size.height - y;
   
   POINT p;
   p.x = x;
   p.y = y;
   
   return p;
-}
-
-static inline POINT
-GSScreenPointToMS(NSPoint point)
-{
-  return GSScreenPointForScreenToMS(point, [NSScreen mainScreen]);
 }
 
 static inline HDC GetCurrentHDC()
