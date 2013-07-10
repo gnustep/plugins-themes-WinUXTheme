@@ -457,7 +457,7 @@ void delete_menu(HWND win)
 - (void) rightMouseDisplay: (NSMenu *)menu
                   forEvent: (NSEvent *)theEvent
 {
-  NSWindow *mainWin = [NSApp mainWindow];
+  NSWindow *mainWin = [theEvent window];
   NSWindow *keyWin  = [NSApp keyWindow];
   NSWindow *theWin  = ((mainWin == nil) ? keyWin : mainWin);
   NSPoint   point   = [theWin convertBaseToScreen: [theEvent locationInWindow]];
@@ -493,7 +493,7 @@ void delete_menu(HWND win)
                                          NSObjectMapValueCallBacks, 50);
 
   [menu update];
-
+  
   HMENU     hmenu  = r_build_menu_for_itemmap(menu, YES, fake, itemMap);
   NSWindow *theWin = ((cvWin == nil) ? [NSApp mainWindow] : cvWin);
   HWND      win    = (HWND)[theWin windowNumber];
