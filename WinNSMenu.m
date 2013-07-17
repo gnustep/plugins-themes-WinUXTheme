@@ -312,44 +312,50 @@ HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL fakeItem)
 
 void build_menu(HWND win)
 {
-  HMENU windows_menu = NULL;
-
-  // Reset the tags...
-  menu_tag = 100;
-
-  // if the map is initialized, free it.
-  if (itemMap != nil)
+  if (win != NULL)
     {
-      NSFreeMapTable(itemMap);
+      HMENU windows_menu = NULL;
+
+      // Reset the tags...
+      menu_tag = 100;
+
+      // if the map is initialized, free it.
+      if (itemMap != nil)
+        {
+          NSFreeMapTable(itemMap);
+        }
+
+      // Create the map
+      itemMap = NSCreateMapTable(NSIntMapKeyCallBacks,
+               NSObjectMapValueCallBacks, 50);
+
+      // Recursively build the menu and set it on the window device.
+      windows_menu = r_build_menu([NSApp mainMenu], NO, NO);
+      SetMenu(win, windows_menu);
     }
-
-  // Create the map
-  itemMap = NSCreateMapTable(NSIntMapKeyCallBacks,
-			     NSObjectMapValueCallBacks, 50);
-
-  // Recursively build the menu and set it on the window device.
-  windows_menu = r_build_menu([NSApp mainMenu], NO, NO); 
-  SetMenu(win, windows_menu);
 }
 
 void delete_menu(HWND win)
 {
-  HMENU menu = GetMenu(win);
-  if(menu)
+  if (win != NULL)
     {
-      // Iterate over the menu bar and delete all items.
-//      while(DeleteMenu(menu, 0, MF_BYPOSITION));
-      
-      // Destroy the menu itself
-      DestroyMenu(menu);
+      HMENU menu = GetMenu(win);
+      if(menu)
+        {
+          // Iterate over the menu bar and delete all items.
+//          while(DeleteMenu(menu, 0, MF_BYPOSITION));
+          
+          // Destroy the menu itself
+          DestroyMenu(menu);
+        }
     }
 }
 
 @implementation WinUXTheme (NSMenu)
 - (void) updateMenu: (NSMenu *)menu
-	  forWindow: (NSWindow *)window
+          forWindow: (NSWindow *)window
 {
-  if(menu != nil && window != nil)
+  if(menu != nil && window != nil && [window windowNumber] != nil)
     {
       HWND win = (HWND)[window windowNumber];
       GSWindowDecorationView *wv = [window windowView];
@@ -358,14 +364,14 @@ void delete_menu(HWND win)
       build_menu(win);
 
       if(![wv hasMenu])
-	{
-	  float h = 0.0;
-	  
-	  [window _setMenu: menu];
-	  h = [self menuHeightForWindow: window];      
-	  [wv setHasMenu: YES];
-	  [wv changeWindowHeight: h]; 
-	}
+        {
+          float h = 0.0;
+          
+          [window _setMenu: menu];
+          h = [self menuHeightForWindow: window];
+          [wv setHasMenu: YES];
+          [wv changeWindowHeight: h];
+        }
     }
 }
 
@@ -375,7 +381,7 @@ void delete_menu(HWND win)
   if(menu != nil && window != nil)
     {
       [self updateMenu: menu
-	     forWindow: window];
+             forWindow: window];
     }
 }
 
@@ -457,7 +463,7 @@ void delete_menu(HWND win)
 - (void) rightMouseDisplay: (NSMenu *)menu
                   forEvent: (NSEvent *)theEvent
 {
-  NSWindow *mainWin = [theEvent window];
+  NSWindow *mainWin = ([theEvent window] ? [theEvent window] : [NSApp mainWindow]);
   NSWindow *keyWin  = [NSApp keyWindow];
   NSWindow *theWin  = ((mainWin == nil) ? keyWin : mainWin);
   NSPoint   point   = [theWin convertBaseToScreen: [theEvent locationInWindow]];
