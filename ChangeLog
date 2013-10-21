@@ -1,3 +1,8 @@
+2013-10-20 21:02-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* GNUmakefile: Correct issue with image loading. Copy the theme
+	images directory properly.
+
 2013-01-16  Doug Simons  <doug.simons@testplant.com>
 
 	* WinNSMenu.m: Fix rightMouseDisplay:forEvent: to work correctly when called
