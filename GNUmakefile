@@ -62,6 +62,7 @@ WinUXTheme_OBJC_FILES = \
 #
 WinUXTheme_RESOURCE_FILES = \
 Resources/WinTheme.png \
+Resources/winUX_preview_128.tiff \
 Resources/ThemeImages
 
 include $(GNUSTEP_MAKEFILES)/bundle.make

@@ -9,6 +9,7 @@
   );
   GSThemeDetails = "Windows native UX theme";
   GSThemeIcon = WinTheme.png;
+  GSThemePreview = winUX_preview_128.tiff;
   GSThemeDomain = {
 	GSBackHandlesWindowDecorations = YES;
 	NSMenuInterfaceStyle = NSWindows95InterfaceStyle;
