@@ -32,6 +32,10 @@
 #import <windows.h>
 #import "WinUXTheme.h"
 
+@interface NSDocumentController (WinUXTheme)
+- (NSArray *) _openableFileExtensions;
+@end
+
 // Flag to indicate that a folder was selected.
 #define FOLDER_SELECTED 0xFFFFFFFF
 
@@ -111,28 +115,73 @@ unichar *filter_string_from_types(NSArray *types)
       return L"All (*.*)\0*.*\0";
     }
 
-  NSMutableSet *set = [NSMutableSet set];
-  NSEnumerator *en = nil;
+  int x = 0;
   id type = nil;
+  NSArray *typeExts = nil;
+  NSEnumerator *en = nil;
+  NSString *str = nil;
   NSDocumentController *dc = [NSDocumentController sharedDocumentController];
   NSMutableString *filterString = [NSMutableString string];
-  NSMutableString *typesString = [NSMutableString string];
+  NSMutableArray *names = [NSMutableArray array];
+  NSMutableArray *exts = [NSMutableArray array];
 
-  [set addObjectsFromArray: types];
-  en = [set objectEnumerator];
-
-  // build the string..
-  while((type = [en nextObject]) != nil)
+  // Add one entry for all types (only for Open panels).
+  if ([[types objectAtIndex: 0] isEqualToString: @"All"])
     {
-	  [filterString appendFormat:@"%@ (*.%@),", [dc displayNameForType: type],
-        type];
-	  [typesString appendFormat: @"*.%@;",type];
+      NSMutableArray *data = [NSMutableArray array];
+
+      for (x = 1; x < [types count]; x++)
+	{
+	  if (![data containsObject: [types objectAtIndex: x]])
+	    {
+	      [data addObject: [types objectAtIndex: x]];
+	    }
+	}
+
+      [names addObject: @"All"];
+      [exts addObject: data];
     }
-  [filterString replaceCharactersInRange:NSMakeRange([filterString length]-1,1)
-    withString:@"+"];
-  [filterString appendString:typesString];
-  [filterString replaceCharactersInRange:NSMakeRange([filterString length]-1,1) 
-    withString:@"+"];
+
+  en = [types objectEnumerator];
+
+  // Get the names and the corresponding extensions
+  while ((type = [en nextObject]))
+    {
+      if ([type isEqualToString: @"All"])
+	continue;
+
+      str = [dc typeFromFileExtension: type];
+      if (![names containsObject: [dc displayNameForType: str]])
+        {
+	  NSMutableArray *data = [NSMutableArray array];
+
+	  typeExts = [dc fileExtensionsFromType: str];
+
+	  for (x = 0; x < [typeExts count]; x++)
+	    {
+	      if (![data containsObject: [typeExts objectAtIndex: x]])
+		{
+		  [data addObject: [typeExts objectAtIndex: x]];
+		}
+	    }
+
+          [names addObject: [dc displayNameForType: str]];
+          [exts addObject: data];
+        }
+    }
+
+  // Build the string, adding one entry for each type
+  x = 0;
+  en = [names objectEnumerator];
+  while((type = [en nextObject]) != nil)
+    { 
+      [filterString appendFormat:@"%@ (*.%@)+*.%@+",
+                    type,
+                    [[exts objectAtIndex: x] componentsJoinedByString: @"; *."],
+                    [[exts objectAtIndex: x] componentsJoinedByString: @";*."]];
+
+      x++;
+    }
 
   // Add the nulls...
   unichar *fs = (unichar *)[filterString cStringUsingEncoding: 
@@ -282,9 +331,8 @@ static void _purgeEvents()
   BOOL flag = YES;
   int result = NSOKButton;
   NSDocumentController *dc = [NSDocumentController sharedDocumentController];
-  NSArray *extensionsForDefaultType = [dc fileExtensionsFromType: [dc defaultType]];
-  NSMutableSet *typeset = [NSMutableSet set];
-  NSArray *types = nil; 
+
+  NSArray *types = nil;
 
   // Arbitrary Folder Browser (not with explicit extension) is a different call in Windows Land
   if ([self canChooseDirectories] && ![self canChooseFiles]) 
@@ -311,20 +359,16 @@ static void _purgeEvents()
     return result;
   }
 
-  [typeset addObjectsFromArray: fileTypes];
-  types = [typeset allObjects];
+  if ([dc _openableFileExtensions] != nil)
+    {
+      types = [NSArray arrayWithObject: @"All"];
+      types = [types arrayByAddingObjectsFromArray: [dc _openableFileExtensions]];
+    }
 
   ofn.hwndOwner = (HWND)[window windowNumber];
   ofn.lpstrFilter = (unichar *)filter_string_from_types(types);
   ofn.nFilterIndex = 0;
-  if ([extensionsForDefaultType count] > 0)
-  {
-  	NSUInteger defaultIndex = [types indexOfObject: [extensionsForDefaultType objectAtIndex: 0]];
-  	if (defaultIndex !=  NSNotFound)
-  	{
-  		ofn.nFilterIndex = defaultIndex + 1;
-  	}
-  }
+
 	ofn.lpstrTitle = (unichar *)[[self title] cStringUsingEncoding: NSUnicodeStringEncoding];
 	if ([name length])
   {
@@ -464,28 +508,51 @@ static void _purgeEvents()
 		       types: (NSArray *)fileTypes
 	    relativeToWindow: (NSWindow*)window
 {
+  NSUInteger i, j;
   BOOL flag = YES;
   int result = NSOKButton;
   NSDocumentController *dc = [NSDocumentController sharedDocumentController];
-  NSArray *extensionsForDefaultType = [dc fileExtensionsFromType: [dc defaultType]];
-  NSMutableSet *typeset = [NSMutableSet set];
-  NSArray *types = nil; 
+  NSDocument *doc = [dc currentDocument];
+  NSArray *types = nil, *names, *exts;
+  NSMutableArray *tps= [NSMutableArray array];
 
-  [typeset addObjectsFromArray: fileTypes];
-  types = [typeset allObjects];
+  // Get all writable types, not only the current type. For the case when
+  // the user wants change the format of the file
+  if ([[self title] isEqualToString: _(@"Save As")])
+    {
+      names = [doc writableTypesForSaveOperation: NSSaveAsOperation];
+    }
+  else if ([[self title] isEqualToString: _(@"Save To")])
+    {
+      names = [doc writableTypesForSaveOperation: NSSaveToOperation];
+    }
+  else
+    {
+      names = [doc writableTypesForSaveOperation: NSSaveOperation];
+    }
+
+
+  for (i = 0; i < [names count]; i++)
+    {
+      exts = [dc fileExtensionsFromType: [names objectAtIndex: i]];
+
+      for (j = 0; j < [exts count]; j++)
+        {
+          if (![tps containsObject: [exts objectAtIndex: j]])
+            {
+              [tps addObject: [exts objectAtIndex: j]];
+            }
+        }
+    }
+  types = [NSArray arrayWithArray: tps];
+
 
   ofn.hwndOwner = (HWND)[window windowNumber];
   
   ofn.lpstrFilter = (unichar *)filter_string_from_types(types);
-  ofn.nFilterIndex = 0;
-  if ([extensionsForDefaultType count] > 0)
-  {
-  	NSUInteger defaultIndex = [types indexOfObject: [extensionsForDefaultType objectAtIndex: 0]];
-  	if (defaultIndex !=  NSNotFound)
-  	{
-  		ofn.nFilterIndex = defaultIndex + 1;
-  	}
-  }
+  // Select the current type
+  ofn.nFilterIndex = [types indexOfObject: [fileTypes objectAtIndex: 0]];
+
   ofn.lpstrTitle = (unichar *)[[self title] cStringUsingEncoding: NSUnicodeStringEncoding];
   if ([name length]) {
     NSString *file = [name lastPathComponent];
