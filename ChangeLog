@@ -1,3 +1,8 @@
+2014-02-24 German Arias <germanandre@gmx.es>
+
+	* WinNSOpenPanel.m: Fix value of nFilterIndex in Open and Save panel.
+	And add the hack to save a document with the selected format.
+
 2014-02-23 German Arias <germanandre@gmx.es>
 
 	* WinNSOpenPanel.m: Changes to allow panel "Open" showing one entry for

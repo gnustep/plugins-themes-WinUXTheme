@@ -36,6 +36,10 @@
 - (NSArray *) _openableFileExtensions;
 @end
 
+@interface NSDocument (WinUXTheme)
+- (IBAction) changeSaveType: (id)sender;
+@end
+
 // Flag to indicate that a folder was selected.
 #define FOLDER_SELECTED 0xFFFFFFFF
 
@@ -367,7 +371,7 @@ static void _purgeEvents()
 
   ofn.hwndOwner = (HWND)[window windowNumber];
   ofn.lpstrFilter = (unichar *)filter_string_from_types(types);
-  ofn.nFilterIndex = 0;
+  ofn.nFilterIndex = 1;
 
 	ofn.lpstrTitle = (unichar *)[[self title] cStringUsingEncoding: NSUnicodeStringEncoding];
 	if ([name length])
@@ -551,7 +555,7 @@ static void _purgeEvents()
   
   ofn.lpstrFilter = (unichar *)filter_string_from_types(types);
   // Select the current type
-  ofn.nFilterIndex = [types indexOfObject: [fileTypes objectAtIndex: 0]];
+  ofn.nFilterIndex = [types indexOfObject: [fileTypes objectAtIndex: 0]] + 1;
 
   ofn.lpstrTitle = (unichar *)[[self title] cStringUsingEncoding: NSUnicodeStringEncoding];
   if ([name length]) {
@@ -587,6 +591,14 @@ static void _purgeEvents()
       NSArray *files = [NSArray arrayWithArray:			     
 				  array_from_filenames(ofn.lpstrFile,
 						       ofn.nFileOffset)];
+      NSPopUpButton *popup = [NSPopUpButton new];
+
+      [popup addItemWithTitle: @"None"];
+      [[popup itemAtIndex: 0] setRepresentedObject:
+			 [dc typeFromFileExtension:
+			       [types objectAtIndex: ofn.nFilterIndex - 1]]];
+      [popup selectItemAtIndex: 0];
+      [doc changeSaveType: [popup autorelease]];
  
       if([files count] > 0)
 	{
