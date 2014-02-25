@@ -1,3 +1,7 @@
+2014-02-25 Doug Simons  <doug.simons@testplant.com>
+
+	* WinNSOpenPanel.m: Fix previous changes to work again with fileTypes passed in.
+
 2014-02-24 German Arias <germanandre@gmx.es>
 
 	* WinNSOpenPanel.m: Fix value of nFilterIndex in Open and Save panel.

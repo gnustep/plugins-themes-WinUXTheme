@@ -128,6 +128,7 @@ unichar *filter_string_from_types(NSArray *types)
   NSMutableString *filterString = [NSMutableString string];
   NSMutableArray *names = [NSMutableArray array];
   NSMutableArray *exts = [NSMutableArray array];
+  NSMutableArray *nonDocumentExts = nil;
 
   // Add one entry for all types (only for Open panels).
   if ([[types objectAtIndex: 0] isEqualToString: @"All"])
@@ -155,6 +156,8 @@ unichar *filter_string_from_types(NSArray *types)
 	continue;
 
       str = [dc typeFromFileExtension: type];
+	  if (str != nil)
+	    {
       if (![names containsObject: [dc displayNameForType: str]])
         {
 	  NSMutableArray *data = [NSMutableArray array];
@@ -172,6 +175,19 @@ unichar *filter_string_from_types(NSArray *types)
           [names addObject: [dc displayNameForType: str]];
           [exts addObject: data];
         }
+	    }
+	  else
+	    {
+		  if (!nonDocumentExts)
+		    {
+			  nonDocumentExts = [NSMutableArray array];
+		      [names addObject: @""];
+			  [exts addObject: nonDocumentExts];
+			}
+		  [nonDocumentExts addObject:type];
+		  [names addObject:type];
+		  [exts addObject:[NSArray arrayWithObject:type]];
+		}
     }
 
   // Build the string, adding one entry for each type
@@ -363,7 +379,11 @@ static void _purgeEvents()
     return result;
   }
 
-  if ([dc _openableFileExtensions] != nil)
+  if (fileTypes != nil)
+    {
+	  types = fileTypes;
+	}
+  else if ([dc _openableFileExtensions] != nil)
     {
       types = [NSArray arrayWithObject: @"All"];
       types = [types arrayByAddingObjectsFromArray: [dc _openableFileExtensions]];
