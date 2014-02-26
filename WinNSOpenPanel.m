@@ -496,6 +496,7 @@ static void _purgeEvents()
       ofn.Flags = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY |
 	OFN_EXPLORER | OFN_ENABLEHOOK;
       ofn.lpfnHook = (void *)filepanel_dialog_hook;
+      ofn.lpstrCustomFilter = NULL;
     }
   return self;
 }
@@ -517,8 +518,8 @@ static void _purgeEvents()
   BOOL flag = YES;
   int result = NSOKButton;
   NSDocumentController *dc = [NSDocumentController sharedDocumentController];
-  NSDocument *doc;
-  NSArray *types = nil, *names, *exts;
+  NSDocument *doc = nil;
+  NSArray *types = nil, *names = nil, *exts = nil;
   NSMutableArray *tps= [NSMutableArray array];
 
   // Get a valid document
@@ -526,7 +527,7 @@ static void _purgeEvents()
     {
       doc  = [dc currentDocument];
     }
-  else
+  else if ([[dc documents] count])
     {
       doc = [[dc documents] objectAtIndex: 0];
     }
@@ -546,7 +547,6 @@ static void _purgeEvents()
       names = [doc writableTypesForSaveOperation: NSSaveOperation];
     }
 
-
   for (i = 0; i < [names count]; i++)
     {
       exts = [dc fileExtensionsFromType: [names objectAtIndex: i]];
@@ -559,15 +559,25 @@ static void _purgeEvents()
             }
         }
     }
+  
+  // Check for presence of fileTypes and add if necessary...
+  for (i = 0; i < [fileTypes count]; ++i)
+  {
+    if ([tps indexOfObject:[fileTypes objectAtIndex:i]] == NSNotFound)
+      [tps addObject:[fileTypes objectAtIndex:i]];
+  }
   types = [NSArray arrayWithArray: tps];
 
 
   ofn.hwndOwner = (HWND)[window windowNumber];
   
   ofn.lpstrFilter = (unichar *)filter_string_from_types(types);
-  // Select the current type
-  ofn.nFilterIndex = [types indexOfObject: [fileTypes objectAtIndex: 0]] + 1;
-
+  
+  // Select the current type - '0' indicates use first one defined in 'lpstrFilter' list...
+  // This will be the 'All' case ONLY if types has no entries...
+  ofn.nFilterIndex = 0;
+  
+  // Setup the initial title...
   ofn.lpstrTitle = (unichar *)[[self title] cStringUsingEncoding: NSUnicodeStringEncoding];
   if ([name length]) {
     NSString *file = [name lastPathComponent];
