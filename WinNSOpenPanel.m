@@ -32,10 +32,6 @@
 #import <windows.h>
 #import "WinUXTheme.h"
 
-@interface NSDocumentController (WinUXTheme)
-- (NSArray *) _openableFileExtensions;
-@end
-
 @interface NSDocument (WinUXTheme)
 - (IBAction) changeSaveType: (id)sender;
 @end
@@ -114,7 +110,8 @@ UINT_PTR CALLBACK filepanel_dialog_hook(HWND win,
  */
 unichar *filter_string_from_types(NSArray *types)
 {
-  if(types == nil || [types count] == 0)
+  if(types == nil || [types count] == 0 ||
+     ([types count] == 1 && [[types objectAtIndex: 0] isEqualToString: @"All"]))
     {
       return L"All (*.*)\0*.*\0";
     }
@@ -128,7 +125,6 @@ unichar *filter_string_from_types(NSArray *types)
   NSMutableString *filterString = [NSMutableString string];
   NSMutableArray *names = [NSMutableArray array];
   NSMutableArray *exts = [NSMutableArray array];
-  NSMutableArray *nonDocumentExts = nil;
 
   // Add one entry for all types (only for Open panels).
   if ([[types objectAtIndex: 0] isEqualToString: @"All"])
@@ -178,16 +174,9 @@ unichar *filter_string_from_types(NSArray *types)
 	    }
 	  else
 	    {
-		  if (!nonDocumentExts)
-		    {
-			  nonDocumentExts = [NSMutableArray array];
-		      [names addObject: @""];
-			  [exts addObject: nonDocumentExts];
-			}
-		  [nonDocumentExts addObject:type];
-		  [names addObject:type];
-		  [exts addObject:[NSArray arrayWithObject:type]];
-		}
+	      [names addObject: type];
+	      [exts addObject: [NSArray arrayWithObject: type]];
+	    }
     }
 
   // Build the string, adding one entry for each type
@@ -350,7 +339,6 @@ static void _purgeEvents()
 {
   BOOL flag = YES;
   int result = NSOKButton;
-  NSDocumentController *dc = [NSDocumentController sharedDocumentController];
 
   NSArray *types = nil;
 
@@ -379,15 +367,8 @@ static void _purgeEvents()
     return result;
   }
 
-  if (fileTypes != nil)
-    {
-	  types = fileTypes;
-	}
-  else if ([dc _openableFileExtensions] != nil)
-    {
-      types = [NSArray arrayWithObject: @"All"];
-      types = [types arrayByAddingObjectsFromArray: [dc _openableFileExtensions]];
-    }
+  types = [NSArray arrayWithObject: @"All"];
+  types = [types arrayByAddingObjectsFromArray: fileTypes];
 
   ofn.hwndOwner = (HWND)[window windowNumber];
   ofn.lpstrFilter = (unichar *)filter_string_from_types(types);
@@ -536,9 +517,19 @@ static void _purgeEvents()
   BOOL flag = YES;
   int result = NSOKButton;
   NSDocumentController *dc = [NSDocumentController sharedDocumentController];
-  NSDocument *doc = [dc currentDocument];
+  NSDocument *doc;
   NSArray *types = nil, *names, *exts;
   NSMutableArray *tps= [NSMutableArray array];
+
+  // Get a valid document
+  if ([dc currentDocument] != nil)
+    {
+      doc  = [dc currentDocument];
+    }
+  else
+    {
+      doc = [[dc documents] objectAtIndex: 0];
+    }
 
   // Get all writable types, not only the current type. For the case when
   // the user wants change the format of the file

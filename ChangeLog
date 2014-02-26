@@ -1,3 +1,8 @@
+2014-02-25 German Arias <germanandre@gmx.es>
+
+	* WinNSOpenPanel.m: Rearrange the code in last commit. And add a better
+	solution to get a valid document.
+
 2014-02-25 Doug Simons  <doug.simons@testplant.com>
 
 	* WinNSOpenPanel.m: Fix previous changes to work again with fileTypes passed in.
