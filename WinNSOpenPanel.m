@@ -367,8 +367,13 @@ static void _purgeEvents()
     return result;
   }
 
-  types = [NSArray arrayWithObject: @"All"];
-  types = [types arrayByAddingObjectsFromArray: fileTypes];
+  if ([fileTypes count] > 1)
+    {
+      types = [NSArray arrayWithObject: @"All"];
+      types = [types arrayByAddingObjectsFromArray: fileTypes];
+    }
+  else
+    types = fileTypes;
 
   ofn.hwndOwner = (HWND)[window windowNumber];
   ofn.lpstrFilter = (unichar *)filter_string_from_types(types);

@@ -1,3 +1,7 @@
+2014-02-26 Doug Simons  <doug.simons@testplant.com>
+
+	* WinNSOpenPanel.m: Tweak to omit "All" when only one file type is allowed.
+
 2014-02-25 German Arias <germanandre@gmx.es>
 
 	* WinNSOpenPanel.m: Rearrange the code in last commit. And add a better
