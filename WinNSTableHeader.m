@@ -33,6 +33,38 @@
                       inView: (NSView *)controlView
                        state: (GSThemeControlState)state
 {  
+  // If the scroll view/table view is within a sub-view that is smaller than the window
+  // itself we need to be careful when drawing on MSWindows with the WinUXTheme (or any theme
+  // using the DC directly on MSWindows).  The HDC is for the ENTIRE window, and direct
+  // writes to the HDC could write OUTSIDE of the view that the table is in, overlapping
+  // onto areas outside...
+  NSTableHeaderView *headerView = (NSTableHeaderView*)controlView;
+  NSTableView       *tableView  = [headerView tableView];
+  
+  if (tableView)
+    {
+      NSClipView *clipView = (NSClipView*)[tableView superview];
+      
+      if (clipView != nil)
+        {
+          NSRect clipFrame = [clipView documentVisibleRect];
+          CGFloat maxWidth = NSMaxX(clipFrame);
+          
+          // If outside the boundaries of the table view's super (clip) view...
+          if (cellFrame.origin.x > maxWidth)
+            return;
+          
+          // Do not exceed the bounds of the clip view...
+          if (NSMaxX(cellFrame) > maxWidth)
+          {
+            cellFrame.size.width = maxWidth - cellFrame.origin.x;
+#if 0
+            NSLog(@"%s:clipping: %@", __PRETTY_FUNCTION__, NSStringFromRect(cellFrame));
+#endif
+          }
+        }
+    }
+  
   if(!IsThemeActive())
     {
       [super drawTableHeaderCell: cell
@@ -58,7 +90,7 @@
       drawState = HIS_NORMAL;
       break;
     }
-
+    
   hTheme = [self themeWithClassName: @"header"];
   if (![self drawThemeBackground: hTheme
 			  inRect: cellFrame
