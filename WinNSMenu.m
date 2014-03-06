@@ -355,7 +355,7 @@ void delete_menu(HWND win)
 - (void) updateMenu: (NSMenu *)menu
           forWindow: (NSWindow *)window
 {
-  if(menu != nil && window != nil && [window windowNumber] != nil)
+  if(menu != nil && window != nil && [window windowNumber] != 0)
     {
       HWND win = (HWND)[window windowNumber];
       GSWindowDecorationView *wv = [window windowView];
