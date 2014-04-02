@@ -1,3 +1,8 @@
+2014-04-01 German Arias <germanandre@gmx.es>
+
+	* WinNSOpenPanel.m: Implement -nameFieldStringValue
+	and -setNameFieldStringValue:.
+
 2014-02-26 Doug Simons  <doug.simons@testplant.com>
 
 	* WinNSOpenPanel.m: Tweak to omit "All" when only one file type is allowed.

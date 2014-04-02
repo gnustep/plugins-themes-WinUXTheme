@@ -263,6 +263,17 @@ static void _purgeEvents()
     ; // do nothing, just discard events
 }
 
+unsigned long long unilen(unichar *chars)
+{
+  unsigned long long length = 0;
+  if(NULL == chars) return length;
+
+  while(NULL != chars[length])
+    length++;
+
+  return length;
+}
+
 @interface WinNSOpenPanel : NSOpenPanel
 {
   unichar szFile[1024];
@@ -512,6 +523,17 @@ static void _purgeEvents()
 {
   ASSIGN(_fullFileName, filename);
   return [super filename];
+}
+
+- (NSString *) nameFieldStringValue
+{
+  return [[NSString stringWithCharacters: szFile
+				  length: unilen(szFile)] lastPathComponent];
+}
+
+- (void) setNameFieldStringValue: (NSString*)value
+{
+  wcscpy(szFile, (const unichar *)[value cStringUsingEncoding: NSUnicodeStringEncoding]);
 }
 
 - (int) runModalForDirectory: (NSString *)path
