@@ -150,35 +150,35 @@ unichar *filter_string_from_types(NSArray *types)
     {
       if ([type isEqualToString: @"All"])
 	continue;
-
+      
       str = [dc typeFromFileExtension: type];
-	  if (str != nil)
+      if (str != nil)
+	{
+	  if (![names containsObject: [dc displayNameForType: str]])
 	    {
-      if (![names containsObject: [dc displayNameForType: str]])
-        {
-	  NSMutableArray *data = [NSMutableArray array];
-
-	  typeExts = [dc fileExtensionsFromType: str];
-
-	  for (x = 0; x < [typeExts count]; x++)
-	    {
-	      if (![data containsObject: [typeExts objectAtIndex: x]])
+	      NSMutableArray *data = [NSMutableArray array];
+	      
+	      typeExts = [dc fileExtensionsFromType: str];
+	      
+	      for (x = 0; x < [typeExts count]; x++)
 		{
-		  [data addObject: [typeExts objectAtIndex: x]];
+		  if (![data containsObject: [typeExts objectAtIndex: x]])
+		    {
+		      [data addObject: [typeExts objectAtIndex: x]];
+		    }
 		}
+	      
+	      [names addObject: [dc displayNameForType: str]];
+	      [exts addObject: data];
 	    }
-
-          [names addObject: [dc displayNameForType: str]];
-          [exts addObject: data];
-        }
-	    }
-	  else
-	    {
-	      [names addObject: type];
-	      [exts addObject: [NSArray arrayWithObject: type]];
-	    }
+	}
+      else
+	{
+	  [names addObject: type];
+	  [exts addObject: [NSArray arrayWithObject: type]];
+	}
     }
-
+  
   // Build the string, adding one entry for each type
   x = 0;
   en = [names objectEnumerator];
@@ -186,12 +186,12 @@ unichar *filter_string_from_types(NSArray *types)
     { 
       [filterString appendFormat:@"%@ (*.%@)+*.%@+",
                     type,
-                    [[exts objectAtIndex: x] componentsJoinedByString: @"; *."],
-                    [[exts objectAtIndex: x] componentsJoinedByString: @";*."]];
-
+	    [[exts objectAtIndex: x] componentsJoinedByString: @"; *."],
+	    [[exts objectAtIndex: x] componentsJoinedByString: @";*."]];
+      
       x++;
     }
-
+  
   // Add the nulls...
   unichar *fs = (unichar *)[filterString cStringUsingEncoding: 
 					   NSUnicodeStringEncoding];
@@ -204,7 +204,7 @@ unichar *filter_string_from_types(NSArray *types)
 	  fs[i] = '\0';
 	}
     }
-
+  
   return fs;
 }
 
