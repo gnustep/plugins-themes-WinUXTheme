@@ -299,6 +299,7 @@ unsigned long long unilen(unichar *chars)
   if((self = [super init]) != nil)
     {
       // Initial values for OPENFILENAMEW structure
+      memset(&ofn, 0, sizeof(ofn));
       ofn.lStructSize = sizeof(ofn);
       ofn.lpstrFile = szFile;
       ofn.lpstrFile[0] = '\0';
