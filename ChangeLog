@@ -1,3 +1,8 @@
+2014-09-10 Riccardo Mottola <rm@gnu.org>
+
+	* WinUXTheme.h (GSScreenPointToMS)
+	Align function to win32 backend version which considers system metrics.
+
 2014-04-01 German Arias <germanandre@gmx.es>
 
 	* WinNSOpenPanel.m: Implement -nameFieldStringValue
