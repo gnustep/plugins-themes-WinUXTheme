@@ -48,7 +48,7 @@ UINT_PTR CALLBACK filepanel_dialog_hook(HWND win,
 					LPARAM lp)
 {
   static BOOL didFolderChange;
-
+  
   if(msg == WM_INITDIALOG)
     { 
       didFolderChange = NO;
@@ -84,7 +84,7 @@ UINT_PTR CALLBACK filepanel_dialog_hook(HWND win,
 		      // Indicate that a folder was selected and
 		      // set it's name in the file section.
 		      ofnw->lpOFN->lCustData = FOLDER_SELECTED;
-			  ofnw->lpOFN->nFileOffset = 0; // Reset the fileOffset to the begining
+		      ofnw->lpOFN->nFileOffset = 0; // Reset the fileOffset to the begining
 		      wcscpy(ofnw->lpOFN->lpstrFile, foldername);
 		      
 		      // If we're opening a folder, then close and
@@ -95,13 +95,11 @@ UINT_PTR CALLBACK filepanel_dialog_hook(HWND win,
 				  0);
 		    }
 		}	      
-	    }
-
+	    }	  
 	  didFolderChange = YES;
 	}
       return (UINT_PTR)TRUE;
-    }
-
+    } 
   return (UINT_PTR)FALSE;
 }
 
@@ -115,7 +113,7 @@ unichar *filter_string_from_types(NSArray *types)
     {
       return L"All (*.*)\0*.*\0";
     }
-
+  
   int x = 0;
   id type = nil;
   NSArray *typeExts = nil;
@@ -125,27 +123,25 @@ unichar *filter_string_from_types(NSArray *types)
   NSMutableString *filterString = [NSMutableString string];
   NSMutableArray *names = [NSMutableArray array];
   NSMutableArray *exts = [NSMutableArray array];
-
+  
   // Add one entry for all types (only for Open panels).
   if ([[types objectAtIndex: 0] isEqualToString: @"All"])
     {
       NSMutableArray *data = [NSMutableArray array];
-
+      
       for (x = 1; x < [types count]; x++)
 	{
 	  if (![data containsObject: [types objectAtIndex: x]])
 	    {
 	      [data addObject: [types objectAtIndex: x]];
 	    }
-	}
-
+	}    
       [names addObject: @"All"];
       [exts addObject: data];
     }
-
-  en = [types objectEnumerator];
-
+  
   // Get the names and the corresponding extensions
+  en = [types objectEnumerator];
   while ((type = [en nextObject]))
     {
       if ([type isEqualToString: @"All"])
@@ -213,7 +209,7 @@ unichar *filter_string_from_types(NSArray *types)
  * string returned by windows.
  */
 NSMutableArray *array_from_filenames(unichar *filename_list,
-				   unsigned int initial_offset)
+				     unsigned int initial_offset)
 {
   unsigned int len = wcslen(filename_list);
   unsigned int offset = initial_offset;
@@ -223,10 +219,10 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
   
   if(offset < [file length])
     {
-	  file = [file stringByStandardizingPath];
-	  file = [file mutableCopy];
+      file = [file stringByStandardizingPath];
+      file = [file mutableCopy];
       [(NSMutableString *)file replaceOccurrencesOfString:@"\\" 
-	    withString:@"/" options: 0 range:NSMakeRange(0, [file length])];
+					       withString:@"/" options: 0 range:NSMakeRange(0, [file length])];
       [filenames addObject: file];
     }
   else
@@ -234,12 +230,12 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
       while([file length] > 0)
 	{
 	  unichar *fn = filename_list + offset; // next filename...
-
+	  
 	  file = [[NSString stringWithCharacters: fn length: wcslen(fn)]
 		   stringByStandardizingPath];
 	  file = [file mutableCopy];
-      [(NSMutableString *)file replaceOccurrencesOfString:@"\\" 
-      withString:@"/" options: 0 range:NSMakeRange(0, [file length])];
+	  [(NSMutableString *)file replaceOccurrencesOfString:@"\\" 
+						   withString:@"/" options: 0 range:NSMakeRange(0, [file length])];
 	  if([file length] > 0)
 	    {
 	      [filenames addObject: file];
@@ -247,7 +243,7 @@ NSMutableArray *array_from_filenames(unichar *filename_list,
 	    }
 	}
     }
-
+  
   return filenames;
 }
 
@@ -257,9 +253,9 @@ static void _purgeEvents()
   // to arrive from the backend.
   NSDate *nearFuture = [NSDate dateWithTimeIntervalSinceNow:0.1];
   while (([NSApp nextEventMatchingMask: NSAnyEventMask
-			untilDate: nearFuture
-			inMode: NSDefaultRunLoopMode
-			dequeue: YES]) != nil)
+			     untilDate: nearFuture
+				inMode: NSDefaultRunLoopMode
+			       dequeue: YES]) != nil)
     ; // do nothing, just discard events
 }
 
@@ -267,10 +263,10 @@ unsigned long long unilen(unichar *chars)
 {
   unsigned long long length = 0;
   if(NULL == chars) return length;
-
+  
   while(NULL != chars[length])
     length++;
-
+  
   return length;
 }
 
@@ -310,7 +306,7 @@ unsigned long long unilen(unichar *chars)
       ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY |
 	OFN_EXPLORER | OFN_ENABLEHOOK;
       ofn.lpfnHook = (void *)filepanel_dialog_hook;
-
+      
       // initialize filenames array
       filenames = [[NSMutableArray alloc] initWithCapacity: 10];
       
@@ -332,7 +328,7 @@ unsigned long long unilen(unichar *chars)
 }
 
 /** <p>Returns the absolute path of the file selected by the user.</p>
-*/
+ */
 - (NSString*) filename
 {
   ASSIGN(_fullFileName, filename);
@@ -351,34 +347,34 @@ unsigned long long unilen(unichar *chars)
 {
   BOOL flag = YES;
   int result = NSOKButton;
-
+  
   NSArray *types = nil;
-
+  
   // Arbitrary Folder Browser (not with explicit extension) is a different call in Windows Land
   if ([self canChooseDirectories] && ![self canChooseFiles]) 
-  {
-    LPITEMIDLIST pidl;
-    folderBrowser.hwndOwner = (HWND)[window windowNumber];
+    {
+      LPITEMIDLIST pidl;
+      folderBrowser.hwndOwner = (HWND)[window windowNumber];
       
-    pidl = SHBrowseForFolder(&folderBrowser);
-    if(pidl == NULL || !SHGetPathFromIDList(pidl,(LPSTR)szFile))
-    {
-      result = NSCancelButton;
+      pidl = SHBrowseForFolder(&folderBrowser);
+      if(pidl == NULL || !SHGetPathFromIDList(pidl,(LPSTR)szFile))
+	{
+	  result = NSCancelButton;
+	}
+      else
+	{
+	  NSString *file = [[NSString stringWithCString:(const char *) szFile encoding: NSUTF8StringEncoding]
+			     stringByStandardizingPath];
+	  file = [file stringByReplacingOccurrencesOfString:@"\\" withString:@"/"]; 
+	  ASSIGN(filenames, [NSArray arrayWithObject:file]);
+	  ASSIGN(filename, file);
+	  [self setDirectory: filename];
+	}
+      
+      _purgeEvents(); // remove any events that came through while panel was running
+      return result;
     }
-    else
-    {
-      NSString *file = [[NSString stringWithCString:(const char *) szFile encoding: NSUTF8StringEncoding]
-        stringByStandardizingPath];
-      file = [file stringByReplacingOccurrencesOfString:@"\\" withString:@"/"]; 
-      ASSIGN(filenames, [NSArray arrayWithObject:file]);
-      ASSIGN(filename, file);
-      [self setDirectory: filename];
-    }
-    
-	_purgeEvents(); // remove any events that came through while panel was running
-    return result;
-  }
-
+  
   if ([fileTypes count] > 1)
     {
       types = [NSArray arrayWithObject: @"All"];
@@ -386,42 +382,43 @@ unsigned long long unilen(unichar *chars)
     }
   else
     types = fileTypes;
-
+  
   ofn.hwndOwner = (HWND)[window windowNumber];
   ofn.lpstrFilter = (unichar *)filter_string_from_types(types);
   ofn.nFilterIndex = 1;
-
-	ofn.lpstrTitle = (unichar *)[[self title] cStringUsingEncoding: NSUnicodeStringEncoding];
-	if ([name length])
-  {
-    NSString *file = [name lastPathComponent];
-		wcscpy(szFile, (const unichar *) [file cStringUsingEncoding: NSUnicodeStringEncoding]);
-	}
-	else 
-  {
-		szFile[0] = '\0';
-	}
-
-	if ([path length]) 
-  { // Convert to Windows
-		path = [path stringByReplacingOccurrencesOfString:@"/" withString:@"\\"];
-		ofn.lpstrInitialDir = (unichar *)[path cStringUsingEncoding: NSUnicodeStringEncoding];
-	}
-	else {
-		ofn.lpstrInitialDir = NULL;
-	}
-	ofn.lCustData = (LPARAM)types;
-
-	// Turn on multiple selection, if it's requested.
-	if([self allowsMultipleSelection]) 
-  {
-		ofn.Flags |= OFN_ALLOWMULTISELECT;
+  
+  ofn.lpstrTitle = (unichar *)[[self title] cStringUsingEncoding: NSUnicodeStringEncoding];
+  if ([name length])
+    {
+      NSString *file = [name lastPathComponent];
+      wcscpy(szFile, (const unichar *) [file cStringUsingEncoding: NSUnicodeStringEncoding]);
+    }
+  else 
+    {
+      szFile[0] = '\0';
+    }
+  
+  if ([path length]) 
+    { // Convert to Windows
+      path = [path stringByReplacingOccurrencesOfString:@"/" withString:@"\\"];
+      ofn.lpstrInitialDir = (unichar *)[path cStringUsingEncoding: NSUnicodeStringEncoding];
+    }
+  else {
+    ofn.lpstrInitialDir = NULL;
   }
-	else {
-		ofn.Flags &= ~OFN_ALLOWMULTISELECT;
-	}
-
-	flag = GetOpenFileNameW(&ofn);
+  ofn.lCustData = (LPARAM)types;
+  
+  // Turn on multiple selection, if it's requested.
+  if([self allowsMultipleSelection]) 
+    {
+      ofn.Flags |= OFN_ALLOWMULTISELECT;
+    }
+  else 
+    {
+      ofn.Flags &= ~OFN_ALLOWMULTISELECT;
+    }
+  
+  flag = GetOpenFileNameW(&ofn);
   
   if(!flag && ofn.lCustData != FOLDER_SELECTED)
     {
@@ -433,19 +430,19 @@ unsigned long long unilen(unichar *chars)
       result = NSCancelButton;
     }
   else
-  {
-    NSArray *files = [NSArray arrayWithArray:			     
+    {
+      NSArray *files = [NSArray arrayWithArray:			     
 				  array_from_filenames(ofn.lpstrFile,
 						       ofn.nFileOffset)];
- 
-    if([files count] > 0)
-    {
-      ASSIGN(filenames, files);
-      ASSIGN(filename, [files objectAtIndex: 0]);
-      [self setDirectory: [filename stringByDeletingLastPathComponent]];
+      
+      if([files count] > 0)
+	{
+	  ASSIGN(filenames, files);
+	  ASSIGN(filename, [files objectAtIndex: 0]);
+	  [self setDirectory: [filename stringByDeletingLastPathComponent]];
+	}
     }
-  }
-
+  
   _purgeEvents(); // remove any events that came through while panel was running
   return result;
 }
@@ -485,10 +482,11 @@ unsigned long long unilen(unichar *chars)
 	modalForWindow:(NSWindow *)docWindow 
 	modalDelegate:(id)modalDelegate 
 	didEndSelector:(SEL)didEndSelector 
-	contextInfo:(void *)contextInfo {
-	int ret = [self runModalForDirectory: path file: name types: fileTypes relativeToWindow: docWindow];
-
-	if (modalDelegate && [modalDelegate respondsToSelector: didEndSelector]) {
+	contextInfo:(void *)contextInfo 
+{
+  int ret = [self runModalForDirectory: path file: name types: fileTypes relativeToWindow: docWindow]; 
+  if (modalDelegate && [modalDelegate respondsToSelector: didEndSelector])
+    {
       void (*didEnd)(id, SEL, id, int, void*);
       didEnd = (void (*)(id, SEL, id, int, void*))[modalDelegate methodForSelector: didEndSelector];
       didEnd(modalDelegate, didEndSelector, self, ret, contextInfo);
@@ -511,7 +509,7 @@ unsigned long long unilen(unichar *chars)
       ofn.nMaxFileTitle = 0;
       ofn.lpstrInitialDir = NULL;
       ofn.Flags = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY |
-	OFN_EXPLORER | OFN_ENABLEHOOK;
+        OFN_ENABLEHOOK;
       ofn.lpfnHook = (void *)filepanel_dialog_hook;
       ofn.lpstrCustomFilter = NULL;
     }
@@ -519,7 +517,7 @@ unsigned long long unilen(unichar *chars)
 }
 
 /** <p>Returns the absolute path of the file selected by the user.</p>
-*/
+ */
 - (NSString*) filename
 {
   ASSIGN(_fullFileName, filename);
