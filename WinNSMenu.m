@@ -236,11 +236,14 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopup, BOOL fakeItem, NSMapT
 	  NSMapInsert(itemMap, (const void *)s, item);
 	}
 
+      NSCharacterSet *functionKeyCharacterSet = [NSCharacterSet characterSetWithRange:NSMakeRange(NSF1FunctionKey, NSF35FunctionKey - NSF1FunctionKey)];
+	
       // Don't attempt to display special characters in the title bar
       if([[item keyEquivalent] length] > 0 &&
          ([[NSCharacterSet alphanumericCharacterSet] characterIsMember:[[item keyEquivalent] characterAtIndex:0]] ||
 		  [[NSCharacterSet punctuationCharacterSet] characterIsMember:[[item keyEquivalent] characterAtIndex:0]] ||
-		  [[NSCharacterSet symbolCharacterSet] characterIsMember:[[item keyEquivalent] characterAtIndex:0]] ))
+		  [[NSCharacterSet symbolCharacterSet] characterIsMember:[[item keyEquivalent] characterAtIndex:0]] ||
+		  [functionKeyCharacterSet characterIsMember:[[item keyEquivalent] characterAtIndex:0]]))
 	{
 	  NSString *modifier = @"";
 	  int mask = [item keyEquivalentModifierMask];
@@ -270,6 +273,11 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopup, BOOL fakeItem, NSMapT
 	      modifier = [[modifier stringByAppendingString: shiftMod]
 			   stringByAppendingString: @"+"];
 	      
+	    }
+
+	  if ([keyEquivalent characterAtIndex:0] >= NSF1FunctionKey && [keyEquivalent characterAtIndex:0] <= NSF35FunctionKey)
+	    {
+	      keyEquivalent = [NSString stringWithFormat:@"F%d", [keyEquivalent characterAtIndex:0] - NSF1FunctionKey + 1];
 	    }
 
 	  title = [NSString stringWithFormat: @"%@\t%@%@", 
