@@ -509,7 +509,7 @@ unsigned long long unilen(unichar *chars)
       ofn.nMaxFileTitle = 0;
       ofn.lpstrInitialDir = NULL;
       ofn.Flags = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY |
-        OFN_ENABLEHOOK;
+        OFN_EXPLORER | OFN_ENABLEHOOK;
       ofn.lpfnHook = (void *)filepanel_dialog_hook;
       ofn.lpstrCustomFilter = NULL;
     }
