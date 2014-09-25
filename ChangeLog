@@ -1,3 +1,8 @@
+2014-09-25 Riccardo Mottola <rm@gnu.org>
+
+	* WinNSOpenPanel.m
+	Initialize also the Save panel to explorer and initialize memory.
+
 2014-09-10 Riccardo Mottola <rm@gnu.org>
 
 	* WinUXTheme.h (GSScreenPointToMS)
