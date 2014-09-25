@@ -31,6 +31,8 @@
 #import "WinUXTheme.h"
 #import "WIN32VSImageRep.h"
 
+#include <Commctrl.h>
+
 static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
 {
   NSAffineTransform* ctm = [GSCurrentContext() GSCurrentCTM];
@@ -54,8 +56,17 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
 
 + (void) initialize
 {
+  INITCOMMONCONTROLSEX icc;
+
+  // Initialise common controls.
+  icc.dwSize = sizeof(icc);
+  icc.dwICC = ICC_WIN95_CLASSES;
+  InitCommonControlsEx(&icc);
+
   // Inserting WIN32VSImageRep class for themed images.
   [NSImageRep registerImageRepClass:[WIN32VSImageRep class]];
+
+
 }
 
 - (void) activate

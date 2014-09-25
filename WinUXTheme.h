@@ -29,6 +29,11 @@
 // Import Windows headers for theme management.
 #undef _WIN32_WINNT
 #define _WIN32_WINNT 0x0501 // Minimal target is Windows XP
+
+#ifndef _WIN32_IE
+#define _WIN32_IE    0x0401
+#endif
+
 #include <windows.h>
 #include <uxtheme.h>
 #include <tmschema.h>
