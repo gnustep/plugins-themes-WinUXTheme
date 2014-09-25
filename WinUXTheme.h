@@ -1,6 +1,6 @@
 /* WINUXTheme A native Windows XP theme for GNUstep
 
-   Copyright (C) 2009 Free Software Foundation, Inc.
+   Copyright (C) 2009-2014 Free Software Foundation, Inc.
 
    Written by: Fred Kiefer <FredKiefer@gmx.de>
    Date: October 2009

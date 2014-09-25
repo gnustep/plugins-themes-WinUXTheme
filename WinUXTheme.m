@@ -1,6 +1,6 @@
 /* WINUXTheme A native Windows XP theme for GNUstep
 
-   Copyright (C) 2009 Free Software Foundation, Inc.
+   Copyright (C) 2009-2014 Free Software Foundation, Inc.
 
    Written by: Fred Kiefer <FredKiefer@gmx.de>
                Riccardo Mottola <rmottola@users.sf.net>
@@ -27,9 +27,9 @@
 
 #import <AppKit/AppKit.h>
 #import <GNUstepGUI/GSDisplayServer.h>
+
 #import "WinUXTheme.h"
 #import "WIN32VSImageRep.h"
-
 
 static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
 {

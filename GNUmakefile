@@ -41,7 +41,7 @@ VERSION = 1
 
 WinUXTheme_INSTALL_DIR=$(GNUSTEP_LIBRARY)/Themes
 WinUXTheme_PRINCIPAL_CLASS = WinUXTheme
-ADDITIONAL_OBJC_LIBS=-luxtheme  
+ADDITIONAL_OBJC_LIBS=-luxtheme -lcomctl32
 
 WinUXTheme_OBJC_FILES = \
 		WinUXTheme.m \
