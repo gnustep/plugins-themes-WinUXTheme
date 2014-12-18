@@ -573,26 +573,32 @@ unsigned long long unilen(unichar *chars)
     {
       names = [doc writableTypesForSaveOperation: NSSaveOperation];
     }
-
-  for (i = 0; i < [names count]; i++)
+    
+  // Check for presence of fileTypes and add...
+  if ([fileTypes count] == 0)
     {
-      exts = [dc fileExtensionsFromType: [names objectAtIndex: i]];
-
-      for (j = 0; j < [exts count]; j++)
+      // fileTypes not specified, add from current documents allowed types
+      for (i = 0; i < [names count]; i++)
         {
-          if (![tps containsObject: [exts objectAtIndex: j]])
+          exts = [dc fileExtensionsFromType: [names objectAtIndex: i]];
+      
+          for (j = 0; j < [exts count]; j++)
             {
-              [tps addObject: [exts objectAtIndex: j]];
+              if (![tps containsObject: [exts objectAtIndex: j]])
+                {
+                  [tps addObject: [exts objectAtIndex: j]];
+                }
             }
         }
+    } 
+  else 
+    {
+      for (i = 0; i < [fileTypes count]; ++i)
+        {
+          if ([tps indexOfObject:[fileTypes objectAtIndex:i]] == NSNotFound)
+            [tps addObject:[fileTypes objectAtIndex:i]];
+        }
     }
-  
-  // Check for presence of fileTypes and add if necessary...
-  for (i = 0; i < [fileTypes count]; ++i)
-  {
-    if ([tps indexOfObject:[fileTypes objectAtIndex:i]] == NSNotFound)
-      [tps addObject:[fileTypes objectAtIndex:i]];
-  }
   types = [NSArray arrayWithArray: tps];
 
 

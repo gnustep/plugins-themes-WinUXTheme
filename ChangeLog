@@ -1,3 +1,8 @@
+2014-12-17 Paul Landers <paul.landers@testplant.com>
+
+    * WinNSOpenPanel.m: Setting the list of allowedFileTypes uses only those in the list. 
+    Otherwise, use the types for the valid document. 
+
 2014-09-25 Riccardo Mottola <rm@gnu.org>
 
 	* WinUXTheme.h
