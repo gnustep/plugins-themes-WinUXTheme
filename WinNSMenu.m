@@ -296,10 +296,10 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopup, BOOL fakeItem, NSMapT
 		    [[[NSString alloc] initWithCharacters: &ellipsis length: 1] autorelease]
 					       withString: @"..."];
 
-      // If it's enabled and not a seperator or a supermenu,
+      // If it's enabled and not a seperator or a supermenu (unless submenu is empty),
       // determine if it's enabled and set it's state accordingly.
       if([item isSeparatorItem] == NO &&
-	 [item hasSubmenu] == NO)
+	 ([item hasSubmenu] == NO || [[item submenu] numberOfItems] == 0) )
 	{
 	  flags |= ([item isEnabled]?MF_ENABLED:MF_GRAYED); // shouldn't this be :MF_GRAYED|MF_DISABLED ?
           if ([item state] == NSOnState)
