@@ -1,4 +1,4 @@
-2015-01-03 Gregory John Casamento <greg.casamento@gmail.com>
+2015-02-03 Gregory John Casamento <greg.casamento@gmail.com>
 
 	* GNUmakefile: Add new classes and headers
 	* GSWIN32PrintPanel.[hm]: New class to handle print panel for the
@@ -7,7 +7,7 @@
 	for the win32 theme.
 	* WinUXTheme.m: Add category to pass back the class to be instantiated
 	to the theme framework.
-	
+
 2015-1-8 Paul Landers <paul.landers@testplant.com>
 
 	* WinNSMenu.m: Allow a menu item with a submenu to be
