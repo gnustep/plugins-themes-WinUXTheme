@@ -55,7 +55,9 @@ WinUXTheme_OBJC_FILES = \
 		WinNSStepper.m \
 		WinNSProgressIndicator.m \
 		WinNSColorWell.m \
-		WinNSBrowserHeader.m
+		WinNSBrowserHeader.m \
+		GSWIN32PrintPanel.m \
+		GSWIN32PageLayout.m
 
 #
 # Resource files

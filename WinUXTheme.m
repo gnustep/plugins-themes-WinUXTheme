@@ -30,6 +30,8 @@
 
 #import "WinUXTheme.h"
 #import "WIN32VSImageRep.h"
+#import "GSWIN32PrintPanel.h"
+#import "GSWIN32PageLayout.h"
 
 #include <Commctrl.h>
 
@@ -242,3 +244,24 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
 @end
 
 
+
+@implementation GSTheme (PrintPanels)
+/**
+ * This method returns the print panel class needed by the
+ * native environment.
+ */
+- (Class) printPanelClass
+{
+  return [GSWIN32PrintPanel class];
+}
+
+/**
+ * This method returns the page layout class needed by the 
+ * native environment.
+ */
+- (Class) pageLayoutClass
+{
+  return [GSWIN32PageLayout class];
+}
+
+@end

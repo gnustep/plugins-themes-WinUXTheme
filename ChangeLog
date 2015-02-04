@@ -1,11 +1,23 @@
+2015-01-03 Gregory John Casamento <greg.casamento@gmail.com>
+
+	* GNUmakefile: Add new classes and headers
+	* GSWIN32PrintPanel.[hm]: New class to handle print panel for the
+	win32 theme.
+	* GSWIN32PageLayout.[hm]: New class to handle page layout panel
+	for the win32 theme.
+	* WinUXTheme.m: Add category to pass back the class to be instantiated
+	to the theme framework.
+	
 2015-1-8 Paul Landers <paul.landers@testplant.com>
 
-    * WinNSMenu.m: Allow a menu item with a submenu to be disabled, if it contains no items.
+	* WinNSMenu.m: Allow a menu item with a submenu to be
+	disabled, if it contains no items.
 
 2014-12-17 Paul Landers <paul.landers@testplant.com>
 
-    * WinNSOpenPanel.m: Setting the list of allowedFileTypes uses only those in the list. 
-    Otherwise, use the types for the valid document. 
+	* WinNSOpenPanel.m: Setting the list of allowedFileTypes
+	uses only those in the list. Otherwise, use the types
+	for the valid document.
 
 2014-09-25 Riccardo Mottola <rm@gnu.org>
 
