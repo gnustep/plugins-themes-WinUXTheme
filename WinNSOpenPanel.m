@@ -648,9 +648,12 @@ unsigned long long unilen(unichar *chars)
       NSPopUpButton *popup = [NSPopUpButton new];
 
       [popup addItemWithTitle: @"None"];
-      [[popup itemAtIndex: 0] setRepresentedObject:
-			 [dc typeFromFileExtension:
-			       [types objectAtIndex: ofn.nFilterIndex - 1]]];
+      if ([types count] > 0)
+	{
+	  [[popup itemAtIndex: 0] setRepresentedObject:
+			     [dc typeFromFileExtension:
+				   [types objectAtIndex: ofn.nFilterIndex - 1]]];
+	}
       [popup selectItemAtIndex: 0];
       [doc changeSaveType: [popup autorelease]];
  
