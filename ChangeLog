@@ -1,3 +1,9 @@
+2015-02-17 German Arias <germanandre@gmx.es>
+
+	* WinNSMenu.m (-doesProcessEventsForPopUpMenu): Return NO since the
+	theme handles all of the popUpMenu event process natively. So we
+	don't need handle these
+
 2015-02-11 Gregory John Casamento <greg.casamento@gmail.com>
 
 	* WinNSOpenPanel.m: Change call to not pull the first type if the
