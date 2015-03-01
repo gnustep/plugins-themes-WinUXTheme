@@ -554,6 +554,7 @@ void delete_menu(HWND win)
 
 - (BOOL) doesProcessEventsForPopUpMenu
 {
+  return YES;
   return NO; /* this theme handles all of the popUpMenu event process
 		natively. So we don't need handle these. */
 }
