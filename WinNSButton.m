@@ -88,48 +88,48 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
   if(!IsThemeActive())
     {
       return [super buttonMarginsForCell: cell
-				   style: style
-				   state: state];
+                                   style: style
+                                   state: state];
     }
-
+  
   HTHEME hTheme;
   NSWindow *window = [[cell controlView] window];
   HWND hwnd = (HWND)[window windowNumber];
-
+  
   hTheme = OpenThemeData(hwnd, L"button");
   if (hTheme != NULL)
     {
       BOOL result = NO;
       GSThemeMargins margins = {0, 0, 0, 0};
-
+      
       if (IsThemePartDefined(hTheme, BP_PUSHBUTTON, 0))
         {
           int drawState = _ButtonStateForThemeControlState(state);
           HDC hDC = GetCurrentHDC();
           MARGINS win32Margins;
-
-          result = (GetThemeMargins(hTheme, hDC, BP_PUSHBUTTON, drawState, 
+          
+          result = (GetThemeMargins(hTheme, hDC, BP_PUSHBUTTON, drawState,
                                     TMT_CONTENTMARGINS, NULL, &win32Margins) == S_OK);
           if (result)
             {
               margins.left = win32Margins.cxLeftWidth;
-	      margins.right = win32Margins.cxRightWidth;
-	      margins.top = win32Margins.cyTopHeight;
-	      margins.bottom = win32Margins.cyBottomHeight;
+              margins.right = win32Margins.cxRightWidth;
+              margins.top = win32Margins.cyTopHeight;
+              margins.bottom = win32Margins.cyBottomHeight;
             }
           ReleaseCurrentHDC(hDC);
         }
-
+      
       CloseThemeData(hTheme);
       if (result)
         {
           return margins;
         }
     }
-
+  
   return [super buttonMarginsForCell: cell
-			       style: style 
-			       state: state];
+                               style: style
+                               state: state];
 }
 
 @end
