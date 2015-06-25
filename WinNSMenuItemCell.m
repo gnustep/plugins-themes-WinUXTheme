@@ -28,7 +28,7 @@
 
 #import "WinUXTheme.h"
 
-@implementation WinUXTheme (NSPopUpButton)
+@implementation WinUXTheme (NSMenuItemCell)
 - (void) drawBorderAndBackgroundForMenuItemCell: (NSMenuItemCell *)cell
                                       withFrame: (NSRect)frame
                                          inView: (NSView *)view
