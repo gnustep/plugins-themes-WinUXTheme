@@ -47,33 +47,77 @@ static NSLock *menuLock = nil;
 }
 @end
 
-@interface GSFakeNSMenuItem : NSMenuItem
+@interface GSFakeNSMenuItem : NSObject
 {
   id _originalItem;
 }
 
-- (void) action: (id)sender;
 - (id) initWithItem: (id)item;
+- (id) target;
+- (SEL)action;
+- (void) action: (id)sender;
 @end
 
 @implementation GSFakeNSMenuItem
 - (id) initWithItem: (id)item
 {
-  if(([super initWithTitle: [item title]
-		    action: @selector(action:)
-	     keyEquivalent: [item keyEquivalent]]) != nil)
-    {
-      _originalItem = item;
-      [self setTarget: self];
-      [self setEnabled: [item isEnabled]];
-    }
+  self = [super init];
+  if (self)
+  {
+    _originalItem = item;
+  }
   return self;
+}
+
+- (id)target
+{
+  return self;
+}
+
+- (SEL)action
+{
+  return @selector(action:);
 }
 
 - (void) action: (id)sender
 {
   NSMenu *theMenu = [_originalItem menu];
   [theMenu performActionForItemAtIndex:[theMenu indexOfItem:_originalItem]];
+}
+
+#ifndef GNUSTEP
+#pragma mark -
+#pragma mark Act as proxy for actual NSMenuItem methods...
+#endif
+- (id)forwardingTargetForSelector:(SEL)selector
+{
+  if ([_originalItem respondsToSelector:selector])
+    return _originalItem;
+  return nil;
+}
+
+- (void)forwardInvocation:(NSInvocation *)invocation
+{
+  SEL selector = [invocation selector];
+
+  // Forward any invocation to the original item if it supports it...
+  if ([_originalItem respondsToSelector:selector])
+    [invocation invokeWithTarget:_originalItem];
+}
+
+-(NSMethodSignature*)methodSignatureForSelector:(SEL)selector
+{
+	NSMethodSignature *signature = [[_originalItem class] instanceMethodSignatureForSelector:selector];
+	if(signature == nil)
+	{
+		signature = [NSMethodSignature signatureWithObjCTypes:"@^v^c"];
+	}
+	return(signature);
+}
+
+- (void)doesNotRecognizeSelector:(SEL)selector
+{
+  NSLog(@"%s:selector not recognized: %@", __PRETTY_FUNCTION__, NSStringFromSelector(selector));
 }
 @end
 
@@ -299,12 +343,12 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopup, BOOL fakeItem, NSMapT
       // If it's enabled and not a seperator or a supermenu (unless submenu is empty),
       // determine if it's enabled and set it's state accordingly.
       if([item isSeparatorItem] == NO &&
-	 ([item hasSubmenu] == NO || [[item submenu] numberOfItems] == 0) )
-	{
-	  flags |= ([item isEnabled]?MF_ENABLED:MF_GRAYED); // shouldn't this be :MF_GRAYED|MF_DISABLED ?
+         ([item hasSubmenu] == NO || [[item submenu] numberOfItems] == 0) )
+        {
+          flags |= ([item isEnabled]?MF_ENABLED:MF_GRAYED); // shouldn't this be :MF_GRAYED|MF_DISABLED ?
           if ([item state] == NSOnState)
             flags |= MF_CHECKED; // set checkmark
-	}
+        }
 
       const wchar_t *ctitle = (wchar_t*)[title cStringUsingEncoding: NSUTF16StringEncoding];
       AppendMenuW(result, flags, (UINT)s, ctitle);
