@@ -47,6 +47,16 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
     }
 }
 
+- (NSRect)insetFrame:(NSRect)frame withMargins:(GSThemeMargins)margins
+{
+  NSRect result = frame;
+  result.origin.x += margins.left;
+  result.origin.y += margins.bottom;
+  result.size.width -= (margins.left + margins.right);
+  result.size.height -= (margins.top + margins.bottom);
+  return(result);
+}
+
 - (void) drawButton: (NSRect) frame 
                  in: (NSCell*) cell 
                view: (NSView*) view 
@@ -65,9 +75,17 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
 
   HTHEME hTheme = [self themeWithClassName: @"button"];
   int drawState = _ButtonStateForThemeControlState(state);
+   GSThemeMargins margins = [self buttonMarginsForCell: cell style: style state: state];
+  NSRect drawFrame = [self insetFrame:frame withMargins:margins];
+
+#if 0
+  NSLog(@"%s:title: %@ frame: %@ drawFrame: %@", __PRETTY_FUNCTION__, [cell title],
+        NSStringFromRect(frame), NSStringFromRect(drawFrame));
+#endif
+ 
 
   if (![self drawThemeBackground: hTheme
-			  inRect: frame
+			  inRect: drawFrame
 			    part: BP_PUSHBUTTON
 			   state: drawState])
     {
@@ -81,7 +99,63 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
   [self releaseTheme: hTheme];
 }
 
-- (GSThemeMargins) buttonMarginsForCell: (NSCell*)cell
+- (GSThemeMargins) gsButtonMarginsForCell: (NSCell*)cell
+                   style: (int)style
+                   state: (GSThemeControlState)state
+{
+  GSThemeMargins margins = { 0 };
+  
+  switch (style)
+  {
+    case NSRoundRectBezelStyle:
+      break;
+    case NSTexturedRoundedBezelStyle:
+    case NSRoundedBezelStyle:
+    {
+      if ([cell controlSize] == NSRegularControlSize)
+      {
+        margins.left = 10; margins.top = 8; margins.right = 10; margins.bottom = 8;
+      }
+      else if ([cell controlSize] == NSSmallControlSize)
+      {
+        margins.left = 8; margins.top = 6; margins.right = 8; margins.bottom = 6;
+      }
+    }
+      break;
+    case NSTexturedSquareBezelStyle:
+      margins.left = 3; margins.top = 3; margins.right = 3; margins.bottom = 3;
+      break;
+    case NSSmallSquareBezelStyle:
+    case NSRegularSquareBezelStyle:
+    case NSShadowlessSquareBezelStyle:
+      margins.left = 2; margins.top = 2; margins.right = 2; margins.bottom = 2;
+      break;
+    case NSThickSquareBezelStyle:
+      margins.left = 3; margins.top = 3; margins.right = 3; margins.bottom = 3;
+      break;
+    case NSThickerSquareBezelStyle:
+      margins.left = 4; margins.top = 4; margins.right = 4; margins.bottom = 4;
+      break;
+    case NSCircularBezelStyle:
+      margins.left = 5; margins.top = 5; margins.right = 5; margins.bottom = 5;
+      break;
+    case NSHelpButtonBezelStyle:
+      margins.left = 2; margins.top = 3; margins.right = 2; margins.bottom = 3;
+      break;
+    case NSDisclosureBezelStyle:
+    case NSRoundedDisclosureBezelStyle:
+    case NSRecessedBezelStyle:
+      // FIXME
+      margins.left = 0; margins.top = 0; margins.right = 0; margins.bottom = 0;
+      break;
+    default:
+      margins.left = 3; margins.top = 3; margins.right = 3; margins.bottom = 3;
+      break;
+  }
+  return margins;
+}
+
+- (GSThemeMargins) windowsButtonMarginsForCell: (NSCell*)cell
 				  style: (int)style 
 				  state: (GSThemeControlState)state
 {
@@ -130,6 +204,17 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
   return [super buttonMarginsForCell: cell
                                style: style
                                state: state];
+}
+
+- (GSThemeMargins) buttonMarginsForCell: (NSCell*)cell
+				  style: (int)style 
+				  state: (GSThemeControlState)state
+{
+  NSUserDefaults *userDefs = [NSUserDefaults standardUserDefaults];
+
+  if ([userDefs boolForKey: @"GSUseInternalThemeMargins"])
+    return [self gsButtonMarginsForCell: cell style: style state: state];
+  return [self windowsButtonMarginsForCell: cell style: style state: state];
 }
 
 @end
