@@ -49,10 +49,10 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
 
 - (NSRect)insetFrame:(NSRect)frame withMargins:(GSThemeMargins)margins
 {
-  NSRect result = frame;
-  result.origin.x += margins.left;
-  result.origin.y += margins.bottom;
-  result.size.width -= (margins.left + margins.right);
+  NSRect result       = frame;
+  result.origin.x    += margins.left;
+  result.origin.y    += margins.top;
+  result.size.width  -= (margins.left + margins.right);
   result.size.height -= (margins.top + margins.bottom);
   return(result);
 }
