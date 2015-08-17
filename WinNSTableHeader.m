@@ -43,15 +43,16 @@
   
   if (tableView)
     {
-      NSClipView *clipView = (NSClipView*)[tableView superview];
+      // Seems like the clip view is optional(?)...
+      id superView = (NSClipView*)[tableView superview];
       
-      if (clipView != nil)
+      if (superView && ([superView respondsToSelector:@selector(documentVisibleRect)]))
         {
-          NSRect clipFrame = [clipView documentVisibleRect];
+          NSRect clipFrame = [superView documentVisibleRect];
           CGFloat maxWidth = NSMaxX(clipFrame);
           
           // If outside the boundaries of the table view's super (clip) view...
-          if (cellFrame.origin.x > maxWidth)
+          if (NSMinX(cellFrame) > maxWidth)
             return;
           
           // Do not exceed the bounds of the clip view...
