@@ -77,6 +77,7 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
   int drawState = _ButtonStateForThemeControlState(state);
    GSThemeMargins margins = [self buttonMarginsForCell: cell style: style state: state];
   NSRect drawFrame = [self insetFrame:frame withMargins:margins];
+  drawFrame = frame;
 
 #if 0
   NSLog(@"%s:title: %@ frame: %@ drawFrame: %@", __PRETTY_FUNCTION__, [cell title],
