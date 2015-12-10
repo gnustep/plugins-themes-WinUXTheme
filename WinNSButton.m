@@ -139,6 +139,7 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
       break;
 
     case NSCircularBezelStyle:
+#if 0
       {
         if ([cell controlSize] == NSRegularControlSize)
         {
@@ -153,6 +154,7 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
           margins.left = 7; margins.top = 6; margins.right = 7; margins.bottom = 6;
         }
       }
+#endif
       break;
 
     case NSHelpButtonBezelStyle:
