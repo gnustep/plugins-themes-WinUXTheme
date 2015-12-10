@@ -47,16 +47,6 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
     }
 }
 
-- (NSRect)insetFrame:(NSRect)frame withMargins:(GSThemeMargins)margins
-{
-  NSRect result       = frame;
-  result.origin.x    += margins.left;
-  result.origin.y    += margins.top;
-  result.size.width  -= (margins.left + margins.right);
-  result.size.height -= (margins.top + margins.bottom);
-  return(result);
-}
-
 - (void) drawButton: (NSRect) frame 
                  in: (NSCell*) cell 
                view: (NSView*) view 
@@ -75,18 +65,10 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
 
   HTHEME hTheme = [self themeWithClassName: @"button"];
   int drawState = _ButtonStateForThemeControlState(state);
-   GSThemeMargins margins = [self buttonMarginsForCell: cell style: style state: state];
-  NSRect drawFrame = [self insetFrame:frame withMargins:margins];
-  drawFrame = frame;
-
-#if 0
-  NSLog(@"%s:title: %@ frame: %@ drawFrame: %@", __PRETTY_FUNCTION__, [cell title],
-        NSStringFromRect(frame), NSStringFromRect(drawFrame));
-#endif
  
 
   if (![self drawThemeBackground: hTheme
-			  inRect: drawFrame
+			  inRect: frame
 			    part: BP_PUSHBUTTON
 			   state: drawState])
     {
@@ -190,6 +172,5 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
   }
   return margins;
 }
-
 
 @end
