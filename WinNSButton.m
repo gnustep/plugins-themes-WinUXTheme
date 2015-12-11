@@ -139,7 +139,7 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
       break;
 
     case NSCircularBezelStyle:
-#if 0
+#if 0 // Apple doesn't seem to inset and/or draw a border around these...
       {
         if ([cell controlSize] == NSRegularControlSize)
         {
