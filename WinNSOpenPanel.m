@@ -38,7 +38,7 @@
 
 // Flag to indicate that a folder was selected.
 #define FOLDER_SELECTED 0xFFFFFFFF
-
+#define FILE_BUFFER_SIZE 9128
 /**
  * Callback function to handle events from the save/open dialog.
  */
@@ -272,7 +272,7 @@ unsigned long long unilen(unichar *chars)
 
 @interface WinNSOpenPanel : NSOpenPanel
 {
-  unichar szFile[1024];
+  unichar szFile[FILE_BUFFER_SIZE];
   OPENFILENAMEW ofn;
   BROWSEINFO folderBrowser;
   NSArray *filenames;
@@ -282,7 +282,7 @@ unsigned long long unilen(unichar *chars)
 
 @interface WinNSSavePanel : NSSavePanel
 {
-  unichar szFile[1024];
+  unichar szFile[FILE_BUFFER_SIZE];
   OPENFILENAMEW ofn;
   NSString *filename;
 }
@@ -299,7 +299,7 @@ unsigned long long unilen(unichar *chars)
       ofn.lStructSize = sizeof(ofn);
       ofn.lpstrFile = szFile;
       ofn.lpstrFile[0] = '\0';
-      ofn.nMaxFile = 1024;
+      ofn.nMaxFile = FILE_BUFFER_SIZE;
       ofn.lpstrFileTitle = NULL;
       ofn.nMaxFileTitle = 0;
       ofn.lpstrInitialDir = NULL;
@@ -505,7 +505,7 @@ unsigned long long unilen(unichar *chars)
       ofn.lStructSize = sizeof(ofn);
       ofn.lpstrFile = szFile;
       ofn.lpstrFile[0] = '\0';
-      ofn.nMaxFile = 1024;
+      ofn.nMaxFile = FILE_BUFFER_SIZE;
       ofn.lpstrFileTitle = NULL;
       ofn.nMaxFileTitle = 0;
       ofn.lpstrInitialDir = NULL;
