@@ -91,6 +91,7 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
   switch (style)
   {
     case NSRoundRectBezelStyle:
+      margins = [super buttonMarginsForCell:cell style:style state:state];
       break;
 
     case NSTexturedRoundedBezelStyle:
@@ -120,22 +121,17 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
       break;
 
     case NSTexturedSquareBezelStyle:
-      margins.left = 3; margins.top = 1; margins.right = 3; margins.bottom = 1;
+      margins = [super buttonMarginsForCell:cell style:style state:state];
       break;
 
     case NSRegularSquareBezelStyle:
-      margins.left = 2; margins.top = 2; margins.right = 2; margins.bottom = 2;
       break;
 
     case NSShadowlessSquareBezelStyle:
-      break;
-
     case NSThickSquareBezelStyle:
-      margins.left = 3; margins.top = 3; margins.right = 3; margins.bottom = 3;
-      break;
-
     case NSThickerSquareBezelStyle:
-      margins.left = 4; margins.top = 4; margins.right = 4; margins.bottom = 4;
+      // Currently defaulting to super's margins...
+      margins = [super buttonMarginsForCell:cell style:style state:state];
       break;
 
     case NSCircularBezelStyle:
@@ -158,18 +154,13 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
       break;
 
     case NSHelpButtonBezelStyle:
-      margins.left = 2; margins.top = 3; margins.right = 2; margins.bottom = 3;
-      break;
-
     case NSDisclosureBezelStyle:
     case NSRoundedDisclosureBezelStyle:
     case NSRecessedBezelStyle:
-      // FIXME
-      margins.left = 3; margins.top = 3; margins.right = 3; margins.bottom = 3;
-      break;
+      // Currently defaulting to super's margins...
 
     default:
-      margins.left = 3; margins.top = 3; margins.right = 3; margins.bottom = 3;
+      margins = [super buttonMarginsForCell:cell style:style state:state];
       break;
   }
   return margins;
