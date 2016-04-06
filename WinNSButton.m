@@ -95,6 +95,7 @@ static int _ButtonStateForThemeControlState(GSThemeControlState state)
       break;
 
     case NSTexturedRoundedBezelStyle:
+      if ([cell imagePosition] == NSNoImage)
       {
         if ([cell controlSize] == NSRegularControlSize)
         {
