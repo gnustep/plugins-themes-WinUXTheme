@@ -27,7 +27,14 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
+#ifdef __MINGW64__
+#define interface struct
+#endif
 #import <shlobj.h>
+#ifdef __MINGW64__
+#undef interface
+#endif
+
 #import <commdlg.h>
 #import <windows.h>
 #import "WinUXTheme.h"
@@ -340,7 +347,7 @@ unsigned long long unilen(unichar *chars)
   return filenames;
 }
 
-- (int) runModalForDirectory: (NSString *)path
+- (NSInteger) runModalForDirectory: (NSString *)path
                         file: (NSString *)name
                        types: (NSArray *)fileTypes
             relativeToWindow: (NSWindow*)window
@@ -447,7 +454,7 @@ unsigned long long unilen(unichar *chars)
   return result;
 }
 
-- (int) runModalForDirectory: (NSString *)path
+- (NSInteger) runModalForDirectory: (NSString *)path
 			file: (NSString *)name
 		       types: (NSArray *)fileTypes
 {
@@ -457,7 +464,7 @@ unsigned long long unilen(unichar *chars)
 		   relativeToWindow: [NSApp keyWindow]];
 }
 
-- (int) runModalForDirectory: (NSString *)path
+- (NSInteger) runModalForDirectory: (NSString *)path
 			file: (NSString *)name
 	    relativeToWindow: (NSWindow*)window
 {
@@ -466,7 +473,7 @@ unsigned long long unilen(unichar *chars)
 			      types: [self allowedFileTypes]];
 }
 
-- (int) runModalForDirectory: (NSString*)path 
+- (NSInteger) runModalForDirectory: (NSString*)path 
 			file: (NSString*)name
 {
   return [self runModalForDirectory: path
@@ -669,7 +676,7 @@ unsigned long long unilen(unichar *chars)
   return result;
 }
 
-- (int) runModalForDirectory: (NSString *)path
+- (NSInteger) runModalForDirectory: (NSString *)path
 			file: (NSString *)name
 		       types: (NSArray *)fileTypes
 {
@@ -679,7 +686,7 @@ unsigned long long unilen(unichar *chars)
 		   relativeToWindow: [NSApp keyWindow]];
 }
 
-- (int) runModalForDirectory: (NSString *)path
+- (NSInteger) runModalForDirectory: (NSString *)path
 			file: (NSString *)name
 	    relativeToWindow: (NSWindow*)window
 {
@@ -688,7 +695,7 @@ unsigned long long unilen(unichar *chars)
 			      types: [self allowedFileTypes]];
 }
 
-- (int) runModalForDirectory: (NSString*)path 
+- (NSInteger) runModalForDirectory: (NSString*)path 
 			file: (NSString*)name
 {
   return [self runModalForDirectory: path
