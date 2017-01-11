@@ -113,7 +113,9 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
       [colors setColor: [NSColor blackColor]
               forKey: @"keyboardFocusIndicatorColor"];
       [colors setColor: Win32ToGSColor(COLOR_3DFACE)
-              forKey: @"knobColor"];
+                forKey: @"knobColor"];
+      [colors setColor: [NSColor blackColor]
+                forKey: @"labelColor"];
       [colors setColor: Win32ToGSColor(COLOR_SCROLLBAR)
               forKey: @"scrollBarColor"];
       [colors setColor: Win32ToGSColor(COLOR_HIGHLIGHT)
