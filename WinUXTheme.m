@@ -150,7 +150,7 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
               forKey: @"alternateSelectedControlTextColor"];
       [colors setColor: [NSColor whiteColor]
               forKey: @"rowBackgroundColor"];
-      [colors setColor: [NSColor lightGrayColor]
+      [colors setColor: [NSColor colorWithCalibratedWhite: 0.94901960784314 alpha: 1.0]
               forKey: @"alternateRowBackgroundColor"];
       [colors setColor: [NSColor lightGrayColor]
               forKey: @"secondarySelectedControlColor"];
@@ -160,9 +160,9 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
 }
 
 - (BOOL) drawThemeBackground:(HTHEME)hTheme
-		      inRect:(NSRect)rect
-		      part:(int)part
-		      state:(int)state
+                      inRect:(NSRect)rect
+                        part:(int)part
+                       state:(int)state
 {
   HDC hDC;
   RECT winRect;
@@ -170,8 +170,7 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
   if (hTheme == NULL)
     return NO;  
 
-  if ([self isTheme: hTheme
-	partDefined: part] == NO)
+  if ([self isTheme: hTheme partDefined: part] == NO)
     return NO;
 
   winRect = GSViewRectToWin([[GSCurrentContext() focusView] window], rect);
