@@ -153,7 +153,9 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
       [colors setColor: [NSColor colorWithCalibratedWhite: 0.94901960784314 alpha: 1.0]
               forKey: @"alternateRowBackgroundColor"];
       [colors setColor: [NSColor lightGrayColor]
-              forKey: @"secondarySelectedControlColor"];
+                forKey: @"secondarySelectedControlColor"];
+      [colors setColor: [NSColor colorWithCalibratedWhite: 0.666667 alpha: 1.0]
+                forKey: @"selectedInactiveColor"];
     }
 
   return colors;
