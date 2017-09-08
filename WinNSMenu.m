@@ -1,10 +1,11 @@
-/* WINUXTheme A native Windows XP theme for GNUstep
+/* WINUXTheme A native Windows theme for GNUstep
    
    Native Menu support.
    
-   Copyright (C) 2009 Free Software Foundation, Inc.
+   Copyright (C) 2009-2017 Free Software Foundation, Inc.
 
    Written by: Gregory Casamento <greg.casamento@gmail.com>
+               Riccardo Mottola <rm@gnu.org>
    Date: Jan 2010
 
    This library is free software; you can redistribute it and/or
@@ -36,16 +37,6 @@ static UINT menu_tag = 0;
 static NSMapTable *itemMap = 0;
 static NSLock *menuLock = nil;
 
-@interface NSMenu (Private)
-- (NSPopUpButtonCell *) owningPopUp;
-@end
-
-@implementation NSMenu (Private)
-- (NSPopUpButtonCell *) owningPopUp
-{
-  return _popUpButtonCell;
-}
-@end
 
 @interface GSFakeNSMenuItem : NSObject
 {
@@ -171,7 +162,7 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopup, BOOL fakeItem, NSMapT
   NSString *ctrlMod = [defaults stringForKey: @"GSFirstControlKey"];
   NSString *shiftMod = [defaults stringForKey: @"GSFirstShiftKey"];
   const unichar ellipsis = 0x2026;
-  BOOL skipFirstItem = (asPopup && [[menu owningPopUp] pullsDown]); // leave first item off of pull-downs
+  BOOL skipFirstItem = (asPopup && [[menu _owningPopUp] pullsDown]); // leave first item off of pull-downs
 
   // if unspecified, map to default...
   if(cmdMod == nil || [cmdMod isEqual: @"NoSymbol"])
@@ -556,7 +547,7 @@ void delete_menu(HWND win)
   if (menu == nil)
     return;
   
-  NSPopUpButtonCell *cell = [menu owningPopUp];
+  NSPopUpButtonCell *cell = [menu _owningPopUp];
   if (cell)
     fake = ![cell pullsDown];
 
