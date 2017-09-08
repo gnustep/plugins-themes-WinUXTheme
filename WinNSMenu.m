@@ -53,6 +53,7 @@ static NSLock *menuLock = nil;
 }
 
 - (id) initWithItem: (id)item;
+- (id) originalItem;
 - (id) target;
 - (SEL)action;
 - (void) action: (id)sender;
@@ -67,6 +68,11 @@ static NSLock *menuLock = nil;
     _originalItem = item;
   }
   return self;
+}
+
+- (id) originalItem
+{
+  return _originalItem;
 }
 
 - (id)target
@@ -346,7 +352,15 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopup, BOOL fakeItem, NSMapT
          ([item hasSubmenu] == NO || [[item submenu] numberOfItems] == 0) )
         {
           flags |= ([item isEnabled]?MF_ENABLED:MF_GRAYED); // shouldn't this be :MF_GRAYED|MF_DISABLED ?
-          if ([item state] == NSOnState)
+          // For PopUpButtons we don't set the flag on the state but on selection
+	  if (fakeItem && [menu _ownedByPopUp])
+	    {
+	      if ([(GSFakeNSMenuItem *)item originalItem] == [[menu _owningPopUp] selectedItem])
+		{
+		  flags |= MF_CHECKED;
+		}
+	    }
+	  else if ([item state] == NSOnState)
             flags |= MF_CHECKED; // set checkmark
         }
 

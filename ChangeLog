@@ -1,3 +1,9 @@
+2017-09-08 Riccardo Mottola <rm@gnu.org>
+
+	* WinNSMenu.m
+	For NSPopUpButton menus, set the check depending on the selected item and
+	not on its state.
+
 2015-02-17 German Arias <germanandre@gmx.es>
 
 	* WinNSMenu.m (-doesProcessEventsForPopUpMenu): Return NO since the
