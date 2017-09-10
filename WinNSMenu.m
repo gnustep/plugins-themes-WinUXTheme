@@ -149,7 +149,7 @@ void initialize_lock()
 }
 
 // find all subitems for the given items...
-HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopup, BOOL fakeItem, NSMapTable *itemMap)
+HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL fakeItem, NSMapTable *itemMap)
 {
   NSArray *array = [menu itemArray];
   NSEnumerator *en = [array objectEnumerator];
@@ -162,7 +162,7 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopup, BOOL fakeItem, NSMapT
   NSString *ctrlMod = [defaults stringForKey: @"GSFirstControlKey"];
   NSString *shiftMod = [defaults stringForKey: @"GSFirstShiftKey"];
   const unichar ellipsis = 0x2026;
-  BOOL skipFirstItem = (asPopup && [[menu _owningPopUp] pullsDown]); // leave first item off of pull-downs
+  BOOL skipFirstItem = (asPopUp && [[menu _owningPopUp] pullsDown]); // leave first item off of pull-downs
 
   // if unspecified, map to default...
   if(cmdMod == nil || [cmdMod isEqual: @"NoSymbol"])
@@ -235,7 +235,7 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopup, BOOL fakeItem, NSMapT
   if(menu == nil)
     return 0; 
   
-  if(asPopup)
+  if(asPopUp)
     {
       result = CreatePopupMenu();
     }
@@ -259,7 +259,7 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopup, BOOL fakeItem, NSMapT
 	{
 	  NSMenu *smenu = [item submenu];
 	  flags = MF_STRING | MF_POPUP;
-	  s = (UINT)r_build_menu_for_itemmap(smenu, asPopup, fakeItem, itemMap);
+	  s = (UINT)r_build_menu_for_itemmap(smenu, asPopUp, fakeItem, itemMap);
 	}
       else if([item isSeparatorItem])
 	{
@@ -344,7 +344,7 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopup, BOOL fakeItem, NSMapT
         {
           flags |= ([item isEnabled]?MF_ENABLED:MF_GRAYED); // shouldn't this be :MF_GRAYED|MF_DISABLED ?
           // For PopUpButtons we don't set the flag on the state but on selection
-	  if (fakeItem && [menu _ownedByPopUp])
+	  if (fakeItem && asPopUp)
 	    {
 	      if ([(GSFakeNSMenuItem *)item originalItem] == [[menu _owningPopUp] selectedItem])
 		{
