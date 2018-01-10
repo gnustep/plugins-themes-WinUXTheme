@@ -49,6 +49,7 @@ WinUXTheme_OBJC_FILES = \
 		WinNSScroller.m \
 		WinNSMenu.m \
 		WinNSMenuItemCell.m \
+		WinNSTabView.m \
 		WIN32VSImageRep.m \
 		WinNSOpenPanel.m \
 		WinNSTableHeader.m \
