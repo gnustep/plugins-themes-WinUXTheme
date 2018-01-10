@@ -110,8 +110,6 @@ static int _TabStateForThemeControlState(NSTabState state)
             iP = NSMakePoint(rect.origin.x, bounds.origin.y);
           else
             iP = NSMakePoint(rect.origin.x, NSMaxY(aRect));
-          NSWarnMLog(@"rect: %@ bounds %@ aRect: %@ iP: %@", NSStringFromRect(rect),
-                     NSStringFromRect(bounds), NSStringFromRect(aRect), NSStringFromPoint(iP));
           
           // Draw the background...use super as Windows Theming may not match GNUstep GSTheme
           // for processing that DOES NOT include WinUXTheme...
