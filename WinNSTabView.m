@@ -1,5 +1,5 @@
 //
-//  WinNSTabViewItem.m
+//  WinNSTabView.m
 //  WinUXTheme
 //
 //  Created by Marcian Lytwyn on 1/9/18.
@@ -95,7 +95,7 @@ static int _TabStateForThemeControlState(NSTabState state)
                                        NSMakePoint(bounds.origin.x, bounds.origin.y) :
                                        NSMakePoint(rect.origin.x, NSMaxY(aRect)));
       const NSRect        check     = NSMakeRect(iP.x, iP.y, bounds.size.width, tabHeight);
-      NSDebugMLLog(@"WinNSTabViewItem", @"frame: %@ rect: %@ check: %@ intersection: %@",
+      NSDebugMLLog(@"WinNSTabView", @"frame: %@ rect: %@ check: %@ intersection: %@",
                    NSStringFromRect(frame),
                    NSStringFromRect(rect), NSStringFromRect(check),
                    NSStringFromRect(NSIntersectionRect(rect, check)));
@@ -128,7 +128,7 @@ static int _TabStateForThemeControlState(NSTabState state)
               id                    firstItem = [items firstObject];
               id                    lastItem  = [items lastObject];
               NSInteger             itemCount = [items count];
-              NSDebugMLLog(@"WinNSTabViewItem", @"rect: %@ aRect: %@",
+              NSDebugMLLog(@"WinNSTabView", @"rect: %@ aRect: %@",
                            NSStringFromRect(rect), NSStringFromRect(aRect));
               
               // Save the current graphics context state...
@@ -152,7 +152,7 @@ static int _TabStateForThemeControlState(NSTabState state)
                   NSRect tabFrame = NSMakeRect(iP.x, iP.y, s.width+FRAME_ADJUST, tabHeight);
                   NSRect labelFrame = NSMakeRect(iP.x+(FRAME_ADJUST/2), iP.y, s.width, tabHeight);
                   int drawState = _TabStateForThemeControlState([item tabState]);
-                  NSDebugMLLog(@"WinNSTabViewItem", @"label: %@ tabFrame: %@ labelFrame: %@ intersection: %@",
+                  NSDebugMLLog(@"WinNSTabView", @"label: %@ tabFrame: %@ labelFrame: %@ intersection: %@",
                                [item label],
                                NSStringFromRect(tabFrame), NSStringFromRect(labelFrame),
                                NSStringFromRect(NSIntersectionRect(rect, tabFrame)));
