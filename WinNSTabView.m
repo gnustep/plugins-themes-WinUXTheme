@@ -116,9 +116,7 @@ static int _TabStateForThemeControlState(NSTabState state)
             }
           else
             {
-              static const CGFloat  FRAME_ADJUST = 6.0;
-              static const CGFloat  FRAME_LEFT_EDGE = 3.0;
-              static const CGFloat  FRAME_RIGHT_EDGE = 3.0;
+              static const CGFloat  FRAME_ADJUST = 12.0;
               
               NSGraphicsContext    *ctxt = GSCurrentContext();
               const NSTabViewType   type      = [(NSTabView *)view tabViewType];
