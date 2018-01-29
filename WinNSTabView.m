@@ -66,8 +66,17 @@ static int _TabStateForThemeControlState(NSTabState state)
 - (CGFloat) tabHeightForType: (NSTabViewType)type
 {
   HTHEME  hTheme = [self themeWithClassName: @"tab"];
-  NSSize  size   = [self sizeForTheme: hTheme part: TABP_TABITEM state: TIS_NORMAL type: WIN32ThemeSizeBestFit];
-  [self releaseTheme: hTheme];
+  NSSize  size   = NSMakeSize(0, 17.0);
+  if (hTheme == NULL)
+  {
+    // Default to GSTheme...
+    size.height = [super tabHeightForType: type];
+  }
+  else
+  {
+    size = [self sizeForTheme: hTheme part: TABP_TABITEM state: TIS_NORMAL type: WIN32ThemeSizeBestFit];
+    [self releaseTheme: hTheme];
+  }
   return size.height;
 }
 
