@@ -77,7 +77,7 @@ static int _TabStateForThemeControlState(NSTabState state)
     size = [self sizeForTheme: hTheme part: TABP_TABITEM state: TIS_NORMAL type: WIN32ThemeSizeBestFit];
     [self releaseTheme: hTheme];
   }
-  return size.height;
+  return MIN(17.0, size.height);
 }
 
 - (void) drawTabViewRect: (NSRect)rect
