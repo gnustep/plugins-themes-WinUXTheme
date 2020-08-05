@@ -68,16 +68,25 @@ static int _TabStateForThemeControlState(NSTabState state)
   HTHEME  hTheme = [self themeWithClassName: @"tab"];
   NSSize  size   = NSMakeSize(0, 17.0);
   if (hTheme == NULL)
-  {
-    // Default to GSTheme...
-    size.height = [super tabHeightForType: type];
-  }
+    {
+      // Default to GSTheme...
+      size.height = [super tabHeightForType: type];
+    }
   else
-  {
-    size = [self sizeForTheme: hTheme part: TABP_TABITEM state: TIS_NORMAL type: WIN32ThemeSizeBestFit];
-    [self releaseTheme: hTheme];
-  }
-  return MAX(8.0, size.height);
+    {
+      size = [self sizeForTheme: hTheme part: TABP_TABITEM state: TIS_NORMAL type: WIN32ThemeSizeBestFit];
+      [self releaseTheme: hTheme];
+
+      // Check for minimum as sometimes the windows theme is messed up for tab...
+      if ([[NSUserDefaults standardUserDefaults] objectForKey:@"GSMinimumTabHeight"])
+        {
+          CGFloat minimum = [[NSUserDefaults standardUserDefaults] floatForKey:@""];
+          NSDebugMLLog(@"WinNSTabView", @"size.height: %f minimum: %f", size.height, minimum);
+          size.height = MAX(size.height, minimum);
+        }
+    }
+  
+  return size.height;
 }
 
 - (void) drawTabViewRect: (NSRect)rect
