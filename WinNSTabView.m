@@ -78,6 +78,7 @@ static int _TabStateForThemeControlState(NSTabState state)
       [self releaseTheme: hTheme];
 
       // Check for minimum as sometimes the windows theme is messed up for tab...
+      // Initialized in -initialize method for WinUXTheme class...
       if ([[NSUserDefaults standardUserDefaults] objectForKey:@"GSMinimumTabHeight"])
         {
           CGFloat minimum = [[NSUserDefaults standardUserDefaults] floatForKey:@"GSMinimumTabHeight"];
