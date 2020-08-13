@@ -82,10 +82,11 @@ static int _TabStateForThemeControlState(NSTabState state)
       if ([[NSUserDefaults standardUserDefaults] objectForKey:@"GSMinimumTabHeight"])
         {
           CGFloat minimum = [[NSUserDefaults standardUserDefaults] floatForKey:@"GSMinimumTabHeight"];
+          CGFloat maximum = [[NSUserDefaults standardUserDefaults] floatForKey:@"GSMaximumTabHeightPrivate"];
           
-          if (0.0 < minimum)
+          if ((0.0 < minimum) && (minimum < maximum))
             {
-              NSDebugMLLog(@"WinNSTabView", @"size.height: %f minimum: %f", size.height, minimum);
+              NSDebugMLLog(@"WinNSTabView", @"size.height: %f min: %f max: %f", size.height, minimum, maximum);
               size.height = MAX(size.height, minimum);
             }
         }
