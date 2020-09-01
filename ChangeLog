@@ -1,3 +1,9 @@
+2020-09-01 Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Resources/ThemeImages/common_Tab*.tif: Redid all of these
+	to get rid of the annoying blue line on the side which doesn't match
+	anything. 
+	
 2017-09-08 Riccardo Mottola <rm@gnu.org>
 
 	* WinNSMenu.m
