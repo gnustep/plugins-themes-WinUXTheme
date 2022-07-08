@@ -67,6 +67,8 @@ Resources/WinTheme.png \
 Resources/winUX_preview_128.tiff \
 Resources/ThemeImages
 
+-include GNUmakefile.preamble
+
 include $(GNUSTEP_MAKEFILES)/bundle.make
 
 -include GNUmakefile.postamble

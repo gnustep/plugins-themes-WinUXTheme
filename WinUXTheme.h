@@ -22,6 +22,9 @@
    Boston, MA 02110-1301, USA.
 */
 
+#ifndef GNUstep_WINUXTHEME_H
+#define GNUstep_WINUXTHEME_H
+
 #import <AppKit/AppKit.h>
 #import <GNUstepGUI/GSDisplayServer.h>
 #import <GNUstepGUI/GSTheme.h>
@@ -36,7 +39,11 @@
 
 #include <windows.h>
 #include <uxtheme.h>
+#ifdef _MSC_VER
+#include <vssym32.h>
+#else
 #include <tmschema.h>
+#endif
 
 // These colours are missing for mingw
 #ifndef COLOR_MENUHILIGHT
@@ -140,3 +147,5 @@ static inline void ReleaseCurrentHDC(HDC hdc)
   		   type:(WIN32ThemeSizeType)sizeType;
 - (BOOL) isTheme:(HTHEME)hTheme partDefined:(int)part;
 @end
+
+#endif
