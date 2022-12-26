@@ -123,6 +123,7 @@ static NSLock *menuLock = nil;
 - (void) _setMenu: (NSMenu *) menu;
 @end
 
+#ifndef _MSC_VER
 @implementation NSWindow (WinMenuPrivate)
 - (GSWindowDecorationView *) windowView
 {
@@ -134,6 +135,7 @@ static NSLock *menuLock = nil;
   [super setMenu: menu];
 }
 @end
+#endif
 
 NSMenuItem *itemForTag(UINT tag, NSMapTable *itemMap)
 {

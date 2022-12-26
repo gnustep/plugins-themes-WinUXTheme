@@ -27,11 +27,11 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-#ifdef __MINGW64__
+#if defined ( __MINGW64__ ) || defined ( _MSC_VER )
 #define interface struct
 #endif
 #import <shlobj.h>
-#ifdef __MINGW64__
+#if defined ( __MINGW64__ ) || defined ( _MSC_VER )
 #undef interface
 #endif
 
@@ -336,11 +336,13 @@ unsigned long long unilen(unichar *chars)
 
 /** <p>Returns the absolute path of the file selected by the user.</p>
  */
+#ifndef _MSC_VER
 - (NSString*) filename
 {
   ASSIGN(_fullFileName, filename);
   return [super filename];
 }
+#endif
 
 - (NSArray*) filenames
 {
@@ -526,11 +528,13 @@ unsigned long long unilen(unichar *chars)
 
 /** <p>Returns the absolute path of the file selected by the user.</p>
  */
+#ifndef _MSC_VER
 - (NSString*) filename
 {
   ASSIGN(_fullFileName, filename);
   return [super filename];
 }
+#endif
 
 - (NSString *) nameFieldStringValue
 {
