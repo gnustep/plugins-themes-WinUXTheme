@@ -199,20 +199,12 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
   wchar_t* classNameChars;
   
   hWnd = (HWND)[[[NSView focusView] window] windowNumber];
-#ifdef _MSC_VER
   classNameChars = calloc([className length]+1, sizeof(wchar_t));
-#else  
-  classNameChars = objc_calloc([className length]+1, sizeof(wchar_t));
-#endif  
   [className getCharacters:classNameChars];
   
   hTheme = OpenThemeData(hWnd, classNameChars);
 
-#ifdef _MSC_VER
   free(classNameChars);
-#else  
-  objc_free(classNameChars);
-#endif  
   return hTheme;
 }
 
