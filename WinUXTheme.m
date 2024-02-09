@@ -43,19 +43,6 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
   return GSWindowRectToMS(win, r);
 }
 
-@interface NSMenu (WinUXThemePrivate)
-- (NSWindow *) window;
-@end
-
-#ifndef _MSC_VER
-@implementation NSMenu (WinUXThemePrivate)
-- (NSWindow *) window
-{
-  return _aWindow;
-}
-@end
-#endif
-
 @implementation WinUXTheme
 
 + (void) initialize
