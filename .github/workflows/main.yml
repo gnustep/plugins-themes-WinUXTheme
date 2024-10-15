@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  mingw:
+    strategy:
+      matrix:
+        os: [ windows-2019 ]
+        msystem: [ ucrt64, mingw64, clang64 ]
+        include:
+          - msystem: ucrt64
+            package-prefix: ucrt-x86_64
+            cmake-flags: LDFLAGS="-fuse-ld=lld -lstdc++ -lgcc_s"
+          - msystem: mingw64
+            package-prefix: x86_64
+            cmake-flags: LDFLAGS="-fuse-ld=lld -lstdc++ -lgcc_s"
+          - msystem: clang64
+            package-prefix: clang-x86_64
+            cmake-flags: LDFLAGS="-lc++"
+      # Don't abort runners if a single one fails
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }} ${{ matrix.msystem }}
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: msys2/setup-msys2@v2
+      with:
+        msystem: ${{ matrix.msystem }}
+        update: true
+        install: git make mingw-w64-${{ matrix.package-prefix }}-clang mingw-w64-${{ matrix.package-prefix }}-lld mingw-w64-${{ matrix.package-prefix }}-gnustep-make mingw-w64-${{ matrix.package-prefix }}-gnustep-gui
+    - name: Build
+      run: |
+        make GNUSTEP_MAKEFILES=${MINGW_PREFIX}/share/GNUstep/Makefiles/
+    - name: Install
+      run: |
+        DESTDIR=dist make install
+    - uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.msystem }}-${{ matrix.build-type }}
+        path: dist/
