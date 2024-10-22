@@ -151,11 +151,12 @@ void initialize_lock()
 }
 
 // find all subitems for the given items...
-HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL fakeItem, NSMapTable *itemMap)
+HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL isFakeItem, NSMapTable *itemMap)
 {
   NSArray *array = [menu itemArray];
   NSEnumerator *en = [array objectEnumerator];
   NSMenuItem *item = nil;
+  GSFakeNSMenuItem* fakeItem = nil;
   HMENU result = 0;
   UINT flags = 0;
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -261,7 +262,7 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL fakeItem, NSMapT
 	{
 	  NSMenu *smenu = [item submenu];
 	  flags = MF_STRING | MF_POPUP;
-	  s = (UINT)r_build_menu_for_itemmap(smenu, asPopUp, fakeItem, itemMap);
+	  s = (UINT)r_build_menu_for_itemmap(smenu, asPopUp, isFakeItem, itemMap);
 	}
       else if([item isSeparatorItem])
 	{
@@ -271,10 +272,10 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL fakeItem, NSMapT
 	{
 	  flags = MF_STRING;
 	  s = menu_tag++;
-	  if(fakeItem)
+	  if(isFakeItem)
 	    {
-	      item = [[GSFakeNSMenuItem alloc] initWithItem: item];
-	      AUTORELEASE(item);
+	      fakeItem = [[GSFakeNSMenuItem alloc] initWithItem: item];
+	      AUTORELEASE(fakeItem);
 	    }
 	  NSMapInsert(itemMap, (const void *)s, item);
 	}
@@ -346,9 +347,9 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL fakeItem, NSMapT
         {
           flags |= MF_ENABLED; // ([item isEnabled]?MF_ENABLED:MF_GRAYED); // shouldn't this be :MF_GRAYED|MF_DISABLED ?
           // For PopUpButtons we don't set the flag on the state but on selection
-	  if (fakeItem && asPopUp)
+	  if (isFakeItem && asPopUp)
 	    {
-	      if ([(GSFakeNSMenuItem *)item originalItem] == [[menu _owningPopUp] selectedItem])
+	      if ([(GSFakeNSMenuItem *)fakeItem originalItem] == [[menu _owningPopUp] selectedItem])
 		{
 		  flags |= MF_CHECKED;
 		}
@@ -364,9 +365,9 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL fakeItem, NSMapT
   return result;
 }
 
-HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL fakeItem)
+HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL isFakeItem)
 {
-  return r_build_menu_for_itemmap(menu, asPopup, fakeItem, itemMap);
+  return r_build_menu_for_itemmap(menu, asPopup, isFakeItem, itemMap);
 }
 
 void build_menu(HWND win)
