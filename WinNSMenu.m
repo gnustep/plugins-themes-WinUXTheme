@@ -38,86 +38,6 @@ static NSMapTable *itemMap = 0;
 static NSLock *menuLock = nil;
 
 
-@interface GSFakeNSMenuItem : NSObject
-{
-  id _originalItem;
-}
-
-- (id) initWithItem: (id)item;
-- (id) originalItem;
-- (id) target;
-- (SEL)action;
-- (void) action: (id)sender;
-@end
-
-@implementation GSFakeNSMenuItem
-- (id) initWithItem: (id)item
-{
-  self = [super init];
-  if (self)
-  {
-    _originalItem = item;
-  }
-  return self;
-}
-
-- (id) originalItem
-{
-  return _originalItem;
-}
-
-- (id)target
-{
-  return self;
-}
-
-- (SEL)action
-{
-  return @selector(action:);
-}
-
-- (void) action: (id)sender
-{
-  NSMenu *theMenu = [_originalItem menu];
-  [theMenu performActionForItemAtIndex:[theMenu indexOfItem:_originalItem]];
-}
-
-#ifndef GNUSTEP
-#pragma mark -
-#pragma mark Act as proxy for actual NSMenuItem methods...
-#endif
-- (id)forwardingTargetForSelector:(SEL)selector
-{
-  if ([_originalItem respondsToSelector:selector])
-    return _originalItem;
-  return nil;
-}
-
-- (void)forwardInvocation:(NSInvocation *)invocation
-{
-  SEL selector = [invocation selector];
-
-  // Forward any invocation to the original item if it supports it...
-  if ([_originalItem respondsToSelector:selector])
-    [invocation invokeWithTarget:_originalItem];
-}
-
--(NSMethodSignature*)methodSignatureForSelector:(SEL)selector
-{
-	NSMethodSignature *signature = [[_originalItem class] instanceMethodSignatureForSelector:selector];
-	if(signature == nil)
-	{
-		signature = [NSMethodSignature signatureWithObjCTypes:"@^v^c"];
-	}
-	return(signature);
-}
-
-- (void)doesNotRecognizeSelector:(SEL)selector
-{
-  NSLog(@"%s:selector not recognized: %@", __PRETTY_FUNCTION__, NSStringFromSelector(selector));
-}
-@end
-
 @interface NSWindow (WinMenuPrivate)
 - (GSWindowDecorationView *) windowView;
 - (void) _setMenu: (NSMenu *) menu;
@@ -271,11 +191,6 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL fakeItem, NSMapT
 	{
 	  flags = MF_STRING;
 	  s = menu_tag++;
-	  if(fakeItem)
-	    {
-	      item = [[GSFakeNSMenuItem alloc] initWithItem: item];
-	      AUTORELEASE(item);
-	    }
 	  NSMapInsert(itemMap, (const void *)s, item);
 	}
 
@@ -348,7 +263,7 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL fakeItem, NSMapT
           // For PopUpButtons we don't set the flag on the state but on selection
 	  if (fakeItem && asPopUp)
 	    {
-	      if ([(GSFakeNSMenuItem *)item originalItem] == [[menu _owningPopUp] selectedItem])
+	      if (item == [[menu _owningPopUp] selectedItem])
 		{
 		  flags |= MF_CHECKED;
 		}
