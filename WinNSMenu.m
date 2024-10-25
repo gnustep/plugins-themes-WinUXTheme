@@ -71,7 +71,7 @@ void initialize_lock()
 }
 
 // find all subitems for the given items...
-HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL fakeItem, NSMapTable *itemMap)
+HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL notPullDown, NSMapTable *itemMap)
 {
   NSArray *array = [menu itemArray];
   NSEnumerator *en = [array objectEnumerator];
@@ -181,7 +181,7 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL fakeItem, NSMapT
 	{
 	  NSMenu *smenu = [item submenu];
 	  flags = MF_STRING | MF_POPUP;
-	  s = (UINT)r_build_menu_for_itemmap(smenu, asPopUp, fakeItem, itemMap);
+	  s = (UINT)r_build_menu_for_itemmap(smenu, asPopUp, notPullDown, itemMap);
 	}
       else if([item isSeparatorItem])
 	{
@@ -191,6 +191,15 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL fakeItem, NSMapT
 	{
 	  flags = MF_STRING;
 	  s = menu_tag++;
+   	  if (([item action] == NULL || [item target] == nil) && notPullDown && asPopUp)
+            {
+	      NSPopUpButtonCell *popup = [menu _owningPopUp];
+              if (popup != nil)
+	        {
+	          [item setAction: @selector(_popUpItemAction:)];
+	          [item setTarget: popup];
+	        }
+            }
 	  NSMapInsert(itemMap, (const void *)s, item);
 	}
 
@@ -261,7 +270,7 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL fakeItem, NSMapT
         {
           flags |= MF_ENABLED; // ([item isEnabled]?MF_ENABLED:MF_GRAYED); // shouldn't this be :MF_GRAYED|MF_DISABLED ?
           // For PopUpButtons we don't set the flag on the state but on selection
-	  if (fakeItem && asPopUp)
+	  if (notPullDown && asPopUp)
 	    {
 	      if (item == [[menu _owningPopUp] selectedItem])
 		{
@@ -279,9 +288,9 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL fakeItem, NSMapT
   return result;
 }
 
-HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL fakeItem)
+HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL notPullDown)
 {
-  return r_build_menu_for_itemmap(menu, asPopup, fakeItem, itemMap);
+  return r_build_menu_for_itemmap(menu, asPopup, notPullDown, itemMap);
 }
 
 void build_menu(HWND win)
