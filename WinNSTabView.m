@@ -7,6 +7,7 @@
 //
 
 #import "WinUXTheme.h"
+#include <uxtheme.h>
 
 @implementation WinUXTheme (NSTabView)
 
@@ -28,39 +29,28 @@ static int _TabStateForThemeControlState(NSTabState state)
                   tabViewType: (NSTabViewType)type
                        inView: (NSView *)view
 {
-  if (!IsThemeActive())
-    {
-      [super drawTabViewBezelRect: aRect
-                      tabViewType: type
-                           inView: view];
-    }
-  else
+  if (IsThemeActive())
     {
       HTHEME hTheme = [self themeWithClassName: @"tab"];
-      
-      if (hTheme == NULL)
-        {
-          // Default to GSTheme...
-          [super drawTabViewBezelRect: aRect
-                          tabViewType: type
-                               inView: view];
-        }
-      else
+
+      if (hTheme != NULL)
       {
-        if (![self drawThemeBackground: hTheme
+        if ([self drawThemeBackground: hTheme
                                 inRect: aRect
                                   part: TABP_BODY
                                  state: 0])
-          {
-            // Default to GSTheme...
-            [super drawTabViewBezelRect: aRect
-                            tabViewType: type
-                                 inView: view];
-          }
-        
+	  {	
+            [self releaseTheme: hTheme];
+	    return;
+	  }
+
         [self releaseTheme: hTheme];
       }
     }
+
+  [super drawTabViewBezelRect: aRect
+                  tabViewType: type
+                       inView: view];
 }
 
 - (CGFloat) tabHeightForType: (NSTabViewType)type
@@ -141,8 +131,7 @@ static int _TabStateForThemeControlState(NSTabState state)
           else
             {
               static const CGFloat  FRAME_ADJUST = 12.0;
-              
-              NSGraphicsContext    *ctxt = GSCurrentContext();
+
               const NSTabViewType   type      = [(NSTabView *)view tabViewType];
               const BOOL            truncate  = [(NSTabView *)view allowsTruncatedLabels];
               int                   part      = TABP_TABITEMBOTHEDGE;
@@ -152,20 +141,13 @@ static int _TabStateForThemeControlState(NSTabState state)
               NSInteger             itemCount = [items count];
               NSDebugMLLog(@"WinNSTabView", @"rect: %@ aRect: %@",
                            NSStringFromRect(rect), NSStringFromRect(aRect));
-              
-              // Save the current graphics context state...
-              //DPSgsave(ctxt);
 
               // Draw the background...
-#if 0
-              [self drawTabViewBezelRect: aRect tabViewType: type inView: view];
-#else
               // FIXME: Use super as Windows Theming may not match GNUstep GSTheme
               // for processing that DOES NOT include WinUXTheme...
               // Unfortunately this means we're mixing HDC and GNUstep drawing but
               // unavoidable for now...
               [super drawTabViewBezelRect: bounds tabViewType: type inView: view];
-#endif
               
               // Loop thru tab items and draw each one...
               for (item in items)
@@ -204,16 +186,12 @@ static int _TabStateForThemeControlState(NSTabState state)
               if (iP.x < NSMaxX(bounds))
                 {
                   NSRect tabFrame = NSMakeRect(iP.x, iP.y, NSMaxX(bounds) - iP.x, tabHeight);
-                  
-#if 0
-                  [self drawThemeBackground: hTheme inRect: tabFrame part: TABP_BODY state: 0];
-#else
+
                   // FIXME: Use super as Windows Theming may not match GNUstep GSTheme
                   // for processing that DOES NOT include WinUXTheme...
                   // Unfortunately this means we're mixing HDC and GNUstep drawing but
                   // unavoidable for now...
                   [self drawTabFillInRect: tabFrame forPart: GSTabBackgroundFill type: type];
-#endif
                 }
               
               // Save the current graphics context state...

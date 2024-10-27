@@ -58,8 +58,11 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
   [NSImageRep registerImageRepClass:[WIN32VSImageRep class]];
 
   // See WinNSTabView.m for implemented usage...
-  [[NSUserDefaults standardUserDefaults] registerDefaults:@{@"GSMinimumTabHeight" : @12.0 }];
-  [[NSUserDefaults standardUserDefaults] registerDefaults:@{@"GSMaximumTabHeightPrivate" : @31.0 }];
+  [[NSUserDefaults standardUserDefaults] registerDefaults:
+    [NSDictionary dictionaryWithObjectsAndKeys:
+      @12.0, @"GSMinimumTabHeight",
+      @31.0, @"GSMaximumTabHeightPrivate",
+      nil]];
 }
 
 - (void) activate
