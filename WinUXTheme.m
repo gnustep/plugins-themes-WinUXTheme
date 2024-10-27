@@ -237,7 +237,13 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
     return YES;
   else 
     return NO;
-} 
+}
+
+- (BOOL) proposedVisibility: (BOOL)visible
+	 forMenu: (NSMenu *) menu
+{
+  return YES;
+}
 @end
 
 
