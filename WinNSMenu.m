@@ -466,7 +466,7 @@ void delete_menu(HWND win)
             preferredEdge: (NSRectEdge)edge
              selectedItem: (int)selectedItem
 {
-  BOOL     fake = NO;
+  BOOL     notPullDown = NO;
   NSMenu  *menu = [mr menu];
   
   // Need menu for display...
@@ -475,7 +475,7 @@ void delete_menu(HWND win)
   
   NSPopUpButtonCell *cell = [menu _owningPopUp];
   if (cell)
-    fake = ![cell pullsDown];
+    notPullDown = ![cell pullsDown];
 
   // Create a temporary item map for this popup sequence...
   NSMapTable *itemMap = NSCreateMapTable(NSIntMapKeyCallBacks,
@@ -483,7 +483,7 @@ void delete_menu(HWND win)
 
   [menu update];
   
-  HMENU     hmenu  = r_build_menu_for_itemmap(menu, YES, fake, itemMap);
+  HMENU     hmenu  = r_build_menu_for_itemmap(menu, YES, notPullDown, itemMap);
   NSWindow *theWin = ((cvWin == nil) ? [NSApp mainWindow] : cvWin);
   HWND      win    = (HWND)[theWin windowNumber];
   NSPoint   point  = cellFrame.origin;
