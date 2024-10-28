@@ -57,7 +57,12 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
   // Inserting WIN32VSImageRep class for themed images.
   [NSImageRep registerImageRepClass:[WIN32VSImageRep class]];
 
-
+  // See WinNSTabView.m for implemented usage...
+  [[NSUserDefaults standardUserDefaults] registerDefaults:
+    [NSDictionary dictionaryWithObjectsAndKeys:
+      [NSNumber numberWithFloat: 12.0], @"GSMinimumTabHeight",
+      [NSNumber numberWithFloat: 31.0], @"GSMaximumTabHeightPrivate",
+      nil]];
 }
 
 - (void) activate
