@@ -60,8 +60,8 @@ static inline RECT GSViewRectToWin(NSWindow *win, NSRect r)
   // See WinNSTabView.m for implemented usage...
   [[NSUserDefaults standardUserDefaults] registerDefaults:
     [NSDictionary dictionaryWithObjectsAndKeys:
-      @12.0, @"GSMinimumTabHeight",
-      @31.0, @"GSMaximumTabHeightPrivate",
+      [NSNumber numberWithFloat: 12.0], @"GSMinimumTabHeight",
+      [NSNumber numberWithFloat: 31.0], @"GSMaximumTabHeightPrivate",
       nil]];
 }
 
