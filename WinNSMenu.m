@@ -38,86 +38,6 @@ static NSMapTable *itemMap = 0;
 static NSLock *menuLock = nil;
 
 
-@interface GSFakeNSMenuItem : NSObject
-{
-  id _originalItem;
-}
-
-- (id) initWithItem: (id)item;
-- (id) originalItem;
-- (id) target;
-- (SEL)action;
-- (void) action: (id)sender;
-@end
-
-@implementation GSFakeNSMenuItem
-- (id) initWithItem: (id)item
-{
-  self = [super init];
-  if (self)
-  {
-    _originalItem = item;
-  }
-  return self;
-}
-
-- (id) originalItem
-{
-  return _originalItem;
-}
-
-- (id)target
-{
-  return self;
-}
-
-- (SEL)action
-{
-  return @selector(action:);
-}
-
-- (void) action: (id)sender
-{
-  NSMenu *theMenu = [_originalItem menu];
-  [theMenu performActionForItemAtIndex:[theMenu indexOfItem:_originalItem]];
-}
-
-#ifndef GNUSTEP
-#pragma mark -
-#pragma mark Act as proxy for actual NSMenuItem methods...
-#endif
-- (id)forwardingTargetForSelector:(SEL)selector
-{
-  if ([_originalItem respondsToSelector:selector])
-    return _originalItem;
-  return nil;
-}
-
-- (void)forwardInvocation:(NSInvocation *)invocation
-{
-  SEL selector = [invocation selector];
-
-  // Forward any invocation to the original item if it supports it...
-  if ([_originalItem respondsToSelector:selector])
-    [invocation invokeWithTarget:_originalItem];
-}
-
--(NSMethodSignature*)methodSignatureForSelector:(SEL)selector
-{
-	NSMethodSignature *signature = [[_originalItem class] instanceMethodSignatureForSelector:selector];
-	if(signature == nil)
-	{
-		signature = [NSMethodSignature signatureWithObjCTypes:"@^v^c"];
-	}
-	return(signature);
-}
-
-- (void)doesNotRecognizeSelector:(SEL)selector
-{
-  NSLog(@"%s:selector not recognized: %@", __PRETTY_FUNCTION__, NSStringFromSelector(selector));
-}
-@end
-
 @interface NSWindow (WinMenuPrivate)
 - (GSWindowDecorationView *) windowView;
 - (void) _setMenu: (NSMenu *) menu;
@@ -151,7 +71,7 @@ void initialize_lock()
 }
 
 // find all subitems for the given items...
-HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL fakeItem, NSMapTable *itemMap)
+HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL notPullDown, NSMapTable *itemMap)
 {
   NSArray *array = [menu itemArray];
   NSEnumerator *en = [array objectEnumerator];
@@ -261,7 +181,7 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL fakeItem, NSMapT
 	{
 	  NSMenu *smenu = [item submenu];
 	  flags = MF_STRING | MF_POPUP;
-	  s = (UINT)r_build_menu_for_itemmap(smenu, asPopUp, fakeItem, itemMap);
+	  s = (UINT)r_build_menu_for_itemmap(smenu, asPopUp, notPullDown, itemMap);
 	}
       else if([item isSeparatorItem])
 	{
@@ -271,11 +191,15 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL fakeItem, NSMapT
 	{
 	  flags = MF_STRING;
 	  s = menu_tag++;
-	  if(fakeItem)
-	    {
-	      item = [[GSFakeNSMenuItem alloc] initWithItem: item];
-	      AUTORELEASE(item);
-	    }
+   	  if (([item action] == NULL || [item target] == nil) && notPullDown && asPopUp)
+            {
+	      NSPopUpButtonCell *popup = [menu _owningPopUp];
+              if (popup != nil)
+	        {
+	          [item setAction: @selector(_popUpItemAction:)];
+	          [item setTarget: popup];
+	        }
+            }
 	  NSMapInsert(itemMap, (const void *)s, item);
 	}
 
@@ -346,9 +270,9 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL fakeItem, NSMapT
         {
           flags |= ([item isEnabled] ? MF_ENABLED : MF_GRAYED);
           // For PopUpButtons we don't set the flag on the state but on selection
-	  if (fakeItem && asPopUp)
+	  if (notPullDown && asPopUp)
 	    {
-	      if ([(GSFakeNSMenuItem *)item originalItem] == [[menu _owningPopUp] selectedItem])
+	      if (item == [[menu _owningPopUp] selectedItem])
 		{
 		  flags |= MF_CHECKED;
 		}
@@ -364,9 +288,9 @@ HMENU r_build_menu_for_itemmap(NSMenu *menu, BOOL asPopUp, BOOL fakeItem, NSMapT
   return result;
 }
 
-HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL fakeItem)
+HMENU r_build_menu(NSMenu *menu, BOOL asPopup, BOOL notPullDown)
 {
-  return r_build_menu_for_itemmap(menu, asPopup, fakeItem, itemMap);
+  return r_build_menu_for_itemmap(menu, asPopup, notPullDown, itemMap);
 }
 
 void build_menu(HWND win)
@@ -542,7 +466,7 @@ void delete_menu(HWND win)
             preferredEdge: (NSRectEdge)edge
              selectedItem: (int)selectedItem
 {
-  BOOL     fake = NO;
+  BOOL     notPullDown = NO;
   NSMenu  *menu = [mr menu];
   
   // Need menu for display...
@@ -551,7 +475,7 @@ void delete_menu(HWND win)
   
   NSPopUpButtonCell *cell = [menu _owningPopUp];
   if (cell)
-    fake = ![cell pullsDown];
+    notPullDown = ![cell pullsDown];
 
   // Create a temporary item map for this popup sequence...
   NSMapTable *itemMap = NSCreateMapTable(NSIntMapKeyCallBacks,
@@ -559,7 +483,7 @@ void delete_menu(HWND win)
 
   [menu update];
   
-  HMENU     hmenu  = r_build_menu_for_itemmap(menu, YES, fake, itemMap);
+  HMENU     hmenu  = r_build_menu_for_itemmap(menu, YES, notPullDown, itemMap);
   NSWindow *theWin = ((cvWin == nil) ? [NSApp mainWindow] : cvWin);
   HWND      win    = (HWND)[theWin windowNumber];
   NSPoint   point  = cellFrame.origin;
