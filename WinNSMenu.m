@@ -566,4 +566,10 @@ void delete_menu(HWND win)
           background: [NSColor clearColor]];
     }
 }
+
+- (BOOL) proposedVisibility: (BOOL)visible
+	 forMenu: (NSMenu *) menu
+{
+  return YES;
+}
 @end
