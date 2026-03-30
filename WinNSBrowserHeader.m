@@ -36,7 +36,7 @@
   // otherwise, do nothing...
   if(!IsThemeActive())
     {
-      [super drawBrowserHeaderCell: cell
+      [super drawBrowserHeaderCell: (NSTableHeaderCell *)cell
 			 withFrame: rect
 			    inView: view];
     }
