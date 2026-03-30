@@ -552,7 +552,7 @@ void delete_menu(HWND win)
     {
       NSRectEdge sides[] = {NSMinYEdge, NSMaxXEdge, NSMaxYEdge, NSMinXEdge,
 			    NSMinYEdge, NSMaxXEdge};
-      float      grays[] = {NSBlack, NSBlack, NSBlack, NSBlack, 
+      CGFloat    grays[] = {NSBlack, NSBlack, NSBlack, NSBlack, 
 			    NSDarkGray, NSDarkGray};
 
      [[NSColor whiteColor] set];
