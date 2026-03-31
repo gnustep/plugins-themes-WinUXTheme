@@ -8,7 +8,7 @@ jobs:
   mingw:
     strategy:
       matrix:
-        os: [ windows-2019 ]
+        os: [ windows-2022 ]
         msystem: [ ucrt64, mingw64, clang64 ]
         include:
           - msystem: ucrt64
